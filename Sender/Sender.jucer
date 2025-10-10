@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<JUCERPROJECT id="naAYbY" name="Sender" projectType="consoleapp" useAppConfig="0"
+              addUsingNamespaceToJuceHeader="0" jucerFormatVersion="1">
+  <MAINGROUP id="KhDDZR" name="Sender">
+    <GROUP id="{542B12BC-850E-9CD8-EA12-ACD6ED2683A6}" name="Source">
+      <FILE id="R3yWrG" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
+    </GROUP>
+  </MAINGROUP>
+  <MODULES>
+    <MODULE id="juce_audio_basics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_audio_devices" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_audio_formats" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_core" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_data_structures" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_events" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_graphics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_gui_basics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_gui_extra" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+  </MODULES>
+  <JUCEOPTIONS JUCE_STRICT_REFCOUNTEDPOINTER="1" JUCE_ASIO="1"/>
+  <EXPORTFORMATS>
+    <VS2022 targetFolder="Builds/VisualStudio2022">
+      <CONFIGURATIONS>
+        <CONFIGURATION isDebug="1" name="Debug" targetName="Sender"/>
+        <CONFIGURATION isDebug="0" name="Release" targetName="Sender"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS>
+        <MODULEPATH id="juce_audio_basics" path="../juce-8.0.10-windows/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_devices" path="../juce-8.0.10-windows/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_formats" path="../juce-8.0.10-windows/JUCE/modules"/>
+        <MODULEPATH id="juce_core" path="../juce-8.0.10-windows/JUCE/modules"/>
+        <MODULEPATH id="juce_data_structures" path="../juce-8.0.10-windows/JUCE/modules"/>
+        <MODULEPATH id="juce_events" path="../juce-8.0.10-windows/JUCE/modules"/>
+        <MODULEPATH id="juce_graphics" path="../juce-8.0.10-windows/JUCE/modules"/>
+        <MODULEPATH id="juce_gui_basics" path="../juce-8.0.10-windows/JUCE/modules"/>
+        <MODULEPATH id="juce_gui_extra" path="../juce-8.0.10-windows/JUCE/modules"/>
+      </MODULEPATHS>
+    </VS2022>
+  </EXPORTFORMATS>
+</JUCERPROJECT>

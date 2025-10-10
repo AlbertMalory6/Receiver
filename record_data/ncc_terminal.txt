@@ -1,0 +1,2758 @@
+Read 1000 bits from INPUT.txt
+Acoustic loopback test is ready.
+Ensure your microphone can hear your speakers.
+Press ENTER to start the play/record process...
+
+--- Playing and recording simultaneously... ---
+
+--- Play/Record finished. ---
+
+--- Analyzing Recorded Audio & Detecting Frames ---
+Detection threshold: 0.3
+
+*** PREAMBLE DETECTED at sample 26260 (t=0.595s)
+    Peak NCC: 0.5457
+    Fine-tuning frame start (searching 44 samples)...
+    Offset correction: 10 samples (clarity score: 0.879)
+
+--- Demodulator Confidence Scores (First 30 bits) ---
+Bit   0: 0 (f0=2.9, f1=0.3, conf=8.25)
+Bit   1: 0 (f0=2.3, f1=0.5, conf=4.95)
+Bit   2: 0 (f0=2.4, f1=0.9, conf=2.53)
+Bit   3: 0 (f0=2.9, f1=0.6, conf=5.10)
+Bit   4: 0 (f0=2.4, f1=0.9, conf=2.62)
+Bit   5: 0 (f0=2.7, f1=0.7, conf=4.08)
+Bit   6: 0 (f0=2.5, f1=1.1, conf=2.32)
+Bit   7: 0 (f0=3.2, f1=0.4, conf=8.06)
+Bit   8: 0 (f0=2.5, f1=0.9, conf=2.79)
+Bit   9: 0 (f0=3.1, f1=0.5, conf=6.75)
+Bit  10: 0 (f0=2.7, f1=1.2, conf=2.38)
+Bit  11: 0 (f0=3.0, f1=0.4, conf=7.17)
+Bit  12: 0 (f0=2.6, f1=1.4, conf=1.87)
+Bit  13: 0 (f0=3.3, f1=0.4, conf=7.42)
+Bit  14: 0 (f0=2.8, f1=1.5, conf=1.88)
+Bit  15: 0 (f0=3.3, f1=0.4, conf=8.39)
+Bit  16: 0 (f0=2.9, f1=1.4, conf=2.01)
+Bit  17: 0 (f0=3.4, f1=0.5, conf=6.98)
+Bit  18: 0 (f0=3.0, f1=1.5, conf=1.96)
+Bit  19: 0 (f0=3.3, f1=0.6, conf=5.61)
+Bit  20: 0 (f0=2.9, f1=1.7, conf=1.69)
+Bit  21: 0 (f0=3.3, f1=0.6, conf=5.18)
+Bit  22: 0 (f0=2.8, f1=1.8, conf=1.61)
+Bit  23: 0 (f0=3.3, f1=0.7, conf=4.70)
+Bit  24: 0 (f0=2.9, f1=1.7, conf=1.69)
+Bit  25: 0 (f0=3.2, f1=0.7, conf=4.36)
+Bit  26: 0 (f0=2.9, f1=1.7, conf=1.70)
+Bit  27: 0 (f0=3.4, f1=0.7, conf=4.75)
+Bit  28: 0 (f0=3.0, f1=1.7, conf=1.71)
+Bit  29: 0 (f0=3.4, f1=0.8, conf=4.35)
+
+--- Demodulation Statistics ---
+Average confidence: 3.19
+Weak bits (conf < 1.5): 258 / 1008 (25.6%)
+
+CRC FAIL! Received: 131, Calculated: 158. Frame discarded.
+Diagnostic beep track saved to: D:\fourth_year\cs120\Receiver\Builds\VisualStudio2022\debug_beeps.wav
+
+*** PREAMBLE DETECTED at sample 26671 (t=0.605s)
+    Peak NCC: 0.3107
+    Fine-tuning frame start (searching 44 samples)...
+    Offset correction: -5 samples (clarity score: 0.852)
+
+--- Demodulator Confidence Scores (First 30 bits) ---
+Bit   0: 0 (f0=3.1, f1=0.5, conf=6.75)
+Bit   1: 0 (f0=2.7, f1=1.2, conf=2.38)
+Bit   2: 0 (f0=3.0, f1=0.4, conf=7.17)
+Bit   3: 0 (f0=2.6, f1=1.4, conf=1.87)
+Bit   4: 0 (f0=3.3, f1=0.4, conf=7.42)
+Bit   5: 0 (f0=2.8, f1=1.5, conf=1.88)
+Bit   6: 0 (f0=3.3, f1=0.4, conf=8.39)
+Bit   7: 0 (f0=2.9, f1=1.4, conf=2.01)
+Bit   8: 0 (f0=3.4, f1=0.5, conf=6.98)
+Bit   9: 0 (f0=3.0, f1=1.5, conf=1.96)
+Bit  10: 0 (f0=3.3, f1=0.6, conf=5.61)
+Bit  11: 0 (f0=2.9, f1=1.7, conf=1.69)
+Bit  12: 0 (f0=3.3, f1=0.6, conf=5.18)
+Bit  13: 0 (f0=2.8, f1=1.8, conf=1.61)
+Bit  14: 0 (f0=3.3, f1=0.7, conf=4.70)
+Bit  15: 0 (f0=2.9, f1=1.7, conf=1.69)
+Bit  16: 0 (f0=3.2, f1=0.7, conf=4.36)
+Bit  17: 0 (f0=2.9, f1=1.7, conf=1.70)
+Bit  18: 0 (f0=3.4, f1=0.7, conf=4.75)
+Bit  19: 0 (f0=3.0, f1=1.7, conf=1.71)
+Bit  20: 0 (f0=3.4, f1=0.8, conf=4.35)
+Bit  21: 0 (f0=3.1, f1=1.8, conf=1.73)
+Bit  22: 0 (f0=3.2, f1=0.7, conf=4.51)
+Bit  23: 0 (f0=3.3, f1=1.8, conf=1.86)
+Bit  24: 0 (f0=3.4, f1=0.8, conf=4.19)
+Bit  25: 0 (f0=3.3, f1=1.7, conf=1.91)
+Bit  26: 0 (f0=3.1, f1=0.8, conf=3.91)
+Bit  27: 0 (f0=3.3, f1=1.7, conf=1.93)
+Bit  28: 0 (f0=3.2, f1=0.8, conf=4.04)
+Bit  29: 0 (f0=3.2, f1=1.7, conf=1.90)
+
+--- Demodulation Statistics ---
+Average confidence: 3.20
+Weak bits (conf < 1.5): 258 / 1008 (25.6%)
+
+CRC FAIL! Received: 64, Calculated: 166. Frame discarded.
+Diagnostic beep track saved to: D:\fourth_year\cs120\Receiver\Builds\VisualStudio2022\debug_beeps.wav
+
+*** PREAMBLE DETECTED at sample 27554 (t=0.625s)
+    Peak NCC: 0.3285
+    Fine-tuning frame start (searching 44 samples)...
+    Offset correction: -7 samples (clarity score: 0.856)
+
+--- Demodulator Confidence Scores (First 30 bits) ---
+Bit   0: 0 (f0=3.3, f1=0.5, conf=6.94)
+Bit   1: 0 (f0=2.8, f1=1.4, conf=1.95)
+Bit   2: 0 (f0=3.1, f1=0.4, conf=7.35)
+Bit   3: 0 (f0=3.0, f1=1.4, conf=2.16)
+Bit   4: 0 (f0=3.4, f1=0.5, conf=6.59)
+Bit   5: 0 (f0=3.0, f1=1.5, conf=2.05)
+Bit   6: 0 (f0=3.1, f1=0.5, conf=5.82)
+Bit   7: 0 (f0=3.1, f1=1.5, conf=2.08)
+Bit   8: 0 (f0=3.4, f1=0.6, conf=5.89)
+Bit   9: 0 (f0=3.0, f1=1.6, conf=1.90)
+Bit  10: 0 (f0=3.2, f1=0.7, conf=4.76)
+Bit  11: 0 (f0=3.1, f1=1.6, conf=1.93)
+Bit  12: 0 (f0=3.1, f1=0.7, conf=4.14)
+Bit  13: 0 (f0=3.1, f1=1.8, conf=1.73)
+Bit  14: 0 (f0=3.1, f1=0.7, conf=4.36)
+Bit  15: 0 (f0=3.2, f1=1.9, conf=1.69)
+Bit  16: 0 (f0=3.0, f1=0.8, conf=4.04)
+Bit  17: 0 (f0=3.2, f1=1.9, conf=1.72)
+Bit  18: 0 (f0=3.0, f1=0.8, conf=4.00)
+Bit  19: 0 (f0=3.3, f1=2.0, conf=1.63)
+Bit  20: 0 (f0=2.7, f1=0.9, conf=3.14)
+Bit  21: 0 (f0=3.3, f1=2.0, conf=1.65)
+Bit  22: 0 (f0=2.9, f1=0.8, conf=3.48)
+Bit  23: 0 (f0=3.2, f1=2.1, conf=1.53)
+Bit  24: 0 (f0=2.7, f1=0.9, conf=2.99)
+Bit  25: 0 (f0=3.1, f1=2.0, conf=1.53)
+Bit  26: 0 (f0=2.5, f1=0.9, conf=2.63)
+Bit  27: 0 (f0=2.9, f1=1.9, conf=1.51)
+Bit  28: 0 (f0=2.4, f1=0.9, conf=2.66)
+Bit  29: 0 (f0=2.8, f1=1.9, conf=1.50)
+
+--- Demodulation Statistics ---
+Average confidence: 3.10
+Weak bits (conf < 1.5): 289 / 1008 (28.7%)
+
+CRC FAIL! Received: 2, Calculated: 199. Frame discarded.
+Diagnostic beep track saved to: D:\fourth_year\cs120\Receiver\Builds\VisualStudio2022\debug_beeps.wav
+
+*** PREAMBLE DETECTED at sample 27819 (t=0.631s)
+    Peak NCC: 0.3378
+    Fine-tuning frame start (searching 44 samples)...
+    Offset correction: -7 samples (clarity score: 0.860)
+
+--- Demodulator Confidence Scores (First 30 bits) ---
+Bit   0: 0 (f0=3.0, f1=0.4, conf=7.12)
+Bit   1: 0 (f0=2.8, f1=1.0, conf=2.88)
+Bit   2: 0 (f0=3.3, f1=0.4, conf=8.08)
+Bit   3: 0 (f0=2.7, f1=1.1, conf=2.51)
+Bit   4: 0 (f0=3.2, f1=0.4, conf=7.55)
+Bit   5: 0 (f0=2.8, f1=1.1, conf=2.49)
+Bit   6: 0 (f0=3.1, f1=0.5, conf=6.79)
+Bit   7: 0 (f0=2.8, f1=1.4, conf=2.09)
+Bit   8: 0 (f0=3.2, f1=0.4, conf=7.16)
+Bit   9: 0 (f0=2.9, f1=1.4, conf=2.03)
+Bit  10: 0 (f0=3.1, f1=0.5, conf=6.35)
+Bit  11: 0 (f0=3.0, f1=1.5, conf=1.96)
+Bit  12: 0 (f0=3.2, f1=0.5, conf=6.34)
+Bit  13: 0 (f0=3.1, f1=1.7, conf=1.81)
+Bit  14: 0 (f0=2.9, f1=0.6, conf=4.56)
+Bit  15: 0 (f0=3.1, f1=1.8, conf=1.76)
+Bit  16: 0 (f0=3.1, f1=0.6, conf=5.03)
+Bit  17: 0 (f0=3.1, f1=1.9, conf=1.59)
+Bit  18: 0 (f0=2.9, f1=0.7, conf=3.88)
+Bit  19: 0 (f0=3.0, f1=1.9, conf=1.55)
+Bit  20: 0 (f0=2.7, f1=0.8, conf=3.29)
+Bit  21: 0 (f0=2.9, f1=2.0, conf=1.45)
+Bit  22: 0 (f0=2.7, f1=0.8, conf=3.20)
+Bit  23: 0 (f0=2.9, f1=2.1, conf=1.40)
+Bit  24: 0 (f0=2.5, f1=0.8, conf=3.00)
+Bit  25: 0 (f0=2.9, f1=2.2, conf=1.34)
+Bit  26: 0 (f0=2.4, f1=0.9, conf=2.77)
+Bit  27: 0 (f0=2.9, f1=2.1, conf=1.35)
+Bit  28: 0 (f0=2.4, f1=1.0, conf=2.37)
+Bit  29: 0 (f0=2.9, f1=2.2, conf=1.30)
+
+--- Demodulation Statistics ---
+Average confidence: 2.84
+Weak bits (conf < 1.5): 316 / 1008 (31.3%)
+
+CRC FAIL! Received: 128, Calculated: 17. Frame discarded.
+Diagnostic beep track saved to: D:\fourth_year\cs120\Receiver\Builds\VisualStudio2022\debug_beeps.wav
+
+*** PREAMBLE DETECTED at sample 28348 (t=0.643s)
+    Peak NCC: 0.3435
+    Fine-tuning frame start (searching 44 samples)...
+    Offset correction: -7 samples (clarity score: 0.854)
+
+--- Demodulator Confidence Scores (First 30 bits) ---
+Bit   0: 0 (f0=3.1, f1=0.5, conf=6.85)
+Bit   1: 0 (f0=2.8, f1=1.1, conf=2.50)
+Bit   2: 0 (f0=2.9, f1=0.5, conf=6.44)
+Bit   3: 0 (f0=2.8, f1=1.2, conf=2.42)
+Bit   4: 0 (f0=3.1, f1=0.4, conf=7.48)
+Bit   5: 0 (f0=2.8, f1=1.3, conf=2.14)
+Bit   6: 0 (f0=3.0, f1=0.5, conf=6.26)
+Bit   7: 0 (f0=2.8, f1=1.4, conf=2.01)
+Bit   8: 0 (f0=2.8, f1=0.5, conf=5.27)
+Bit   9: 0 (f0=2.7, f1=1.5, conf=1.81)
+Bit  10: 0 (f0=2.8, f1=0.6, conf=4.98)
+Bit  11: 0 (f0=2.7, f1=1.6, conf=1.66)
+Bit  12: 0 (f0=2.7, f1=0.6, conf=4.62)
+Bit  13: 0 (f0=2.8, f1=1.8, conf=1.55)
+Bit  14: 0 (f0=2.6, f1=0.7, conf=3.90)
+Bit  15: 0 (f0=2.8, f1=1.9, conf=1.52)
+Bit  16: 0 (f0=2.5, f1=0.8, conf=3.23)
+Bit  17: 0 (f0=2.8, f1=2.0, conf=1.40)
+Bit  18: 0 (f0=2.5, f1=0.8, conf=2.99)
+Bit  19: 0 (f0=2.8, f1=2.1, conf=1.32)
+Bit  20: 0 (f0=2.4, f1=1.0, conf=2.45)
+Bit  21: 0 (f0=2.7, f1=2.2, conf=1.18)
+Bit  22: 0 (f0=2.3, f1=1.0, conf=2.28)
+Bit  23: 0 (f0=2.7, f1=2.3, conf=1.20)
+Bit  24: 0 (f0=2.2, f1=1.1, conf=2.03)
+Bit  25: 0 (f0=2.6, f1=2.4, conf=1.09)
+Bit  26: 0 (f0=2.1, f1=1.2, conf=1.84)
+Bit  27: 0 (f0=2.5, f1=2.4, conf=1.06)
+Bit  28: 0 (f0=2.1, f1=1.2, conf=1.73)
+Bit  29: 1 (f0=2.4, f1=2.4, conf=1.00)
+
+--- Demodulation Statistics ---
+Average confidence: 2.49
+Weak bits (conf < 1.5): 341 / 1008 (33.8%)
+
+CRC FAIL! Received: 0, Calculated: 122. Frame discarded.
+Diagnostic beep track saved to: D:\fourth_year\cs120\Receiver\Builds\VisualStudio2022\debug_beeps.wav
+
+*** PREAMBLE DETECTED at sample 28613 (t=0.649s)
+    Peak NCC: 0.3447
+    Fine-tuning frame start (searching 44 samples)...
+    Offset correction: -8 samples (clarity score: 0.840)
+
+--- Demodulator Confidence Scores (First 30 bits) ---
+Bit   0: 0 (f0=3.0, f1=0.5, conf=6.26)
+Bit   1: 0 (f0=2.8, f1=1.4, conf=2.01)
+Bit   2: 0 (f0=2.8, f1=0.5, conf=5.27)
+Bit   3: 0 (f0=2.7, f1=1.5, conf=1.81)
+Bit   4: 0 (f0=2.8, f1=0.6, conf=4.98)
+Bit   5: 0 (f0=2.7, f1=1.6, conf=1.66)
+Bit   6: 0 (f0=2.7, f1=0.6, conf=4.62)
+Bit   7: 0 (f0=2.8, f1=1.8, conf=1.55)
+Bit   8: 0 (f0=2.6, f1=0.7, conf=3.90)
+Bit   9: 0 (f0=2.8, f1=1.9, conf=1.52)
+Bit  10: 0 (f0=2.5, f1=0.8, conf=3.23)
+Bit  11: 0 (f0=2.8, f1=2.0, conf=1.40)
+Bit  12: 0 (f0=2.5, f1=0.8, conf=2.99)
+Bit  13: 0 (f0=2.8, f1=2.1, conf=1.32)
+Bit  14: 0 (f0=2.4, f1=1.0, conf=2.45)
+Bit  15: 0 (f0=2.7, f1=2.2, conf=1.18)
+Bit  16: 0 (f0=2.3, f1=1.0, conf=2.28)
+Bit  17: 0 (f0=2.7, f1=2.3, conf=1.20)
+Bit  18: 0 (f0=2.2, f1=1.1, conf=2.03)
+Bit  19: 0 (f0=2.6, f1=2.4, conf=1.09)
+Bit  20: 0 (f0=2.1, f1=1.2, conf=1.84)
+Bit  21: 0 (f0=2.5, f1=2.4, conf=1.06)
+Bit  22: 0 (f0=2.1, f1=1.2, conf=1.73)
+Bit  23: 1 (f0=2.4, f1=2.4, conf=1.00)
+Bit  24: 0 (f0=2.1, f1=1.2, conf=1.70)
+Bit  25: 1 (f0=2.3, f1=2.4, conf=1.05)
+Bit  26: 0 (f0=2.0, f1=1.2, conf=1.62)
+Bit  27: 1 (f0=2.3, f1=2.4, conf=1.05)
+Bit  28: 0 (f0=2.1, f1=1.3, conf=1.64)
+Bit  29: 1 (f0=2.3, f1=2.4, conf=1.06)
+
+--- Demodulation Statistics ---
+Average confidence: 2.47
+Weak bits (conf < 1.5): 342 / 1008 (33.9%)
+
+CRC FAIL! Received: 0, Calculated: 145. Frame discarded.
+Diagnostic beep track saved to: D:\fourth_year\cs120\Receiver\Builds\VisualStudio2022\debug_beeps.wav
+
+*** PREAMBLE DETECTED at sample 28966 (t=0.657s)
+    Peak NCC: 0.3356
+    Fine-tuning frame start (searching 44 samples)...
+    Offset correction: -8 samples (clarity score: 0.831)
+
+--- Demodulator Confidence Scores (First 30 bits) ---
+Bit   0: 0 (f0=2.7, f1=0.5, conf=5.91)
+Bit   1: 0 (f0=2.6, f1=1.2, conf=2.12)
+Bit   2: 0 (f0=2.6, f1=0.5, conf=5.10)
+Bit   3: 0 (f0=2.6, f1=1.4, conf=1.92)
+Bit   4: 0 (f0=2.6, f1=0.5, conf=4.83)
+Bit   5: 0 (f0=2.7, f1=1.5, conf=1.76)
+Bit   6: 0 (f0=2.4, f1=0.7, conf=3.76)
+Bit   7: 0 (f0=2.5, f1=1.7, conf=1.51)
+Bit   8: 0 (f0=2.4, f1=0.7, conf=3.45)
+Bit   9: 0 (f0=2.6, f1=1.7, conf=1.50)
+Bit  10: 0 (f0=2.3, f1=0.8, conf=2.85)
+Bit  11: 0 (f0=2.5, f1=1.9, conf=1.31)
+Bit  12: 0 (f0=2.2, f1=0.9, conf=2.44)
+Bit  13: 0 (f0=2.5, f1=2.0, conf=1.21)
+Bit  14: 0 (f0=2.1, f1=1.0, conf=2.19)
+Bit  15: 0 (f0=2.3, f1=2.1, conf=1.09)
+Bit  16: 0 (f0=2.1, f1=1.1, conf=2.02)
+Bit  17: 0 (f0=2.3, f1=2.3, conf=1.01)
+Bit  18: 0 (f0=2.1, f1=1.1, conf=1.84)
+Bit  19: 1 (f0=2.3, f1=2.4, conf=1.02)
+Bit  20: 0 (f0=2.1, f1=1.2, conf=1.76)
+Bit  21: 1 (f0=2.3, f1=2.4, conf=1.07)
+Bit  22: 0 (f0=2.0, f1=1.3, conf=1.57)
+Bit  23: 1 (f0=2.3, f1=2.5, conf=1.10)
+Bit  24: 0 (f0=2.0, f1=1.3, conf=1.49)
+Bit  25: 1 (f0=2.2, f1=2.6, conf=1.16)
+Bit  26: 0 (f0=2.0, f1=1.4, conf=1.40)
+Bit  27: 1 (f0=2.2, f1=2.5, conf=1.12)
+Bit  28: 0 (f0=2.0, f1=1.4, conf=1.41)
+Bit  29: 1 (f0=2.2, f1=2.6, conf=1.20)
+
+--- Demodulation Statistics ---
+Average confidence: 2.20
+Weak bits (conf < 1.5): 388 / 1008 (38.5%)
+
+CRC FAIL! Received: 0, Calculated: 223. Frame discarded.
+Diagnostic beep track saved to: D:\fourth_year\cs120\Receiver\Builds\VisualStudio2022\debug_beeps.wav
+
+*** PREAMBLE DETECTED at sample 29319 (t=0.665s)
+    Peak NCC: 0.3235
+    Fine-tuning frame start (searching 44 samples)...
+    Offset correction: -14 samples (clarity score: 0.827)
+
+--- Demodulator Confidence Scores (First 30 bits) ---
+Bit   0: 0 (f0=2.4, f1=0.4, conf=5.80)
+Bit   1: 0 (f0=2.1, f1=1.5, conf=1.47)
+Bit   2: 0 (f0=2.5, f1=0.5, conf=5.46)
+Bit   3: 0 (f0=2.2, f1=1.5, conf=1.42)
+Bit   4: 0 (f0=2.5, f1=0.5, conf=4.91)
+Bit   5: 0 (f0=2.1, f1=1.6, conf=1.31)
+Bit   6: 0 (f0=2.6, f1=0.5, conf=4.78)
+Bit   7: 0 (f0=2.1, f1=1.7, conf=1.23)
+Bit   8: 0 (f0=2.7, f1=0.6, conf=4.85)
+Bit   9: 0 (f0=2.2, f1=1.8, conf=1.23)
+Bit  10: 0 (f0=2.8, f1=0.6, conf=4.90)
+Bit  11: 0 (f0=2.3, f1=1.8, conf=1.28)
+Bit  12: 0 (f0=3.0, f1=0.6, conf=5.00)
+Bit  13: 0 (f0=2.4, f1=1.9, conf=1.32)
+Bit  14: 0 (f0=2.9, f1=0.7, conf=4.16)
+Bit  15: 0 (f0=2.5, f1=2.0, conf=1.26)
+Bit  16: 0 (f0=3.0, f1=0.7, conf=3.99)
+Bit  17: 0 (f0=2.7, f1=2.0, conf=1.36)
+Bit  18: 0 (f0=3.1, f1=0.8, conf=3.95)
+Bit  19: 0 (f0=2.7, f1=1.9, conf=1.42)
+Bit  20: 0 (f0=3.1, f1=0.8, conf=3.69)
+Bit  21: 0 (f0=2.8, f1=2.0, conf=1.37)
+Bit  22: 0 (f0=3.1, f1=0.9, conf=3.64)
+Bit  23: 0 (f0=2.9, f1=2.0, conf=1.46)
+Bit  24: 0 (f0=3.1, f1=0.9, conf=3.51)
+Bit  25: 0 (f0=2.9, f1=2.0, conf=1.45)
+Bit  26: 0 (f0=3.0, f1=0.9, conf=3.43)
+Bit  27: 0 (f0=2.9, f1=1.9, conf=1.52)
+Bit  28: 0 (f0=3.0, f1=0.9, conf=3.33)
+Bit  29: 0 (f0=3.0, f1=1.9, conf=1.53)
+
+--- Demodulation Statistics ---
+Average confidence: 3.17
+Weak bits (conf < 1.5): 265 / 1008 (26.3%)
+
+CRC FAIL! Received: 0, Calculated: 221. Frame discarded.
+Diagnostic beep track saved to: D:\fourth_year\cs120\Receiver\Builds\VisualStudio2022\debug_beeps.wav
+
+*** PREAMBLE DETECTED at sample 29583 (t=0.671s)
+    Peak NCC: 0.3193
+    Fine-tuning frame start (searching 44 samples)...
+    Offset correction: -13 samples (clarity score: 0.791)
+
+--- Demodulator Confidence Scores (First 30 bits) ---
+Bit   0: 0 (f0=2.3, f1=0.5, conf=4.78)
+Bit   1: 0 (f0=2.0, f1=1.1, conf=1.79)
+Bit   2: 0 (f0=2.4, f1=0.4, conf=5.69)
+Bit   3: 0 (f0=2.0, f1=1.2, conf=1.73)
+Bit   4: 0 (f0=2.5, f1=0.4, conf=5.96)
+Bit   5: 0 (f0=2.1, f1=1.2, conf=1.71)
+Bit   6: 0 (f0=2.7, f1=0.4, conf=6.90)
+Bit   7: 0 (f0=2.2, f1=1.3, conf=1.69)
+Bit   8: 0 (f0=2.7, f1=0.4, conf=6.06)
+Bit   9: 0 (f0=2.2, f1=1.4, conf=1.51)
+Bit  10: 0 (f0=2.7, f1=0.5, conf=5.93)
+Bit  11: 0 (f0=2.3, f1=1.5, conf=1.57)
+Bit  12: 0 (f0=2.9, f1=0.5, conf=5.90)
+Bit  13: 0 (f0=2.4, f1=1.6, conf=1.56)
+Bit  14: 0 (f0=2.9, f1=0.5, conf=5.42)
+Bit  15: 0 (f0=2.5, f1=1.7, conf=1.44)
+Bit  16: 0 (f0=3.0, f1=0.6, conf=5.13)
+Bit  17: 0 (f0=2.5, f1=1.7, conf=1.47)
+Bit  18: 0 (f0=3.0, f1=0.6, conf=4.76)
+Bit  19: 0 (f0=2.6, f1=1.8, conf=1.41)
+Bit  20: 0 (f0=3.0, f1=0.7, conf=4.44)
+Bit  21: 0 (f0=2.7, f1=1.9, conf=1.43)
+Bit  22: 0 (f0=3.0, f1=0.7, conf=4.14)
+Bit  23: 0 (f0=2.7, f1=1.9, conf=1.40)
+Bit  24: 0 (f0=3.0, f1=0.8, conf=3.76)
+Bit  25: 0 (f0=2.7, f1=2.0, conf=1.37)
+Bit  26: 0 (f0=3.0, f1=0.8, conf=3.67)
+Bit  27: 0 (f0=2.8, f1=2.0, conf=1.40)
+Bit  28: 0 (f0=3.0, f1=0.9, conf=3.41)
+Bit  29: 0 (f0=2.8, f1=2.0, conf=1.40)
+
+--- Demodulation Statistics ---
+Average confidence: 3.23
+Weak bits (conf < 1.5): 271 / 1008 (26.9%)
+
+CRC FAIL! Received: 0, Calculated: 89. Frame discarded.
+Diagnostic beep track saved to: D:\fourth_year\cs120\Receiver\Builds\VisualStudio2022\debug_beeps.wav
+
+*** PREAMBLE DETECTED at sample 29848 (t=0.677s)
+    Peak NCC: 0.3084
+    Fine-tuning frame start (searching 44 samples)...
+    Offset correction: -14 samples (clarity score: 0.855)
+
+--- Demodulator Confidence Scores (First 30 bits) ---
+Bit   0: 0 (f0=2.7, f1=0.4, conf=6.90)
+Bit   1: 0 (f0=2.2, f1=1.3, conf=1.69)
+Bit   2: 0 (f0=2.7, f1=0.4, conf=6.06)
+Bit   3: 0 (f0=2.2, f1=1.4, conf=1.51)
+Bit   4: 0 (f0=2.7, f1=0.5, conf=5.93)
+Bit   5: 0 (f0=2.3, f1=1.5, conf=1.57)
+Bit   6: 0 (f0=2.9, f1=0.5, conf=5.90)
+Bit   7: 0 (f0=2.4, f1=1.6, conf=1.56)
+Bit   8: 0 (f0=2.9, f1=0.5, conf=5.42)
+Bit   9: 0 (f0=2.5, f1=1.7, conf=1.44)
+Bit  10: 0 (f0=3.0, f1=0.6, conf=5.13)
+Bit  11: 0 (f0=2.5, f1=1.7, conf=1.47)
+Bit  12: 0 (f0=3.0, f1=0.6, conf=4.76)
+Bit  13: 0 (f0=2.6, f1=1.8, conf=1.41)
+Bit  14: 0 (f0=3.0, f1=0.7, conf=4.44)
+Bit  15: 0 (f0=2.7, f1=1.9, conf=1.43)
+Bit  16: 0 (f0=3.0, f1=0.7, conf=4.14)
+Bit  17: 0 (f0=2.7, f1=1.9, conf=1.40)
+Bit  18: 0 (f0=3.0, f1=0.8, conf=3.76)
+Bit  19: 0 (f0=2.7, f1=2.0, conf=1.37)
+Bit  20: 0 (f0=3.0, f1=0.8, conf=3.67)
+Bit  21: 0 (f0=2.8, f1=2.0, conf=1.40)
+Bit  22: 0 (f0=3.0, f1=0.9, conf=3.41)
+Bit  23: 0 (f0=2.8, f1=2.0, conf=1.40)
+Bit  24: 0 (f0=3.0, f1=0.8, conf=3.59)
+Bit  25: 0 (f0=3.0, f1=2.0, conf=1.48)
+Bit  26: 0 (f0=2.9, f1=0.9, conf=3.44)
+Bit  27: 0 (f0=2.9, f1=2.0, conf=1.47)
+Bit  28: 0 (f0=2.9, f1=0.9, conf=3.24)
+Bit  29: 0 (f0=2.9, f1=1.9, conf=1.51)
+
+--- Demodulation Statistics ---
+Average confidence: 3.23
+Weak bits (conf < 1.5): 272 / 1008 (27.0%)
+
+CRC FAIL! Received: 24, Calculated: 68. Frame discarded.
+Diagnostic beep track saved to: D:\fourth_year\cs120\Receiver\Builds\VisualStudio2022\debug_beeps.wav
+
+*** PREAMBLE DETECTED at sample 30707 (t=0.696s)
+    Peak NCC: 0.3210
+    Fine-tuning frame start (searching 44 samples)...
+    Offset correction: 8 samples (clarity score: 0.818)
+
+--- Demodulator Confidence Scores (First 30 bits) ---
+Bit   0: 0 (f0=2.9, f1=0.5, conf=5.50)
+Bit   1: 0 (f0=2.5, f1=1.6, conf=1.56)
+Bit   2: 0 (f0=2.9, f1=0.6, conf=4.89)
+Bit   3: 0 (f0=2.6, f1=1.7, conf=1.50)
+Bit   4: 0 (f0=3.0, f1=0.6, conf=5.12)
+Bit   5: 0 (f0=2.7, f1=1.8, conf=1.55)
+Bit   6: 0 (f0=3.0, f1=0.6, conf=4.73)
+Bit   7: 0 (f0=2.7, f1=1.8, conf=1.48)
+Bit   8: 0 (f0=2.9, f1=0.7, conf=4.37)
+Bit   9: 0 (f0=2.8, f1=1.9, conf=1.49)
+Bit  10: 0 (f0=2.9, f1=0.7, conf=3.97)
+Bit  11: 0 (f0=2.8, f1=1.9, conf=1.43)
+Bit  12: 0 (f0=2.8, f1=0.8, conf=3.44)
+Bit  13: 0 (f0=2.8, f1=2.0, conf=1.41)
+Bit  14: 0 (f0=2.8, f1=0.8, conf=3.43)
+Bit  15: 0 (f0=2.8, f1=2.0, conf=1.39)
+Bit  16: 0 (f0=2.7, f1=0.9, conf=3.00)
+Bit  17: 0 (f0=2.8, f1=2.1, conf=1.32)
+Bit  18: 0 (f0=2.7, f1=0.9, conf=2.86)
+Bit  19: 0 (f0=2.8, f1=2.1, conf=1.37)
+Bit  20: 0 (f0=2.6, f1=1.0, conf=2.73)
+Bit  21: 0 (f0=2.7, f1=2.1, conf=1.28)
+Bit  22: 0 (f0=2.6, f1=1.0, conf=2.58)
+Bit  23: 0 (f0=2.7, f1=2.0, conf=1.34)
+Bit  24: 0 (f0=2.5, f1=1.0, conf=2.55)
+Bit  25: 0 (f0=2.7, f1=2.1, conf=1.29)
+Bit  26: 0 (f0=2.4, f1=1.0, conf=2.34)
+Bit  27: 0 (f0=2.6, f1=2.1, conf=1.28)
+Bit  28: 0 (f0=2.3, f1=1.0, conf=2.33)
+Bit  29: 0 (f0=2.6, f1=2.0, conf=1.29)
+
+--- Demodulation Statistics ---
+Average confidence: 3.08
+Weak bits (conf < 1.5): 307 / 1008 (30.5%)
+
+CRC FAIL! Received: 2, Calculated: 68. Frame discarded.
+Diagnostic beep track saved to: D:\fourth_year\cs120\Receiver\Builds\VisualStudio2022\debug_beeps.wav
+
+*** PREAMBLE DETECTED at sample 31060 (t=0.704s)
+    Peak NCC: 0.3191
+    Fine-tuning frame start (searching 44 samples)...
+    Offset correction: 8 samples (clarity score: 0.847)
+
+--- Demodulator Confidence Scores (First 30 bits) ---
+Bit   0: 0 (f0=2.9, f1=0.4, conf=6.55)
+Bit   1: 0 (f0=2.5, f1=1.3, conf=1.93)
+Bit   2: 0 (f0=2.9, f1=0.5, conf=6.20)
+Bit   3: 0 (f0=2.5, f1=1.4, conf=1.77)
+Bit   4: 0 (f0=2.8, f1=0.5, conf=5.33)
+Bit   5: 0 (f0=2.5, f1=1.5, conf=1.70)
+Bit   6: 0 (f0=2.8, f1=0.5, conf=5.36)
+Bit   7: 0 (f0=2.6, f1=1.6, conf=1.61)
+Bit   8: 0 (f0=2.8, f1=0.6, conf=4.45)
+Bit   9: 0 (f0=2.6, f1=1.7, conf=1.48)
+Bit  10: 0 (f0=2.8, f1=0.7, conf=4.09)
+Bit  11: 0 (f0=2.7, f1=1.8, conf=1.49)
+Bit  12: 0 (f0=2.7, f1=0.7, conf=3.71)
+Bit  13: 0 (f0=2.6, f1=1.9, conf=1.34)
+Bit  14: 0 (f0=2.7, f1=0.8, conf=3.36)
+Bit  15: 0 (f0=2.7, f1=2.0, conf=1.35)
+Bit  16: 0 (f0=2.7, f1=0.8, conf=3.22)
+Bit  17: 0 (f0=2.6, f1=2.1, conf=1.27)
+Bit  18: 0 (f0=2.6, f1=0.9, conf=2.82)
+Bit  19: 0 (f0=2.6, f1=2.1, conf=1.22)
+Bit  20: 0 (f0=2.5, f1=0.9, conf=2.76)
+Bit  21: 0 (f0=2.6, f1=2.2, conf=1.20)
+Bit  22: 0 (f0=2.4, f1=1.0, conf=2.47)
+Bit  23: 0 (f0=2.6, f1=2.3, conf=1.14)
+Bit  24: 0 (f0=2.4, f1=1.0, conf=2.42)
+Bit  25: 0 (f0=2.6, f1=2.3, conf=1.15)
+Bit  26: 0 (f0=2.3, f1=1.0, conf=2.31)
+Bit  27: 0 (f0=2.5, f1=2.3, conf=1.09)
+Bit  28: 0 (f0=2.2, f1=1.1, conf=2.08)
+Bit  29: 0 (f0=2.5, f1=2.3, conf=1.06)
+
+--- Demodulation Statistics ---
+Average confidence: 2.89
+Weak bits (conf < 1.5): 323 / 1008 (32.0%)
+
+CRC FAIL! Received: 0, Calculated: 204. Frame discarded.
+Diagnostic beep track saved to: D:\fourth_year\cs120\Receiver\Builds\VisualStudio2022\debug_beeps.wav
+
+*** PREAMBLE DETECTED at sample 31324 (t=0.710s)
+    Peak NCC: 0.3063
+    Fine-tuning frame start (searching 44 samples)...
+    Offset correction: 8 samples (clarity score: 0.814)
+
+--- Demodulator Confidence Scores (First 30 bits) ---
+Bit   0: 0 (f0=2.8, f1=0.5, conf=5.36)
+Bit   1: 0 (f0=2.6, f1=1.6, conf=1.61)
+Bit   2: 0 (f0=2.8, f1=0.6, conf=4.45)
+Bit   3: 0 (f0=2.6, f1=1.7, conf=1.48)
+Bit   4: 0 (f0=2.8, f1=0.7, conf=4.09)
+Bit   5: 0 (f0=2.7, f1=1.8, conf=1.49)
+Bit   6: 0 (f0=2.7, f1=0.7, conf=3.71)
+Bit   7: 0 (f0=2.6, f1=1.9, conf=1.34)
+Bit   8: 0 (f0=2.7, f1=0.8, conf=3.36)
+Bit   9: 0 (f0=2.7, f1=2.0, conf=1.35)
+Bit  10: 0 (f0=2.7, f1=0.8, conf=3.22)
+Bit  11: 0 (f0=2.6, f1=2.1, conf=1.27)
+Bit  12: 0 (f0=2.6, f1=0.9, conf=2.82)
+Bit  13: 0 (f0=2.6, f1=2.1, conf=1.22)
+Bit  14: 0 (f0=2.5, f1=0.9, conf=2.76)
+Bit  15: 0 (f0=2.6, f1=2.2, conf=1.20)
+Bit  16: 0 (f0=2.4, f1=1.0, conf=2.47)
+Bit  17: 0 (f0=2.6, f1=2.3, conf=1.14)
+Bit  18: 0 (f0=2.4, f1=1.0, conf=2.42)
+Bit  19: 0 (f0=2.6, f1=2.3, conf=1.15)
+Bit  20: 0 (f0=2.3, f1=1.0, conf=2.31)
+Bit  21: 0 (f0=2.5, f1=2.3, conf=1.09)
+Bit  22: 0 (f0=2.2, f1=1.1, conf=2.08)
+Bit  23: 0 (f0=2.5, f1=2.3, conf=1.06)
+Bit  24: 0 (f0=2.2, f1=1.1, conf=2.00)
+Bit  25: 0 (f0=2.4, f1=2.3, conf=1.05)
+Bit  26: 0 (f0=2.1, f1=1.2, conf=1.84)
+Bit  27: 0 (f0=2.4, f1=2.3, conf=1.04)
+Bit  28: 0 (f0=2.1, f1=1.2, conf=1.81)
+Bit  29: 0 (f0=2.3, f1=2.2, conf=1.04)
+
+--- Demodulation Statistics ---
+Average confidence: 2.88
+Weak bits (conf < 1.5): 324 / 1008 (32.1%)
+
+CRC FAIL! Received: 34, Calculated: 242. Frame discarded.
+Diagnostic beep track saved to: D:\fourth_year\cs120\Receiver\Builds\VisualStudio2022\debug_beeps.wav
+
+*** PREAMBLE DETECTED at sample 34772 (t=0.788s)
+    Peak NCC: 0.3402
+    Fine-tuning frame start (searching 44 samples)...
+    Offset correction: -7 samples (clarity score: 0.835)
+
+--- Demodulator Confidence Scores (First 30 bits) ---
+Bit   0: 0 (f0=2.8, f1=0.5, conf=6.06)
+Bit   1: 0 (f0=2.3, f1=1.2, conf=1.85)
+Bit   2: 0 (f0=2.7, f1=0.5, conf=6.01)
+Bit   3: 0 (f0=2.3, f1=1.4, conf=1.70)
+Bit   4: 0 (f0=2.7, f1=0.5, conf=5.86)
+Bit   5: 0 (f0=2.4, f1=1.5, conf=1.64)
+Bit   6: 0 (f0=2.7, f1=0.5, conf=5.49)
+Bit   7: 0 (f0=2.4, f1=1.6, conf=1.50)
+Bit   8: 0 (f0=2.7, f1=0.5, conf=4.84)
+Bit   9: 0 (f0=2.4, f1=1.7, conf=1.44)
+Bit  10: 0 (f0=2.6, f1=0.6, conf=4.48)
+Bit  11: 0 (f0=2.4, f1=1.8, conf=1.32)
+Bit  12: 0 (f0=2.5, f1=0.7, conf=3.65)
+Bit  13: 0 (f0=2.4, f1=1.9, conf=1.24)
+Bit  14: 0 (f0=2.5, f1=0.7, conf=3.51)
+Bit  15: 0 (f0=2.5, f1=2.0, conf=1.22)
+Bit  16: 0 (f0=2.5, f1=0.8, conf=3.08)
+Bit  17: 0 (f0=2.4, f1=2.1, conf=1.14)
+Bit  18: 0 (f0=2.4, f1=0.9, conf=2.82)
+Bit  19: 0 (f0=2.5, f1=2.2, conf=1.13)
+Bit  20: 0 (f0=2.3, f1=0.9, conf=2.53)
+Bit  21: 0 (f0=2.4, f1=2.3, conf=1.04)
+Bit  22: 0 (f0=2.3, f1=1.0, conf=2.23)
+Bit  23: 0 (f0=2.4, f1=2.3, conf=1.03)
+Bit  24: 0 (f0=2.2, f1=1.0, conf=2.18)
+Bit  25: 1 (f0=2.4, f1=2.4, conf=1.01)
+Bit  26: 0 (f0=2.2, f1=1.1, conf=1.97)
+Bit  27: 1 (f0=2.3, f1=2.4, conf=1.05)
+Bit  28: 0 (f0=2.1, f1=1.1, conf=1.90)
+Bit  29: 1 (f0=2.3, f1=2.4, conf=1.06)
+
+--- Demodulation Statistics ---
+Average confidence: 2.66
+Weak bits (conf < 1.5): 341 / 1008 (33.8%)
+
+CRC FAIL! Received: 102, Calculated: 171. Frame discarded.
+Diagnostic beep track saved to: D:\fourth_year\cs120\Receiver\Builds\VisualStudio2022\debug_beeps.wav
+
+*** PREAMBLE DETECTED at sample 35037 (t=0.794s)
+    Peak NCC: 0.3406
+    Fine-tuning frame start (searching 44 samples)...
+    Offset correction: -8 samples (clarity score: 0.818)
+
+--- Demodulator Confidence Scores (First 30 bits) ---
+Bit   0: 0 (f0=2.7, f1=0.5, conf=5.49)
+Bit   1: 0 (f0=2.4, f1=1.6, conf=1.50)
+Bit   2: 0 (f0=2.7, f1=0.5, conf=4.84)
+Bit   3: 0 (f0=2.4, f1=1.7, conf=1.44)
+Bit   4: 0 (f0=2.6, f1=0.6, conf=4.48)
+Bit   5: 0 (f0=2.4, f1=1.8, conf=1.32)
+Bit   6: 0 (f0=2.5, f1=0.7, conf=3.65)
+Bit   7: 0 (f0=2.4, f1=1.9, conf=1.24)
+Bit   8: 0 (f0=2.5, f1=0.7, conf=3.51)
+Bit   9: 0 (f0=2.5, f1=2.0, conf=1.22)
+Bit  10: 0 (f0=2.5, f1=0.8, conf=3.08)
+Bit  11: 0 (f0=2.4, f1=2.1, conf=1.14)
+Bit  12: 0 (f0=2.4, f1=0.9, conf=2.82)
+Bit  13: 0 (f0=2.5, f1=2.2, conf=1.13)
+Bit  14: 0 (f0=2.3, f1=0.9, conf=2.53)
+Bit  15: 0 (f0=2.4, f1=2.3, conf=1.04)
+Bit  16: 0 (f0=2.3, f1=1.0, conf=2.23)
+Bit  17: 0 (f0=2.4, f1=2.3, conf=1.03)
+Bit  18: 0 (f0=2.2, f1=1.0, conf=2.18)
+Bit  19: 1 (f0=2.4, f1=2.4, conf=1.01)
+Bit  20: 0 (f0=2.2, f1=1.1, conf=1.97)
+Bit  21: 1 (f0=2.3, f1=2.4, conf=1.05)
+Bit  22: 0 (f0=2.1, f1=1.1, conf=1.90)
+Bit  23: 1 (f0=2.3, f1=2.4, conf=1.06)
+Bit  24: 0 (f0=2.1, f1=1.1, conf=1.79)
+Bit  25: 1 (f0=2.2, f1=2.4, conf=1.10)
+Bit  26: 0 (f0=2.0, f1=1.2, conf=1.72)
+Bit  27: 1 (f0=2.2, f1=2.4, conf=1.10)
+Bit  28: 0 (f0=2.0, f1=1.2, conf=1.68)
+Bit  29: 1 (f0=2.1, f1=2.4, conf=1.13)
+
+--- Demodulation Statistics ---
+Average confidence: 2.66
+Weak bits (conf < 1.5): 344 / 1008 (34.1%)
+
+CRC FAIL! Received: 149, Calculated: 182. Frame discarded.
+Diagnostic beep track saved to: D:\fourth_year\cs120\Receiver\Builds\VisualStudio2022\debug_beeps.wav
+
+*** PREAMBLE DETECTED at sample 35478 (t=0.804s)
+    Peak NCC: 0.3351
+    Fine-tuning frame start (searching 44 samples)...
+    Offset correction: -8 samples (clarity score: 0.793)
+
+--- Demodulator Confidence Scores (First 30 bits) ---
+Bit   0: 0 (f0=2.5, f1=0.5, conf=4.83)
+Bit   1: 0 (f0=2.2, f1=1.5, conf=1.52)
+Bit   2: 0 (f0=2.5, f1=0.6, conf=4.45)
+Bit   3: 0 (f0=2.3, f1=1.6, conf=1.48)
+Bit   4: 0 (f0=2.4, f1=0.6, conf=3.87)
+Bit   5: 0 (f0=2.3, f1=1.7, conf=1.30)
+Bit   6: 0 (f0=2.3, f1=0.7, conf=3.24)
+Bit   7: 0 (f0=2.3, f1=1.8, conf=1.25)
+Bit   8: 0 (f0=2.3, f1=0.8, conf=3.10)
+Bit   9: 0 (f0=2.3, f1=2.0, conf=1.17)
+Bit  10: 0 (f0=2.2, f1=0.9, conf=2.61)
+Bit  11: 0 (f0=2.2, f1=2.1, conf=1.07)
+Bit  12: 0 (f0=2.2, f1=0.9, conf=2.41)
+Bit  13: 0 (f0=2.2, f1=2.2, conf=1.04)
+Bit  14: 0 (f0=2.1, f1=1.0, conf=2.15)
+Bit  15: 1 (f0=2.2, f1=2.3, conf=1.04)
+Bit  16: 0 (f0=2.1, f1=1.1, conf=1.96)
+Bit  17: 1 (f0=2.2, f1=2.3, conf=1.07)
+Bit  18: 0 (f0=2.0, f1=1.1, conf=1.82)
+Bit  19: 1 (f0=2.1, f1=2.4, conf=1.15)
+Bit  20: 0 (f0=2.0, f1=1.2, conf=1.67)
+Bit  21: 1 (f0=2.1, f1=2.5, conf=1.17)
+Bit  22: 0 (f0=2.0, f1=1.2, conf=1.63)
+Bit  23: 1 (f0=2.1, f1=2.5, conf=1.20)
+Bit  24: 0 (f0=1.9, f1=1.3, conf=1.54)
+Bit  25: 1 (f0=2.0, f1=2.5, conf=1.25)
+Bit  26: 0 (f0=1.9, f1=1.3, conf=1.53)
+Bit  27: 1 (f0=2.0, f1=2.5, conf=1.26)
+Bit  28: 0 (f0=1.9, f1=1.3, conf=1.48)
+Bit  29: 1 (f0=1.9, f1=2.6, conf=1.33)
+
+--- Demodulation Statistics ---
+Average confidence: 2.41
+Weak bits (conf < 1.5): 374 / 1008 (37.1%)
+
+CRC FAIL! Received: 217, Calculated: 189. Frame discarded.
+Diagnostic beep track saved to: D:\fourth_year\cs120\Receiver\Builds\VisualStudio2022\debug_beeps.wav
+
+*** PREAMBLE DETECTED at sample 35743 (t=0.810s)
+    Peak NCC: 0.3251
+    Fine-tuning frame start (searching 44 samples)...
+    Offset correction: -14 samples (clarity score: 0.826)
+
+--- Demodulator Confidence Scores (First 30 bits) ---
+Bit   0: 0 (f0=2.4, f1=0.4, conf=5.74)
+Bit   1: 0 (f0=1.9, f1=1.5, conf=1.26)
+Bit   2: 0 (f0=2.4, f1=0.5, conf=5.26)
+Bit   3: 0 (f0=1.9, f1=1.6, conf=1.20)
+Bit   4: 0 (f0=2.5, f1=0.4, conf=5.74)
+Bit   5: 0 (f0=2.0, f1=1.7, conf=1.21)
+Bit   6: 0 (f0=2.6, f1=0.5, conf=5.47)
+Bit   7: 0 (f0=2.0, f1=1.8, conf=1.16)
+Bit   8: 0 (f0=2.7, f1=0.5, conf=5.32)
+Bit   9: 0 (f0=2.1, f1=1.8, conf=1.19)
+Bit  10: 0 (f0=2.8, f1=0.5, conf=5.15)
+Bit  11: 0 (f0=2.2, f1=1.9, conf=1.17)
+Bit  12: 0 (f0=2.8, f1=0.6, conf=4.91)
+Bit  13: 0 (f0=2.3, f1=1.9, conf=1.23)
+Bit  14: 0 (f0=2.9, f1=0.6, conf=4.91)
+Bit  15: 0 (f0=2.3, f1=1.9, conf=1.21)
+Bit  16: 0 (f0=2.9, f1=0.7, conf=4.43)
+Bit  17: 0 (f0=2.4, f1=2.0, conf=1.25)
+Bit  18: 0 (f0=3.0, f1=0.7, conf=4.58)
+Bit  19: 0 (f0=2.5, f1=2.0, conf=1.28)
+Bit  20: 0 (f0=3.0, f1=0.7, conf=4.21)
+Bit  21: 0 (f0=2.5, f1=2.0, conf=1.27)
+Bit  22: 0 (f0=3.0, f1=0.7, conf=4.20)
+Bit  23: 0 (f0=2.7, f1=2.0, conf=1.36)
+Bit  24: 0 (f0=3.1, f1=0.7, conf=4.17)
+Bit  25: 0 (f0=2.7, f1=2.0, conf=1.35)
+Bit  26: 0 (f0=3.0, f1=0.8, conf=3.84)
+Bit  27: 0 (f0=2.7, f1=1.9, conf=1.41)
+Bit  28: 0 (f0=3.0, f1=0.8, conf=3.91)
+Bit  29: 0 (f0=2.8, f1=1.9, conf=1.44)
+
+--- Demodulation Statistics ---
+Average confidence: 3.28
+Weak bits (conf < 1.5): 278 / 1008 (27.6%)
+
+CRC FAIL! Received: 160, Calculated: 116. Frame discarded.
+Diagnostic beep track saved to: D:\fourth_year\cs120\Receiver\Builds\VisualStudio2022\debug_beeps.wav
+
+*** PREAMBLE DETECTED at sample 36007 (t=0.816s)
+    Peak NCC: 0.3167
+    Fine-tuning frame start (searching 44 samples)...
+    Offset correction: -14 samples (clarity score: 0.817)
+
+--- Demodulator Confidence Scores (First 30 bits) ---
+Bit   0: 0 (f0=2.6, f1=0.5, conf=5.47)
+Bit   1: 0 (f0=2.0, f1=1.8, conf=1.16)
+Bit   2: 0 (f0=2.7, f1=0.5, conf=5.32)
+Bit   3: 0 (f0=2.1, f1=1.8, conf=1.19)
+Bit   4: 0 (f0=2.8, f1=0.5, conf=5.15)
+Bit   5: 0 (f0=2.2, f1=1.9, conf=1.17)
+Bit   6: 0 (f0=2.8, f1=0.6, conf=4.91)
+Bit   7: 0 (f0=2.3, f1=1.9, conf=1.23)
+Bit   8: 0 (f0=2.9, f1=0.6, conf=4.91)
+Bit   9: 0 (f0=2.3, f1=1.9, conf=1.21)
+Bit  10: 0 (f0=2.9, f1=0.7, conf=4.43)
+Bit  11: 0 (f0=2.4, f1=2.0, conf=1.25)
+Bit  12: 0 (f0=3.0, f1=0.7, conf=4.58)
+Bit  13: 0 (f0=2.5, f1=2.0, conf=1.28)
+Bit  14: 0 (f0=3.0, f1=0.7, conf=4.21)
+Bit  15: 0 (f0=2.5, f1=2.0, conf=1.27)
+Bit  16: 0 (f0=3.0, f1=0.7, conf=4.20)
+Bit  17: 0 (f0=2.7, f1=2.0, conf=1.36)
+Bit  18: 0 (f0=3.1, f1=0.7, conf=4.17)
+Bit  19: 0 (f0=2.7, f1=2.0, conf=1.35)
+Bit  20: 0 (f0=3.0, f1=0.8, conf=3.84)
+Bit  21: 0 (f0=2.7, f1=1.9, conf=1.41)
+Bit  22: 0 (f0=3.0, f1=0.8, conf=3.91)
+Bit  23: 0 (f0=2.8, f1=1.9, conf=1.44)
+Bit  24: 0 (f0=2.9, f1=0.8, conf=3.61)
+Bit  25: 0 (f0=2.8, f1=1.9, conf=1.47)
+Bit  26: 0 (f0=2.9, f1=0.8, conf=3.65)
+Bit  27: 0 (f0=2.8, f1=1.8, conf=1.53)
+Bit  28: 0 (f0=2.8, f1=0.8, conf=3.42)
+Bit  29: 0 (f0=2.8, f1=1.8, conf=1.54)
+
+--- Demodulation Statistics ---
+Average confidence: 3.28
+Weak bits (conf < 1.5): 278 / 1008 (27.6%)
+
+CRC FAIL! Received: 3, Calculated: 213. Frame discarded.
+Diagnostic beep track saved to: D:\fourth_year\cs120\Receiver\Builds\VisualStudio2022\debug_beeps.wav
+
+*** PREAMBLE DETECTED at sample 36272 (t=0.822s)
+    Peak NCC: 0.3077
+    Fine-tuning frame start (searching 44 samples)...
+    Offset correction: -14 samples (clarity score: 0.850)
+
+--- Demodulator Confidence Scores (First 30 bits) ---
+Bit   0: 0 (f0=2.5, f1=0.4, conf=6.66)
+Bit   1: 0 (f0=2.0, f1=1.3, conf=1.56)
+Bit   2: 0 (f0=2.6, f1=0.4, conf=7.13)
+Bit   3: 0 (f0=2.1, f1=1.4, conf=1.46)
+Bit   4: 0 (f0=2.7, f1=0.4, conf=6.58)
+Bit   5: 0 (f0=2.1, f1=1.5, conf=1.43)
+Bit   6: 0 (f0=2.8, f1=0.4, conf=6.96)
+Bit   7: 0 (f0=2.2, f1=1.6, conf=1.42)
+Bit   8: 0 (f0=2.8, f1=0.5, conf=6.14)
+Bit   9: 0 (f0=2.2, f1=1.7, conf=1.34)
+Bit  10: 0 (f0=2.9, f1=0.5, conf=6.02)
+Bit  11: 0 (f0=2.4, f1=1.7, conf=1.39)
+Bit  12: 0 (f0=3.0, f1=0.5, conf=5.82)
+Bit  13: 0 (f0=2.4, f1=1.8, conf=1.32)
+Bit  14: 0 (f0=3.0, f1=0.6, conf=5.09)
+Bit  15: 0 (f0=2.5, f1=1.9, conf=1.34)
+Bit  16: 0 (f0=3.0, f1=0.6, conf=5.06)
+Bit  17: 0 (f0=2.5, f1=1.9, conf=1.33)
+Bit  18: 0 (f0=3.0, f1=0.7, conf=4.42)
+Bit  19: 0 (f0=2.6, f1=2.0, conf=1.31)
+Bit  20: 0 (f0=3.0, f1=0.7, conf=4.39)
+Bit  21: 0 (f0=2.6, f1=2.0, conf=1.34)
+Bit  22: 0 (f0=3.0, f1=0.8, conf=3.94)
+Bit  23: 0 (f0=2.6, f1=2.0, conf=1.30)
+Bit  24: 0 (f0=3.0, f1=0.8, conf=3.77)
+Bit  25: 0 (f0=2.7, f1=2.0, conf=1.35)
+Bit  26: 0 (f0=2.9, f1=0.8, conf=3.69)
+Bit  27: 0 (f0=2.7, f1=2.0, conf=1.35)
+Bit  28: 0 (f0=2.9, f1=0.8, conf=3.41)
+Bit  29: 0 (f0=2.8, f1=2.0, conf=1.38)
+
+--- Demodulation Statistics ---
+Average confidence: 3.22
+Weak bits (conf < 1.5): 294 / 1008 (29.2%)
+
+CRC FAIL! Received: 160, Calculated: 247. Frame discarded.
+Diagnostic beep track saved to: D:\fourth_year\cs120\Receiver\Builds\VisualStudio2022\debug_beeps.wav
+
+*** PREAMBLE DETECTED at sample 37131 (t=0.842s)
+    Peak NCC: 0.3124
+    Fine-tuning frame start (searching 44 samples)...
+    Offset correction: 8 samples (clarity score: 0.852)
+
+--- Demodulator Confidence Scores (First 30 bits) ---
+Bit   0: 0 (f0=2.9, f1=0.4, conf=6.77)
+Bit   1: 0 (f0=2.4, f1=1.6, conf=1.51)
+Bit   2: 0 (f0=2.9, f1=0.5, conf=5.79)
+Bit   3: 0 (f0=2.4, f1=1.7, conf=1.40)
+Bit   4: 0 (f0=2.9, f1=0.5, conf=5.39)
+Bit   5: 0 (f0=2.5, f1=1.7, conf=1.42)
+Bit   6: 0 (f0=3.0, f1=0.6, conf=5.13)
+Bit   7: 0 (f0=2.5, f1=1.8, conf=1.36)
+Bit   8: 0 (f0=2.9, f1=0.6, conf=4.51)
+Bit   9: 0 (f0=2.6, f1=1.9, conf=1.36)
+Bit  10: 0 (f0=3.0, f1=0.6, conf=4.61)
+Bit  11: 0 (f0=2.6, f1=1.9, conf=1.36)
+Bit  12: 0 (f0=2.9, f1=0.7, conf=4.11)
+Bit  13: 0 (f0=2.6, f1=2.0, conf=1.30)
+Bit  14: 0 (f0=2.9, f1=0.8, conf=3.81)
+Bit  15: 0 (f0=2.7, f1=2.1, conf=1.30)
+Bit  16: 0 (f0=2.8, f1=0.8, conf=3.50)
+Bit  17: 0 (f0=2.6, f1=2.1, conf=1.25)
+Bit  18: 0 (f0=2.7, f1=0.8, conf=3.26)
+Bit  19: 0 (f0=2.7, f1=2.1, conf=1.27)
+Bit  20: 0 (f0=2.7, f1=0.9, conf=3.13)
+Bit  21: 0 (f0=2.6, f1=2.1, conf=1.24)
+Bit  22: 0 (f0=2.6, f1=0.9, conf=2.88)
+Bit  23: 0 (f0=2.6, f1=2.1, conf=1.25)
+Bit  24: 0 (f0=2.6, f1=0.9, conf=2.88)
+Bit  25: 0 (f0=2.6, f1=2.1, conf=1.26)
+Bit  26: 0 (f0=2.5, f1=0.9, conf=2.70)
+Bit  27: 0 (f0=2.6, f1=2.1, conf=1.23)
+Bit  28: 0 (f0=2.4, f1=0.9, conf=2.61)
+Bit  29: 0 (f0=2.6, f1=2.0, conf=1.26)
+
+--- Demodulation Statistics ---
+Average confidence: 3.13
+Weak bits (conf < 1.5): 323 / 1008 (32.0%)
+
+CRC FAIL! Received: 16, Calculated: 28. Frame discarded.
+Diagnostic beep track saved to: D:\fourth_year\cs120\Receiver\Builds\VisualStudio2022\debug_beeps.wav
+
+*** PREAMBLE DETECTED at sample 37572 (t=0.852s)
+    Peak NCC: 0.3134
+    Fine-tuning frame start (searching 44 samples)...
+    Offset correction: 8 samples (clarity score: 0.862)
+
+--- Demodulator Confidence Scores (First 30 bits) ---
+Bit   0: 0 (f0=2.9, f1=0.4, conf=7.24)
+Bit   1: 0 (f0=2.4, f1=1.4, conf=1.69)
+Bit   2: 0 (f0=2.9, f1=0.4, conf=6.44)
+Bit   3: 0 (f0=2.4, f1=1.5, conf=1.55)
+Bit   4: 0 (f0=2.9, f1=0.5, conf=5.82)
+Bit   5: 0 (f0=2.4, f1=1.6, conf=1.50)
+Bit   6: 0 (f0=2.8, f1=0.6, conf=5.12)
+Bit   7: 0 (f0=2.4, f1=1.8, conf=1.38)
+Bit   8: 0 (f0=2.8, f1=0.6, conf=4.57)
+Bit   9: 0 (f0=2.5, f1=1.8, conf=1.38)
+Bit  10: 0 (f0=2.8, f1=0.7, conf=4.29)
+Bit  11: 0 (f0=2.5, f1=1.9, conf=1.29)
+Bit  12: 0 (f0=2.7, f1=0.7, conf=3.73)
+Bit  13: 0 (f0=2.5, f1=2.0, conf=1.26)
+Bit  14: 0 (f0=2.7, f1=0.7, conf=3.63)
+Bit  15: 0 (f0=2.6, f1=2.1, conf=1.24)
+Bit  16: 0 (f0=2.6, f1=0.8, conf=3.25)
+Bit  17: 0 (f0=2.5, f1=2.2, conf=1.17)
+Bit  18: 0 (f0=2.6, f1=0.9, conf=3.04)
+Bit  19: 0 (f0=2.6, f1=2.2, conf=1.17)
+Bit  20: 0 (f0=2.5, f1=0.9, conf=2.83)
+Bit  21: 0 (f0=2.5, f1=2.3, conf=1.12)
+Bit  22: 0 (f0=2.4, f1=0.9, conf=2.64)
+Bit  23: 0 (f0=2.5, f1=2.3, conf=1.13)
+Bit  24: 0 (f0=2.4, f1=0.9, conf=2.56)
+Bit  25: 0 (f0=2.5, f1=2.3, conf=1.08)
+Bit  26: 0 (f0=2.3, f1=1.0, conf=2.35)
+Bit  27: 0 (f0=2.4, f1=2.3, conf=1.07)
+Bit  28: 0 (f0=2.3, f1=1.0, conf=2.31)
+Bit  29: 0 (f0=2.4, f1=2.2, conf=1.08)
+
+--- Demodulation Statistics ---
+Average confidence: 2.89
+Weak bits (conf < 1.5): 332 / 1008 (32.9%)
+
+CRC FAIL! Received: 0, Calculated: 61. Frame discarded.
+Diagnostic beep track saved to: D:\fourth_year\cs120\Receiver\Builds\VisualStudio2022\debug_beeps.wav
+
+*** PREAMBLE DETECTED at sample 37925 (t=0.860s)
+    Peak NCC: 0.3033
+    Fine-tuning frame start (searching 44 samples)...
+    Offset correction: 8 samples (clarity score: 0.841)
+
+--- Demodulator Confidence Scores (First 30 bits) ---
+Bit   0: 0 (f0=2.7, f1=0.4, conf=6.30)
+Bit   1: 0 (f0=2.2, f1=1.2, conf=1.87)
+Bit   2: 0 (f0=2.7, f1=0.4, conf=6.38)
+Bit   3: 0 (f0=2.2, f1=1.3, conf=1.71)
+Bit   4: 0 (f0=2.7, f1=0.5, conf=5.77)
+Bit   5: 0 (f0=2.3, f1=1.4, conf=1.64)
+Bit   6: 0 (f0=2.7, f1=0.5, conf=5.70)
+Bit   7: 0 (f0=2.4, f1=1.5, conf=1.57)
+Bit   8: 0 (f0=2.7, f1=0.5, conf=4.94)
+Bit   9: 0 (f0=2.3, f1=1.6, conf=1.42)
+Bit  10: 0 (f0=2.7, f1=0.6, conf=4.47)
+Bit  11: 0 (f0=2.4, f1=1.7, conf=1.38)
+Bit  12: 0 (f0=2.6, f1=0.7, conf=4.00)
+Bit  13: 0 (f0=2.4, f1=1.9, conf=1.27)
+Bit  14: 0 (f0=2.6, f1=0.7, conf=3.55)
+Bit  15: 0 (f0=2.4, f1=1.9, conf=1.25)
+Bit  16: 0 (f0=2.5, f1=0.8, conf=3.34)
+Bit  17: 0 (f0=2.4, f1=2.1, conf=1.16)
+Bit  18: 0 (f0=2.4, f1=0.8, conf=2.89)
+Bit  19: 0 (f0=2.4, f1=2.2, conf=1.11)
+Bit  20: 0 (f0=2.4, f1=0.9, conf=2.77)
+Bit  21: 0 (f0=2.4, f1=2.2, conf=1.10)
+Bit  22: 0 (f0=2.3, f1=0.9, conf=2.49)
+Bit  23: 0 (f0=2.4, f1=2.3, conf=1.02)
+Bit  24: 0 (f0=2.3, f1=1.0, conf=2.32)
+Bit  25: 0 (f0=2.4, f1=2.3, conf=1.01)
+Bit  26: 0 (f0=2.2, f1=1.0, conf=2.18)
+Bit  27: 1 (f0=2.3, f1=2.4, conf=1.04)
+Bit  28: 0 (f0=2.1, f1=1.0, conf=2.04)
+Bit  29: 1 (f0=2.3, f1=2.4, conf=1.06)
+
+--- Demodulation Statistics ---
+Average confidence: 2.68
+Weak bits (conf < 1.5): 339 / 1008 (33.6%)
+
+CRC FAIL! Received: 64, Calculated: 83. Frame discarded.
+Diagnostic beep track saved to: D:\fourth_year\cs120\Receiver\Builds\VisualStudio2022\debug_beeps.wav
+
+*** PREAMBLE DETECTED at sample 41284 (t=0.936s)
+    Peak NCC: 0.3380
+    Fine-tuning frame start (searching 44 samples)...
+    Offset correction: -7 samples (clarity score: 0.852)
+
+--- Demodulator Confidence Scores (First 30 bits) ---
+Bit   0: 0 (f0=2.7, f1=0.4, conf=6.75)
+Bit   1: 0 (f0=2.2, f1=1.3, conf=1.71)
+Bit   2: 0 (f0=2.7, f1=0.4, conf=6.61)
+Bit   3: 0 (f0=2.3, f1=1.4, conf=1.70)
+Bit   4: 0 (f0=2.7, f1=0.4, conf=6.39)
+Bit   5: 0 (f0=2.3, f1=1.5, conf=1.54)
+Bit   6: 0 (f0=2.6, f1=0.5, conf=5.38)
+Bit   7: 0 (f0=2.3, f1=1.6, conf=1.46)
+Bit   8: 0 (f0=2.7, f1=0.5, conf=5.13)
+Bit   9: 0 (f0=2.4, f1=1.7, conf=1.38)
+Bit  10: 0 (f0=2.6, f1=0.6, conf=4.20)
+Bit  11: 0 (f0=2.3, f1=1.9, conf=1.26)
+Bit  12: 0 (f0=2.5, f1=0.7, conf=3.90)
+Bit  13: 0 (f0=2.4, f1=1.9, conf=1.26)
+Bit  14: 0 (f0=2.5, f1=0.7, conf=3.51)
+Bit  15: 0 (f0=2.4, f1=2.0, conf=1.16)
+Bit  16: 0 (f0=2.4, f1=0.8, conf=3.05)
+Bit  17: 0 (f0=2.4, f1=2.1, conf=1.14)
+Bit  18: 0 (f0=2.4, f1=0.8, conf=2.94)
+Bit  19: 0 (f0=2.4, f1=2.2, conf=1.09)
+Bit  20: 0 (f0=2.3, f1=0.9, conf=2.53)
+Bit  21: 0 (f0=2.4, f1=2.3, conf=1.04)
+Bit  22: 0 (f0=2.2, f1=0.9, conf=2.39)
+Bit  23: 0 (f0=2.3, f1=2.3, conf=1.01)
+Bit  24: 0 (f0=2.2, f1=1.0, conf=2.18)
+Bit  25: 1 (f0=2.3, f1=2.4, conf=1.04)
+Bit  26: 0 (f0=2.1, f1=1.0, conf=2.07)
+Bit  27: 1 (f0=2.3, f1=2.3, conf=1.03)
+Bit  28: 0 (f0=2.1, f1=1.1, conf=1.96)
+Bit  29: 1 (f0=2.2, f1=2.4, conf=1.09)
+
+--- Demodulation Statistics ---
+Average confidence: 2.69
+Weak bits (conf < 1.5): 333 / 1008 (33.0%)
+
+CRC FAIL! Received: 8, Calculated: 205. Frame discarded.
+Diagnostic beep track saved to: D:\fourth_year\cs120\Receiver\Builds\VisualStudio2022\debug_beeps.wav
+
+*** PREAMBLE DETECTED at sample 41549 (t=0.942s)
+    Peak NCC: 0.3393
+    Fine-tuning frame start (searching 44 samples)...
+    Offset correction: -8 samples (clarity score: 0.814)
+
+--- Demodulator Confidence Scores (First 30 bits) ---
+Bit   0: 0 (f0=2.6, f1=0.5, conf=5.38)
+Bit   1: 0 (f0=2.3, f1=1.6, conf=1.46)
+Bit   2: 0 (f0=2.7, f1=0.5, conf=5.13)
+Bit   3: 0 (f0=2.4, f1=1.7, conf=1.38)
+Bit   4: 0 (f0=2.6, f1=0.6, conf=4.20)
+Bit   5: 0 (f0=2.3, f1=1.9, conf=1.26)
+Bit   6: 0 (f0=2.5, f1=0.7, conf=3.90)
+Bit   7: 0 (f0=2.4, f1=1.9, conf=1.26)
+Bit   8: 0 (f0=2.5, f1=0.7, conf=3.51)
+Bit   9: 0 (f0=2.4, f1=2.0, conf=1.16)
+Bit  10: 0 (f0=2.4, f1=0.8, conf=3.05)
+Bit  11: 0 (f0=2.4, f1=2.1, conf=1.14)
+Bit  12: 0 (f0=2.4, f1=0.8, conf=2.94)
+Bit  13: 0 (f0=2.4, f1=2.2, conf=1.09)
+Bit  14: 0 (f0=2.3, f1=0.9, conf=2.53)
+Bit  15: 0 (f0=2.4, f1=2.3, conf=1.04)
+Bit  16: 0 (f0=2.2, f1=0.9, conf=2.39)
+Bit  17: 0 (f0=2.3, f1=2.3, conf=1.01)
+Bit  18: 0 (f0=2.2, f1=1.0, conf=2.18)
+Bit  19: 1 (f0=2.3, f1=2.4, conf=1.04)
+Bit  20: 0 (f0=2.1, f1=1.0, conf=2.07)
+Bit  21: 1 (f0=2.3, f1=2.3, conf=1.03)
+Bit  22: 0 (f0=2.1, f1=1.1, conf=1.96)
+Bit  23: 1 (f0=2.2, f1=2.4, conf=1.09)
+Bit  24: 0 (f0=2.0, f1=1.1, conf=1.84)
+Bit  25: 1 (f0=2.2, f1=2.4, conf=1.09)
+Bit  26: 0 (f0=2.0, f1=1.1, conf=1.84)
+Bit  27: 1 (f0=2.1, f1=2.3, conf=1.10)
+Bit  28: 0 (f0=2.0, f1=1.1, conf=1.76)
+Bit  29: 1 (f0=2.1, f1=2.3, conf=1.12)
+
+--- Demodulation Statistics ---
+Average confidence: 2.70
+Weak bits (conf < 1.5): 333 / 1008 (33.0%)
+
+CRC FAIL! Received: 0, Calculated: 253. Frame discarded.
+Diagnostic beep track saved to: D:\fourth_year\cs120\Receiver\Builds\VisualStudio2022\debug_beeps.wav
+
+*** PREAMBLE DETECTED at sample 41902 (t=0.950s)
+    Peak NCC: 0.3337
+    Fine-tuning frame start (searching 44 samples)...
+    Offset correction: -8 samples (clarity score: 0.818)
+
+--- Demodulator Confidence Scores (First 30 bits) ---
+Bit   0: 0 (f0=2.5, f1=0.5, conf=5.49)
+Bit   1: 0 (f0=2.2, f1=1.4, conf=1.57)
+Bit   2: 0 (f0=2.5, f1=0.5, conf=4.80)
+Bit   3: 0 (f0=2.2, f1=1.5, conf=1.51)
+Bit   4: 0 (f0=2.5, f1=0.5, conf=4.58)
+Bit   5: 0 (f0=2.2, f1=1.6, conf=1.39)
+Bit   6: 0 (f0=2.4, f1=0.6, conf=3.72)
+Bit   7: 0 (f0=2.2, f1=1.7, conf=1.29)
+Bit   8: 0 (f0=2.3, f1=0.7, conf=3.40)
+Bit   9: 0 (f0=2.2, f1=1.9, conf=1.21)
+Bit  10: 0 (f0=2.3, f1=0.8, conf=2.93)
+Bit  11: 0 (f0=2.2, f1=2.0, conf=1.11)
+Bit  12: 0 (f0=2.2, f1=0.8, conf=2.66)
+Bit  13: 0 (f0=2.2, f1=2.1, conf=1.09)
+Bit  14: 0 (f0=2.2, f1=0.9, conf=2.40)
+Bit  15: 1 (f0=2.2, f1=2.2, conf=1.01)
+Bit  16: 0 (f0=2.1, f1=1.0, conf=2.11)
+Bit  17: 1 (f0=2.2, f1=2.3, conf=1.04)
+Bit  18: 0 (f0=2.1, f1=1.0, conf=2.03)
+Bit  19: 1 (f0=2.1, f1=2.3, conf=1.09)
+Bit  20: 0 (f0=2.0, f1=1.1, conf=1.82)
+Bit  21: 1 (f0=2.1, f1=2.4, conf=1.15)
+Bit  22: 0 (f0=2.0, f1=1.1, conf=1.75)
+Bit  23: 1 (f0=2.1, f1=2.4, conf=1.18)
+Bit  24: 0 (f0=1.9, f1=1.2, conf=1.65)
+Bit  25: 1 (f0=2.0, f1=2.5, conf=1.24)
+Bit  26: 0 (f0=1.9, f1=1.2, conf=1.60)
+Bit  27: 1 (f0=2.0, f1=2.5, conf=1.25)
+Bit  28: 0 (f0=1.9, f1=1.2, conf=1.57)
+Bit  29: 1 (f0=1.9, f1=2.5, conf=1.30)
+
+--- Demodulation Statistics ---
+Average confidence: 2.45
+Weak bits (conf < 1.5): 361 / 1008 (35.8%)
+
+CRC FAIL! Received: 0, Calculated: 31. Frame discarded.
+Diagnostic beep track saved to: D:\fourth_year\cs120\Receiver\Builds\VisualStudio2022\debug_beeps.wav
+
+*** PREAMBLE DETECTED at sample 42167 (t=0.956s)
+    Peak NCC: 0.3243
+    Fine-tuning frame start (searching 44 samples)...
+    Offset correction: -14 samples (clarity score: 0.826)
+
+--- Demodulator Confidence Scores (First 30 bits) ---
+Bit   0: 0 (f0=2.2, f1=0.4, conf=5.74)
+Bit   1: 0 (f0=1.8, f1=1.5, conf=1.25)
+Bit   2: 0 (f0=2.3, f1=0.4, conf=5.64)
+Bit   3: 0 (f0=1.9, f1=1.6, conf=1.19)
+Bit   4: 0 (f0=2.4, f1=0.4, conf=5.98)
+Bit   5: 0 (f0=1.9, f1=1.6, conf=1.18)
+Bit   6: 0 (f0=2.5, f1=0.4, conf=5.57)
+Bit   7: 0 (f0=1.9, f1=1.7, conf=1.12)
+Bit   8: 0 (f0=2.6, f1=0.5, conf=5.43)
+Bit   9: 0 (f0=2.0, f1=1.7, conf=1.17)
+Bit  10: 0 (f0=2.7, f1=0.5, conf=5.60)
+Bit  11: 0 (f0=2.1, f1=1.8, conf=1.15)
+Bit  12: 0 (f0=2.7, f1=0.5, conf=4.93)
+Bit  13: 0 (f0=2.1, f1=1.9, conf=1.15)
+Bit  14: 0 (f0=2.8, f1=0.6, conf=5.14)
+Bit  15: 0 (f0=2.3, f1=1.9, conf=1.19)
+Bit  16: 0 (f0=2.8, f1=0.6, conf=4.68)
+Bit  17: 0 (f0=2.3, f1=1.9, conf=1.18)
+Bit  18: 0 (f0=2.9, f1=0.6, conf=4.73)
+Bit  19: 0 (f0=2.4, f1=1.9, conf=1.25)
+Bit  20: 0 (f0=3.0, f1=0.6, conf=4.55)
+Bit  21: 0 (f0=2.4, f1=2.0, conf=1.24)
+Bit  22: 0 (f0=3.0, f1=0.7, conf=4.34)
+Bit  23: 0 (f0=2.6, f1=2.0, conf=1.30)
+Bit  24: 0 (f0=3.0, f1=0.7, conf=4.33)
+Bit  25: 0 (f0=2.6, f1=2.0, conf=1.32)
+Bit  26: 0 (f0=3.0, f1=0.7, conf=3.99)
+Bit  27: 0 (f0=2.6, f1=1.9, conf=1.35)
+Bit  28: 0 (f0=3.0, f1=0.7, conf=4.20)
+Bit  29: 0 (f0=2.7, f1=1.9, conf=1.43)
+
+--- Demodulation Statistics ---
+Average confidence: 3.20
+Weak bits (conf < 1.5): 288 / 1008 (28.6%)
+
+CRC FAIL! Received: 8, Calculated: 188. Frame discarded.
+Diagnostic beep track saved to: D:\fourth_year\cs120\Receiver\Builds\VisualStudio2022\debug_beeps.wav
+
+*** PREAMBLE DETECTED at sample 42431 (t=0.962s)
+    Peak NCC: 0.3184
+    Fine-tuning frame start (searching 44 samples)...
+    Offset correction: -14 samples (clarity score: 0.821)
+
+--- Demodulator Confidence Scores (First 30 bits) ---
+Bit   0: 0 (f0=2.5, f1=0.4, conf=5.57)
+Bit   1: 0 (f0=1.9, f1=1.7, conf=1.12)
+Bit   2: 0 (f0=2.6, f1=0.5, conf=5.43)
+Bit   3: 0 (f0=2.0, f1=1.7, conf=1.17)
+Bit   4: 0 (f0=2.7, f1=0.5, conf=5.60)
+Bit   5: 0 (f0=2.1, f1=1.8, conf=1.15)
+Bit   6: 0 (f0=2.7, f1=0.5, conf=4.93)
+Bit   7: 0 (f0=2.1, f1=1.9, conf=1.15)
+Bit   8: 0 (f0=2.8, f1=0.6, conf=5.14)
+Bit   9: 0 (f0=2.3, f1=1.9, conf=1.19)
+Bit  10: 0 (f0=2.8, f1=0.6, conf=4.68)
+Bit  11: 0 (f0=2.3, f1=1.9, conf=1.18)
+Bit  12: 0 (f0=2.9, f1=0.6, conf=4.73)
+Bit  13: 0 (f0=2.4, f1=1.9, conf=1.25)
+Bit  14: 0 (f0=3.0, f1=0.6, conf=4.55)
+Bit  15: 0 (f0=2.4, f1=2.0, conf=1.24)
+Bit  16: 0 (f0=3.0, f1=0.7, conf=4.34)
+Bit  17: 0 (f0=2.6, f1=2.0, conf=1.30)
+Bit  18: 0 (f0=3.0, f1=0.7, conf=4.33)
+Bit  19: 0 (f0=2.6, f1=2.0, conf=1.32)
+Bit  20: 0 (f0=3.0, f1=0.7, conf=3.99)
+Bit  21: 0 (f0=2.6, f1=1.9, conf=1.35)
+Bit  22: 0 (f0=3.0, f1=0.7, conf=4.20)
+Bit  23: 0 (f0=2.7, f1=1.9, conf=1.43)
+Bit  24: 0 (f0=2.9, f1=0.8, conf=3.86)
+Bit  25: 0 (f0=2.7, f1=1.9, conf=1.43)
+Bit  26: 0 (f0=2.9, f1=0.7, conf=3.90)
+Bit  27: 0 (f0=2.8, f1=1.8, conf=1.53)
+Bit  28: 0 (f0=2.9, f1=0.8, conf=3.81)
+Bit  29: 0 (f0=2.7, f1=1.8, conf=1.53)
+
+--- Demodulation Statistics ---
+Average confidence: 3.18
+Weak bits (conf < 1.5): 287 / 1008 (28.5%)
+
+CRC FAIL! Received: 16, Calculated: 188. Frame discarded.
+Diagnostic beep track saved to: D:\fourth_year\cs120\Receiver\Builds\VisualStudio2022\debug_beeps.wav
+
+*** PREAMBLE DETECTED at sample 42696 (t=0.968s)
+    Peak NCC: 0.3083
+    Fine-tuning frame start (searching 44 samples)...
+    Offset correction: -14 samples (clarity score: 0.851)
+
+--- Demodulator Confidence Scores (First 30 bits) ---
+Bit   0: 0 (f0=2.4, f1=0.4, conf=6.71)
+Bit   1: 0 (f0=1.9, f1=1.3, conf=1.49)
+Bit   2: 0 (f0=2.6, f1=0.3, conf=7.39)
+Bit   3: 0 (f0=2.0, f1=1.4, conf=1.47)
+Bit   4: 0 (f0=2.6, f1=0.4, conf=6.93)
+Bit   5: 0 (f0=2.0, f1=1.5, conf=1.39)
+Bit   6: 0 (f0=2.7, f1=0.4, conf=7.11)
+Bit   7: 0 (f0=2.1, f1=1.5, conf=1.41)
+Bit   8: 0 (f0=2.8, f1=0.4, conf=6.71)
+Bit   9: 0 (f0=2.1, f1=1.6, conf=1.33)
+Bit  10: 0 (f0=2.8, f1=0.5, conf=6.16)
+Bit  11: 0 (f0=2.3, f1=1.7, conf=1.35)
+Bit  12: 0 (f0=2.9, f1=0.5, conf=6.02)
+Bit  13: 0 (f0=2.3, f1=1.8, conf=1.32)
+Bit  14: 0 (f0=2.9, f1=0.6, conf=5.21)
+Bit  15: 0 (f0=2.4, f1=1.8, conf=1.31)
+Bit  16: 0 (f0=3.0, f1=0.5, conf=5.47)
+Bit  17: 0 (f0=2.5, f1=1.8, conf=1.35)
+Bit  18: 0 (f0=2.9, f1=0.6, conf=4.76)
+Bit  19: 0 (f0=2.5, f1=1.9, conf=1.29)
+Bit  20: 0 (f0=3.0, f1=0.6, conf=4.67)
+Bit  21: 0 (f0=2.6, f1=1.9, conf=1.35)
+Bit  22: 0 (f0=3.0, f1=0.7, conf=4.41)
+Bit  23: 0 (f0=2.6, f1=2.0, conf=1.31)
+Bit  24: 0 (f0=2.9, f1=0.7, conf=4.02)
+Bit  25: 0 (f0=2.6, f1=2.0, conf=1.35)
+Bit  26: 0 (f0=3.0, f1=0.7, conf=4.09)
+Bit  27: 0 (f0=2.7, f1=2.0, conf=1.34)
+Bit  28: 0 (f0=2.8, f1=0.8, conf=3.60)
+Bit  29: 0 (f0=2.6, f1=2.0, conf=1.33)
+
+--- Demodulation Statistics ---
+Average confidence: 3.12
+Weak bits (conf < 1.5): 293 / 1008 (29.1%)
+
+CRC FAIL! Received: 0, Calculated: 202. Frame discarded.
+Diagnostic beep track saved to: D:\fourth_year\cs120\Receiver\Builds\VisualStudio2022\debug_beeps.wav
+
+*** PREAMBLE DETECTED at sample 43643 (t=0.990s)
+    Peak NCC: 0.3145
+    Fine-tuning frame start (searching 44 samples)...
+    Offset correction: 8 samples (clarity score: 0.849)
+
+--- Demodulator Confidence Scores (First 30 bits) ---
+Bit   0: 0 (f0=2.9, f1=0.4, conf=6.62)
+Bit   1: 0 (f0=2.3, f1=1.6, conf=1.44)
+Bit   2: 0 (f0=2.9, f1=0.5, conf=5.72)
+Bit   3: 0 (f0=2.4, f1=1.7, conf=1.44)
+Bit   4: 0 (f0=3.0, f1=0.5, conf=5.74)
+Bit   5: 0 (f0=2.4, f1=1.8, conf=1.38)
+Bit   6: 0 (f0=2.9, f1=0.6, conf=4.73)
+Bit   7: 0 (f0=2.4, f1=1.8, conf=1.32)
+Bit   8: 0 (f0=2.9, f1=0.6, conf=4.69)
+Bit   9: 0 (f0=2.5, f1=1.9, conf=1.35)
+Bit  10: 0 (f0=2.9, f1=0.7, conf=4.27)
+Bit  11: 0 (f0=2.5, f1=2.0, conf=1.29)
+Bit  12: 0 (f0=2.9, f1=0.7, conf=4.07)
+Bit  13: 0 (f0=2.6, f1=2.0, conf=1.32)
+Bit  14: 0 (f0=2.8, f1=0.7, conf=3.86)
+Bit  15: 0 (f0=2.6, f1=2.0, conf=1.26)
+Bit  16: 0 (f0=2.7, f1=0.8, conf=3.50)
+Bit  17: 0 (f0=2.6, f1=2.0, conf=1.29)
+Bit  18: 0 (f0=2.7, f1=0.8, conf=3.49)
+Bit  19: 0 (f0=2.6, f1=2.1, conf=1.27)
+Bit  20: 0 (f0=2.6, f1=0.8, conf=3.17)
+Bit  21: 0 (f0=2.6, f1=2.1, conf=1.25)
+Bit  22: 0 (f0=2.6, f1=0.8, conf=3.17)
+Bit  23: 0 (f0=2.6, f1=2.0, conf=1.29)
+Bit  24: 0 (f0=2.5, f1=0.8, conf=3.00)
+Bit  25: 0 (f0=2.6, f1=2.0, conf=1.25)
+Bit  26: 0 (f0=2.4, f1=0.8, conf=2.90)
+Bit  27: 0 (f0=2.6, f1=2.0, conf=1.28)
+Bit  28: 0 (f0=2.4, f1=0.8, conf=2.83)
+Bit  29: 0 (f0=2.5, f1=2.0, conf=1.27)
+
+--- Demodulation Statistics ---
+Average confidence: 3.06
+Weak bits (conf < 1.5): 319 / 1008 (31.6%)
+
+CRC FAIL! Received: 0, Calculated: 194. Frame discarded.
+Diagnostic beep track saved to: D:\fourth_year\cs120\Receiver\Builds\VisualStudio2022\debug_beeps.wav
+
+*** PREAMBLE DETECTED at sample 43996 (t=0.998s)
+    Peak NCC: 0.3137
+    Fine-tuning frame start (searching 44 samples)...
+    Offset correction: 8 samples (clarity score: 0.863)
+
+--- Demodulator Confidence Scores (First 30 bits) ---
+Bit   0: 0 (f0=2.8, f1=0.4, conf=7.30)
+Bit   1: 0 (f0=2.3, f1=1.3, conf=1.71)
+Bit   2: 0 (f0=2.8, f1=0.4, conf=6.65)
+Bit   3: 0 (f0=2.3, f1=1.5, conf=1.56)
+Bit   4: 0 (f0=2.8, f1=0.5, conf=6.24)
+Bit   5: 0 (f0=2.4, f1=1.5, conf=1.55)
+Bit   6: 0 (f0=2.8, f1=0.5, conf=5.74)
+Bit   7: 0 (f0=2.4, f1=1.7, conf=1.42)
+Bit   8: 0 (f0=2.8, f1=0.6, conf=4.95)
+Bit   9: 0 (f0=2.5, f1=1.7, conf=1.42)
+Bit  10: 0 (f0=2.8, f1=0.6, conf=4.81)
+Bit  11: 0 (f0=2.5, f1=1.8, conf=1.35)
+Bit  12: 0 (f0=2.7, f1=0.7, conf=4.14)
+Bit  13: 0 (f0=2.5, f1=1.9, conf=1.29)
+Bit  14: 0 (f0=2.7, f1=0.7, conf=4.04)
+Bit  15: 0 (f0=2.6, f1=2.0, conf=1.30)
+Bit  16: 0 (f0=2.7, f1=0.7, conf=3.66)
+Bit  17: 0 (f0=2.5, f1=2.1, conf=1.22)
+Bit  18: 0 (f0=2.6, f1=0.8, conf=3.39)
+Bit  19: 0 (f0=2.5, f1=2.1, conf=1.22)
+Bit  20: 0 (f0=2.6, f1=0.8, conf=3.20)
+Bit  21: 0 (f0=2.5, f1=2.2, conf=1.16)
+Bit  22: 0 (f0=2.5, f1=0.9, conf=2.85)
+Bit  23: 0 (f0=2.5, f1=2.2, conf=1.14)
+Bit  24: 0 (f0=2.4, f1=0.9, conf=2.77)
+Bit  25: 0 (f0=2.5, f1=2.2, conf=1.11)
+Bit  26: 0 (f0=2.3, f1=0.9, conf=2.50)
+Bit  27: 0 (f0=2.4, f1=2.2, conf=1.08)
+Bit  28: 0 (f0=2.3, f1=0.9, conf=2.47)
+Bit  29: 0 (f0=2.4, f1=2.2, conf=1.08)
+
+--- Demodulation Statistics ---
+Average confidence: 2.85
+Weak bits (conf < 1.5): 321 / 1008 (31.8%)
+
+CRC FAIL! Received: 0, Calculated: 225. Frame discarded.
+Diagnostic beep track saved to: D:\fourth_year\cs120\Receiver\Builds\VisualStudio2022\debug_beeps.wav
+
+*** PREAMBLE DETECTED at sample 44260 (t=1.004s)
+    Peak NCC: 0.3047
+    Fine-tuning frame start (searching 44 samples)...
+    Offset correction: 9 samples (clarity score: 0.844)
+
+--- Demodulator Confidence Scores (First 30 bits) ---
+Bit   0: 0 (f0=2.7, f1=0.4, conf=6.39)
+Bit   1: 0 (f0=2.1, f1=1.1, conf=1.91)
+Bit   2: 0 (f0=2.7, f1=0.4, conf=6.60)
+Bit   3: 0 (f0=2.2, f1=1.1, conf=1.93)
+Bit   4: 0 (f0=2.8, f1=0.4, conf=7.04)
+Bit   5: 0 (f0=2.2, f1=1.2, conf=1.83)
+Bit   6: 0 (f0=2.7, f1=0.4, conf=6.42)
+Bit   7: 0 (f0=2.2, f1=1.3, conf=1.70)
+Bit   8: 0 (f0=2.7, f1=0.4, conf=6.41)
+Bit   9: 0 (f0=2.3, f1=1.4, conf=1.69)
+Bit  10: 0 (f0=2.7, f1=0.5, conf=5.66)
+Bit  11: 0 (f0=2.3, f1=1.5, conf=1.51)
+Bit  12: 0 (f0=2.7, f1=0.5, conf=5.06)
+Bit  13: 0 (f0=2.4, f1=1.6, conf=1.48)
+Bit  14: 0 (f0=2.7, f1=0.6, conf=4.62)
+Bit  15: 0 (f0=2.4, f1=1.7, conf=1.36)
+Bit  16: 0 (f0=2.6, f1=0.7, conf=3.86)
+Bit  17: 0 (f0=2.4, f1=1.9, conf=1.28)
+Bit  18: 0 (f0=2.5, f1=0.7, conf=3.62)
+Bit  19: 0 (f0=2.4, f1=2.0, conf=1.21)
+Bit  20: 0 (f0=2.4, f1=0.8, conf=3.09)
+Bit  21: 0 (f0=2.4, f1=2.1, conf=1.14)
+Bit  22: 0 (f0=2.4, f1=0.8, conf=2.96)
+Bit  23: 0 (f0=2.4, f1=2.1, conf=1.11)
+Bit  24: 0 (f0=2.3, f1=0.9, conf=2.57)
+Bit  25: 0 (f0=2.3, f1=2.2, conf=1.02)
+Bit  26: 0 (f0=2.3, f1=0.9, conf=2.43)
+Bit  27: 0 (f0=2.3, f1=2.3, conf=1.03)
+Bit  28: 0 (f0=2.2, f1=1.0, conf=2.31)
+Bit  29: 1 (f0=2.3, f1=2.3, conf=1.03)
+
+--- Demodulation Statistics ---
+Average confidence: 2.72
+Weak bits (conf < 1.5): 318 / 1008 (31.5%)
+
+CRC FAIL! Received: 0, Calculated: 239. Frame discarded.
+Diagnostic beep track saved to: D:\fourth_year\cs120\Receiver\Builds\VisualStudio2022\debug_beeps.wav
+
+*** PREAMBLE DETECTED at sample 47708 (t=1.082s)
+    Peak NCC: 0.3370
+    Fine-tuning frame start (searching 44 samples)...
+    Offset correction: -7 samples (clarity score: 0.859)
+
+--- Demodulator Confidence Scores (First 30 bits) ---
+Bit   0: 0 (f0=2.7, f1=0.4, conf=7.10)
+Bit   1: 0 (f0=2.2, f1=1.2, conf=1.78)
+Bit   2: 0 (f0=2.7, f1=0.4, conf=6.99)
+Bit   3: 0 (f0=2.3, f1=1.3, conf=1.74)
+Bit   4: 0 (f0=2.7, f1=0.4, conf=6.77)
+Bit   5: 0 (f0=2.3, f1=1.4, conf=1.61)
+Bit   6: 0 (f0=2.6, f1=0.5, conf=5.80)
+Bit   7: 0 (f0=2.3, f1=1.5, conf=1.50)
+Bit   8: 0 (f0=2.6, f1=0.5, conf=5.52)
+Bit   9: 0 (f0=2.3, f1=1.6, conf=1.42)
+Bit  10: 0 (f0=2.6, f1=0.6, conf=4.55)
+Bit  11: 0 (f0=2.3, f1=1.8, conf=1.30)
+Bit  12: 0 (f0=2.5, f1=0.6, conf=4.18)
+Bit  13: 0 (f0=2.4, f1=1.8, conf=1.30)
+Bit  14: 0 (f0=2.5, f1=0.6, conf=3.87)
+Bit  15: 0 (f0=2.3, f1=2.0, conf=1.19)
+Bit  16: 0 (f0=2.4, f1=0.7, conf=3.27)
+Bit  17: 0 (f0=2.3, f1=2.0, conf=1.15)
+Bit  18: 0 (f0=2.4, f1=0.8, conf=3.12)
+Bit  19: 0 (f0=2.3, f1=2.1, conf=1.11)
+Bit  20: 0 (f0=2.3, f1=0.8, conf=2.73)
+Bit  21: 0 (f0=2.3, f1=2.2, conf=1.06)
+Bit  22: 0 (f0=2.2, f1=0.9, conf=2.59)
+Bit  23: 0 (f0=2.3, f1=2.2, conf=1.03)
+Bit  24: 0 (f0=2.2, f1=0.9, conf=2.29)
+Bit  25: 1 (f0=2.2, f1=2.3, conf=1.03)
+Bit  26: 0 (f0=2.1, f1=1.0, conf=2.17)
+Bit  27: 1 (f0=2.2, f1=2.3, conf=1.03)
+Bit  28: 0 (f0=2.1, f1=1.0, conf=2.06)
+Bit  29: 1 (f0=2.2, f1=2.4, conf=1.09)
+
+--- Demodulation Statistics ---
+Average confidence: 2.69
+Weak bits (conf < 1.5): 304 / 1008 (30.2%)
+
+CRC FAIL! Received: 0, Calculated: 212. Frame discarded.
+Diagnostic beep track saved to: D:\fourth_year\cs120\Receiver\Builds\VisualStudio2022\debug_beeps.wav
+
+*** PREAMBLE DETECTED at sample 47973 (t=1.088s)
+    Peak NCC: 0.3386
+    Fine-tuning frame start (searching 44 samples)...
+    Offset correction: -8 samples (clarity score: 0.827)
+
+--- Demodulator Confidence Scores (First 30 bits) ---
+Bit   0: 0 (f0=2.6, f1=0.5, conf=5.80)
+Bit   1: 0 (f0=2.3, f1=1.5, conf=1.50)
+Bit   2: 0 (f0=2.6, f1=0.5, conf=5.52)
+Bit   3: 0 (f0=2.3, f1=1.6, conf=1.42)
+Bit   4: 0 (f0=2.6, f1=0.6, conf=4.55)
+Bit   5: 0 (f0=2.3, f1=1.8, conf=1.30)
+Bit   6: 0 (f0=2.5, f1=0.6, conf=4.18)
+Bit   7: 0 (f0=2.4, f1=1.8, conf=1.30)
+Bit   8: 0 (f0=2.5, f1=0.6, conf=3.87)
+Bit   9: 0 (f0=2.3, f1=2.0, conf=1.19)
+Bit  10: 0 (f0=2.4, f1=0.7, conf=3.27)
+Bit  11: 0 (f0=2.3, f1=2.0, conf=1.15)
+Bit  12: 0 (f0=2.4, f1=0.8, conf=3.12)
+Bit  13: 0 (f0=2.3, f1=2.1, conf=1.11)
+Bit  14: 0 (f0=2.3, f1=0.8, conf=2.73)
+Bit  15: 0 (f0=2.3, f1=2.2, conf=1.06)
+Bit  16: 0 (f0=2.2, f1=0.9, conf=2.59)
+Bit  17: 0 (f0=2.3, f1=2.2, conf=1.03)
+Bit  18: 0 (f0=2.2, f1=0.9, conf=2.29)
+Bit  19: 1 (f0=2.2, f1=2.3, conf=1.03)
+Bit  20: 0 (f0=2.1, f1=1.0, conf=2.17)
+Bit  21: 1 (f0=2.2, f1=2.3, conf=1.03)
+Bit  22: 0 (f0=2.1, f1=1.0, conf=2.06)
+Bit  23: 1 (f0=2.2, f1=2.4, conf=1.09)
+Bit  24: 0 (f0=2.0, f1=1.1, conf=1.92)
+Bit  25: 1 (f0=2.1, f1=2.3, conf=1.10)
+Bit  26: 0 (f0=2.0, f1=1.0, conf=1.90)
+Bit  27: 1 (f0=2.1, f1=2.3, conf=1.10)
+Bit  28: 0 (f0=2.0, f1=1.1, conf=1.82)
+Bit  29: 1 (f0=2.1, f1=2.3, conf=1.13)
+
+--- Demodulation Statistics ---
+Average confidence: 2.68
+Weak bits (conf < 1.5): 306 / 1008 (30.4%)
+
+CRC FAIL! Received: 8, Calculated: 241. Frame discarded.
+Diagnostic beep track saved to: D:\fourth_year\cs120\Receiver\Builds\VisualStudio2022\debug_beeps.wav
+
+*** PREAMBLE DETECTED at sample 48326 (t=1.096s)
+    Peak NCC: 0.3334
+    Fine-tuning frame start (searching 44 samples)...
+    Offset correction: -8 samples (clarity score: 0.833)
+
+--- Demodulator Confidence Scores (First 30 bits) ---
+Bit   0: 0 (f0=2.5, f1=0.4, conf=5.98)
+Bit   1: 0 (f0=2.1, f1=1.3, conf=1.63)
+Bit   2: 0 (f0=2.5, f1=0.5, conf=5.13)
+Bit   3: 0 (f0=2.2, f1=1.4, conf=1.55)
+Bit   4: 0 (f0=2.5, f1=0.5, conf=4.89)
+Bit   5: 0 (f0=2.2, f1=1.5, conf=1.45)
+Bit   6: 0 (f0=2.4, f1=0.6, conf=4.08)
+Bit   7: 0 (f0=2.2, f1=1.6, conf=1.33)
+Bit   8: 0 (f0=2.4, f1=0.6, conf=3.75)
+Bit   9: 0 (f0=2.2, f1=1.7, conf=1.27)
+Bit  10: 0 (f0=2.3, f1=0.7, conf=3.11)
+Bit  11: 0 (f0=2.2, f1=1.9, conf=1.14)
+Bit  12: 0 (f0=2.2, f1=0.8, conf=2.84)
+Bit  13: 0 (f0=2.2, f1=2.0, conf=1.11)
+Bit  14: 0 (f0=2.2, f1=0.8, conf=2.55)
+Bit  15: 0 (f0=2.1, f1=2.1, conf=1.01)
+Bit  16: 0 (f0=2.1, f1=0.9, conf=2.24)
+Bit  17: 1 (f0=2.1, f1=2.2, conf=1.03)
+Bit  18: 0 (f0=2.1, f1=1.0, conf=2.14)
+Bit  19: 1 (f0=2.1, f1=2.2, conf=1.06)
+Bit  20: 0 (f0=2.0, f1=1.0, conf=1.93)
+Bit  21: 1 (f0=2.1, f1=2.3, conf=1.13)
+Bit  22: 0 (f0=2.0, f1=1.1, conf=1.85)
+Bit  23: 1 (f0=2.1, f1=2.4, conf=1.14)
+Bit  24: 0 (f0=1.9, f1=1.1, conf=1.75)
+Bit  25: 1 (f0=2.0, f1=2.4, conf=1.20)
+Bit  26: 0 (f0=1.9, f1=1.1, conf=1.65)
+Bit  27: 1 (f0=2.0, f1=2.4, conf=1.23)
+Bit  28: 0 (f0=1.9, f1=1.2, conf=1.61)
+Bit  29: 1 (f0=1.9, f1=2.5, conf=1.28)
+
+--- Demodulation Statistics ---
+Average confidence: 2.49
+Weak bits (conf < 1.5): 330 / 1008 (32.7%)
+
+CRC FAIL! Received: 16, Calculated: 131. Frame discarded.
+Diagnostic beep track saved to: D:\fourth_year\cs120\Receiver\Builds\VisualStudio2022\debug_beeps.wav
+
+*** PREAMBLE DETECTED at sample 48590 (t=1.102s)
+    Peak NCC: 0.3245
+    Fine-tuning frame start (searching 44 samples)...
+    Offset correction: -13 samples (clarity score: 0.830)
+
+--- Demodulator Confidence Scores (First 30 bits) ---
+Bit   0: 0 (f0=2.2, f1=0.4, conf=5.87)
+Bit   1: 0 (f0=1.8, f1=1.4, conf=1.27)
+Bit   2: 0 (f0=2.2, f1=0.4, conf=5.67)
+Bit   3: 0 (f0=1.8, f1=1.5, conf=1.19)
+Bit   4: 0 (f0=2.3, f1=0.4, conf=5.98)
+Bit   5: 0 (f0=1.9, f1=1.5, conf=1.21)
+Bit   6: 0 (f0=2.4, f1=0.4, conf=5.93)
+Bit   7: 0 (f0=1.9, f1=1.6, conf=1.13)
+Bit   8: 0 (f0=2.5, f1=0.4, conf=5.61)
+Bit   9: 0 (f0=2.0, f1=1.7, conf=1.17)
+Bit  10: 0 (f0=2.6, f1=0.4, conf=5.98)
+Bit  11: 0 (f0=2.0, f1=1.8, conf=1.15)
+Bit  12: 0 (f0=2.6, f1=0.5, conf=5.23)
+Bit  13: 0 (f0=2.1, f1=1.8, conf=1.14)
+Bit  14: 0 (f0=2.7, f1=0.5, conf=5.36)
+Bit  15: 0 (f0=2.2, f1=1.8, conf=1.17)
+Bit  16: 0 (f0=2.8, f1=0.6, conf=4.90)
+Bit  17: 0 (f0=2.2, f1=1.9, conf=1.14)
+Bit  18: 0 (f0=2.8, f1=0.6, conf=4.66)
+Bit  19: 0 (f0=2.3, f1=1.9, conf=1.20)
+Bit  20: 0 (f0=2.9, f1=0.6, conf=4.63)
+Bit  21: 0 (f0=2.3, f1=1.9, conf=1.21)
+Bit  22: 0 (f0=2.9, f1=0.7, conf=4.35)
+Bit  23: 0 (f0=2.4, f1=1.9, conf=1.25)
+Bit  24: 0 (f0=2.9, f1=0.7, conf=4.40)
+Bit  25: 0 (f0=2.5, f1=2.0, conf=1.27)
+Bit  26: 0 (f0=2.9, f1=0.7, conf=4.06)
+Bit  27: 0 (f0=2.5, f1=1.9, conf=1.31)
+Bit  28: 0 (f0=2.9, f1=0.7, conf=4.23)
+Bit  29: 0 (f0=2.6, f1=1.9, conf=1.39)
+
+--- Demodulation Statistics ---
+Average confidence: 3.12
+Weak bits (conf < 1.5): 285 / 1008 (28.3%)
+
+CRC FAIL! Received: 24, Calculated: 252. Frame discarded.
+Diagnostic beep track saved to: D:\fourth_year\cs120\Receiver\Builds\VisualStudio2022\debug_beeps.wav
+
+*** PREAMBLE DETECTED at sample 48855 (t=1.108s)
+    Peak NCC: 0.3187
+    Fine-tuning frame start (searching 44 samples)...
+    Offset correction: -14 samples (clarity score: 0.831)
+
+--- Demodulator Confidence Scores (First 30 bits) ---
+Bit   0: 0 (f0=2.4, f1=0.4, conf=5.93)
+Bit   1: 0 (f0=1.9, f1=1.6, conf=1.13)
+Bit   2: 0 (f0=2.5, f1=0.4, conf=5.61)
+Bit   3: 0 (f0=2.0, f1=1.7, conf=1.17)
+Bit   4: 0 (f0=2.6, f1=0.4, conf=5.98)
+Bit   5: 0 (f0=2.0, f1=1.8, conf=1.15)
+Bit   6: 0 (f0=2.6, f1=0.5, conf=5.23)
+Bit   7: 0 (f0=2.1, f1=1.8, conf=1.14)
+Bit   8: 0 (f0=2.7, f1=0.5, conf=5.36)
+Bit   9: 0 (f0=2.2, f1=1.8, conf=1.17)
+Bit  10: 0 (f0=2.8, f1=0.6, conf=4.90)
+Bit  11: 0 (f0=2.2, f1=1.9, conf=1.14)
+Bit  12: 0 (f0=2.8, f1=0.6, conf=4.66)
+Bit  13: 0 (f0=2.3, f1=1.9, conf=1.20)
+Bit  14: 0 (f0=2.9, f1=0.6, conf=4.63)
+Bit  15: 0 (f0=2.3, f1=1.9, conf=1.21)
+Bit  16: 0 (f0=2.9, f1=0.7, conf=4.35)
+Bit  17: 0 (f0=2.4, f1=1.9, conf=1.25)
+Bit  18: 0 (f0=2.9, f1=0.7, conf=4.40)
+Bit  19: 0 (f0=2.5, f1=2.0, conf=1.27)
+Bit  20: 0 (f0=2.9, f1=0.7, conf=4.06)
+Bit  21: 0 (f0=2.5, f1=1.9, conf=1.31)
+Bit  22: 0 (f0=2.9, f1=0.7, conf=4.23)
+Bit  23: 0 (f0=2.6, f1=1.9, conf=1.39)
+Bit  24: 0 (f0=2.9, f1=0.7, conf=4.04)
+Bit  25: 0 (f0=2.6, f1=1.9, conf=1.38)
+Bit  26: 0 (f0=2.9, f1=0.7, conf=3.95)
+Bit  27: 0 (f0=2.7, f1=1.8, conf=1.48)
+Bit  28: 0 (f0=2.8, f1=0.7, conf=3.96)
+Bit  29: 0 (f0=2.7, f1=1.8, conf=1.49)
+
+--- Demodulation Statistics ---
+Average confidence: 3.11
+Weak bits (conf < 1.5): 284 / 1008 (28.2%)
+
+CRC FAIL! Received: 0, Calculated: 251. Frame discarded.
+Diagnostic beep track saved to: D:\fourth_year\cs120\Receiver\Builds\VisualStudio2022\debug_beeps.wav
+
+*** PREAMBLE DETECTED at sample 49120 (t=1.114s)
+    Peak NCC: 0.3093
+    Fine-tuning frame start (searching 44 samples)...
+    Offset correction: -14 samples (clarity score: 0.853)
+
+--- Demodulator Confidence Scores (First 30 bits) ---
+Bit   0: 0 (f0=2.3, f1=0.3, conf=6.82)
+Bit   1: 0 (f0=1.9, f1=1.2, conf=1.53)
+Bit   2: 0 (f0=2.5, f1=0.3, conf=7.50)
+Bit   3: 0 (f0=1.9, f1=1.3, conf=1.50)
+Bit   4: 0 (f0=2.5, f1=0.3, conf=7.18)
+Bit   5: 0 (f0=1.9, f1=1.4, conf=1.37)
+Bit   6: 0 (f0=2.5, f1=0.4, conf=6.89)
+Bit   7: 0 (f0=2.0, f1=1.5, conf=1.38)
+Bit   8: 0 (f0=2.7, f1=0.4, conf=6.83)
+Bit   9: 0 (f0=2.1, f1=1.6, conf=1.33)
+Bit  10: 0 (f0=2.7, f1=0.4, conf=6.18)
+Bit  11: 0 (f0=2.2, f1=1.6, conf=1.33)
+Bit  12: 0 (f0=2.8, f1=0.5, conf=6.16)
+Bit  13: 0 (f0=2.2, f1=1.7, conf=1.30)
+Bit  14: 0 (f0=2.8, f1=0.5, conf=5.36)
+Bit  15: 0 (f0=2.3, f1=1.8, conf=1.30)
+Bit  16: 0 (f0=2.9, f1=0.5, conf=5.53)
+Bit  17: 0 (f0=2.4, f1=1.8, conf=1.34)
+Bit  18: 0 (f0=2.9, f1=0.6, conf=5.04)
+Bit  19: 0 (f0=2.4, f1=1.9, conf=1.28)
+Bit  20: 0 (f0=2.9, f1=0.6, conf=4.77)
+Bit  21: 0 (f0=2.5, f1=1.9, conf=1.34)
+Bit  22: 0 (f0=2.9, f1=0.6, conf=4.68)
+Bit  23: 0 (f0=2.5, f1=1.9, conf=1.30)
+Bit  24: 0 (f0=2.9, f1=0.7, conf=4.20)
+Bit  25: 0 (f0=2.6, f1=1.9, conf=1.34)
+Bit  26: 0 (f0=2.9, f1=0.7, conf=4.34)
+Bit  27: 0 (f0=2.6, f1=1.9, conf=1.36)
+Bit  28: 0 (f0=2.8, f1=0.7, conf=3.95)
+Bit  29: 0 (f0=2.6, f1=2.0, conf=1.35)
+
+--- Demodulation Statistics ---
+Average confidence: 3.04
+Weak bits (conf < 1.5): 284 / 1008 (28.2%)
+
+CRC FAIL! Received: 17, Calculated: 246. Frame discarded.
+Diagnostic beep track saved to: D:\fourth_year\cs120\Receiver\Builds\VisualStudio2022\debug_beeps.wav
+
+*** PREAMBLE DETECTED at sample 50155 (t=1.137s)
+    Peak NCC: 0.3148
+    Fine-tuning frame start (searching 44 samples)...
+    Offset correction: 9 samples (clarity score: 0.852)
+
+--- Demodulator Confidence Scores (First 30 bits) ---
+Bit   0: 0 (f0=2.6, f1=0.4, conf=6.74)
+Bit   1: 0 (f0=2.0, f1=1.0, conf=1.99)
+Bit   2: 0 (f0=2.7, f1=0.4, conf=7.60)
+Bit   3: 0 (f0=2.1, f1=1.1, conf=1.96)
+Bit   4: 0 (f0=2.7, f1=0.4, conf=7.64)
+Bit   5: 0 (f0=2.1, f1=1.2, conf=1.82)
+Bit   6: 0 (f0=2.8, f1=0.3, conf=8.02)
+Bit   7: 0 (f0=2.2, f1=1.2, conf=1.81)
+Bit   8: 0 (f0=2.8, f1=0.4, conf=7.27)
+Bit   9: 0 (f0=2.2, f1=1.4, conf=1.61)
+Bit  10: 0 (f0=2.8, f1=0.4, conf=6.51)
+Bit  11: 0 (f0=2.3, f1=1.4, conf=1.60)
+Bit  12: 0 (f0=2.8, f1=0.4, conf=6.34)
+Bit  13: 0 (f0=2.3, f1=1.6, conf=1.49)
+Bit  14: 0 (f0=2.8, f1=0.5, conf=5.41)
+Bit  15: 0 (f0=2.4, f1=1.6, conf=1.46)
+Bit  16: 0 (f0=2.8, f1=0.5, conf=5.33)
+Bit  17: 0 (f0=2.4, f1=1.7, conf=1.41)
+Bit  18: 0 (f0=2.7, f1=0.6, conf=4.52)
+Bit  19: 0 (f0=2.4, f1=1.8, conf=1.32)
+Bit  20: 0 (f0=2.7, f1=0.6, conf=4.30)
+Bit  21: 0 (f0=2.5, f1=1.9, conf=1.30)
+Bit  22: 0 (f0=2.6, f1=0.7, conf=3.75)
+Bit  23: 0 (f0=2.4, f1=2.0, conf=1.19)
+Bit  24: 0 (f0=2.6, f1=0.8, conf=3.41)
+Bit  25: 0 (f0=2.5, f1=2.0, conf=1.21)
+Bit  26: 0 (f0=2.5, f1=0.8, conf=3.29)
+Bit  27: 0 (f0=2.4, f1=2.1, conf=1.15)
+Bit  28: 0 (f0=2.5, f1=0.8, conf=2.95)
+Bit  29: 0 (f0=2.4, f1=2.2, conf=1.13)
+
+--- Demodulation Statistics ---
+Average confidence: 2.81
+Weak bits (conf < 1.5): 300 / 1008 (29.8%)
+
+CRC FAIL! Received: 0, Calculated: 78. Frame discarded.
+Diagnostic beep track saved to: D:\fourth_year\cs120\Receiver\Builds\VisualStudio2022\debug_beeps.wav
+
+*** PREAMBLE DETECTED at sample 50420 (t=1.143s)
+    Peak NCC: 0.3142
+    Fine-tuning frame start (searching 44 samples)...
+    Offset correction: 8 samples (clarity score: 0.875)
+
+--- Demodulator Confidence Scores (First 30 bits) ---
+Bit   0: 0 (f0=2.8, f1=0.3, conf=8.02)
+Bit   1: 0 (f0=2.2, f1=1.2, conf=1.81)
+Bit   2: 0 (f0=2.8, f1=0.4, conf=7.27)
+Bit   3: 0 (f0=2.2, f1=1.4, conf=1.61)
+Bit   4: 0 (f0=2.8, f1=0.4, conf=6.51)
+Bit   5: 0 (f0=2.3, f1=1.4, conf=1.60)
+Bit   6: 0 (f0=2.8, f1=0.4, conf=6.34)
+Bit   7: 0 (f0=2.3, f1=1.6, conf=1.49)
+Bit   8: 0 (f0=2.8, f1=0.5, conf=5.41)
+Bit   9: 0 (f0=2.4, f1=1.6, conf=1.46)
+Bit  10: 0 (f0=2.8, f1=0.5, conf=5.33)
+Bit  11: 0 (f0=2.4, f1=1.7, conf=1.41)
+Bit  12: 0 (f0=2.7, f1=0.6, conf=4.52)
+Bit  13: 0 (f0=2.4, f1=1.8, conf=1.32)
+Bit  14: 0 (f0=2.7, f1=0.6, conf=4.30)
+Bit  15: 0 (f0=2.5, f1=1.9, conf=1.30)
+Bit  16: 0 (f0=2.6, f1=0.7, conf=3.75)
+Bit  17: 0 (f0=2.4, f1=2.0, conf=1.19)
+Bit  18: 0 (f0=2.6, f1=0.8, conf=3.41)
+Bit  19: 0 (f0=2.5, f1=2.0, conf=1.21)
+Bit  20: 0 (f0=2.5, f1=0.8, conf=3.29)
+Bit  21: 0 (f0=2.4, f1=2.1, conf=1.15)
+Bit  22: 0 (f0=2.5, f1=0.8, conf=2.95)
+Bit  23: 0 (f0=2.4, f1=2.2, conf=1.13)
+Bit  24: 0 (f0=2.4, f1=0.8, conf=2.91)
+Bit  25: 0 (f0=2.4, f1=2.2, conf=1.12)
+Bit  26: 0 (f0=2.3, f1=0.9, conf=2.64)
+Bit  27: 0 (f0=2.4, f1=2.2, conf=1.08)
+Bit  28: 0 (f0=2.3, f1=0.9, conf=2.62)
+Bit  29: 0 (f0=2.4, f1=2.2, conf=1.10)
+
+--- Demodulation Statistics ---
+Average confidence: 2.80
+Weak bits (conf < 1.5): 303 / 1008 (30.1%)
+
+CRC FAIL! Received: 33, Calculated: 124. Frame discarded.
+Diagnostic beep track saved to: D:\fourth_year\cs120\Receiver\Builds\VisualStudio2022\debug_beeps.wav
+
+*** PREAMBLE DETECTED at sample 50684 (t=1.149s)
+    Peak NCC: 0.3078
+    Fine-tuning frame start (searching 44 samples)...
+    Offset correction: 8 samples (clarity score: 0.842)
+
+--- Demodulator Confidence Scores (First 30 bits) ---
+Bit   0: 0 (f0=2.8, f1=0.4, conf=6.34)
+Bit   1: 0 (f0=2.3, f1=1.6, conf=1.49)
+Bit   2: 0 (f0=2.8, f1=0.5, conf=5.41)
+Bit   3: 0 (f0=2.4, f1=1.6, conf=1.46)
+Bit   4: 0 (f0=2.8, f1=0.5, conf=5.33)
+Bit   5: 0 (f0=2.4, f1=1.7, conf=1.41)
+Bit   6: 0 (f0=2.7, f1=0.6, conf=4.52)
+Bit   7: 0 (f0=2.4, f1=1.8, conf=1.32)
+Bit   8: 0 (f0=2.7, f1=0.6, conf=4.30)
+Bit   9: 0 (f0=2.5, f1=1.9, conf=1.30)
+Bit  10: 0 (f0=2.6, f1=0.7, conf=3.75)
+Bit  11: 0 (f0=2.4, f1=2.0, conf=1.19)
+Bit  12: 0 (f0=2.6, f1=0.8, conf=3.41)
+Bit  13: 0 (f0=2.5, f1=2.0, conf=1.21)
+Bit  14: 0 (f0=2.5, f1=0.8, conf=3.29)
+Bit  15: 0 (f0=2.4, f1=2.1, conf=1.15)
+Bit  16: 0 (f0=2.5, f1=0.8, conf=2.95)
+Bit  17: 0 (f0=2.4, f1=2.2, conf=1.13)
+Bit  18: 0 (f0=2.4, f1=0.8, conf=2.91)
+Bit  19: 0 (f0=2.4, f1=2.2, conf=1.12)
+Bit  20: 0 (f0=2.3, f1=0.9, conf=2.64)
+Bit  21: 0 (f0=2.4, f1=2.2, conf=1.08)
+Bit  22: 0 (f0=2.3, f1=0.9, conf=2.62)
+Bit  23: 0 (f0=2.4, f1=2.2, conf=1.10)
+Bit  24: 0 (f0=2.2, f1=0.9, conf=2.50)
+Bit  25: 0 (f0=2.3, f1=2.2, conf=1.05)
+Bit  26: 0 (f0=2.1, f1=0.9, conf=2.35)
+Bit  27: 0 (f0=2.3, f1=2.2, conf=1.06)
+Bit  28: 0 (f0=2.1, f1=0.9, conf=2.35)
+Bit  29: 0 (f0=2.2, f1=2.1, conf=1.05)
+
+--- Demodulation Statistics ---
+Average confidence: 2.79
+Weak bits (conf < 1.5): 306 / 1008 (30.4%)
+
+CRC FAIL! Received: 80, Calculated: 196. Frame discarded.
+Diagnostic beep track saved to: D:\fourth_year\cs120\Receiver\Builds\VisualStudio2022\debug_beeps.wav
+
+*** PREAMBLE DETECTED at sample 50949 (t=1.155s)
+    Peak NCC: 0.3005
+    Fine-tuning frame start (searching 44 samples)...
+    Offset correction: 8 samples (clarity score: 0.855)
+
+--- Demodulator Confidence Scores (First 30 bits) ---
+Bit   0: 0 (f0=2.7, f1=0.4, conf=6.88)
+Bit   1: 0 (f0=2.2, f1=1.2, conf=1.78)
+Bit   2: 0 (f0=2.7, f1=0.4, conf=6.77)
+Bit   3: 0 (f0=2.3, f1=1.3, conf=1.72)
+Bit   4: 0 (f0=2.6, f1=0.5, conf=5.79)
+Bit   5: 0 (f0=2.2, f1=1.5, conf=1.50)
+Bit   6: 0 (f0=2.6, f1=0.5, conf=5.08)
+Bit   7: 0 (f0=2.3, f1=1.5, conf=1.49)
+Bit   8: 0 (f0=2.6, f1=0.5, conf=4.77)
+Bit   9: 0 (f0=2.3, f1=1.7, conf=1.36)
+Bit  10: 0 (f0=2.5, f1=0.6, conf=4.04)
+Bit  11: 0 (f0=2.3, f1=1.8, conf=1.30)
+Bit  12: 0 (f0=2.5, f1=0.7, conf=3.88)
+Bit  13: 0 (f0=2.3, f1=1.9, conf=1.25)
+Bit  14: 0 (f0=2.4, f1=0.7, conf=3.32)
+Bit  15: 0 (f0=2.3, f1=2.0, conf=1.17)
+Bit  16: 0 (f0=2.4, f1=0.8, conf=3.20)
+Bit  17: 0 (f0=2.4, f1=2.0, conf=1.16)
+Bit  18: 0 (f0=2.4, f1=0.8, conf=2.92)
+Bit  19: 0 (f0=2.3, f1=2.1, conf=1.07)
+Bit  20: 0 (f0=2.3, f1=0.9, conf=2.61)
+Bit  21: 0 (f0=2.3, f1=2.2, conf=1.05)
+Bit  22: 0 (f0=2.2, f1=0.9, conf=2.53)
+Bit  23: 0 (f0=2.3, f1=2.3, conf=1.01)
+Bit  24: 0 (f0=2.2, f1=0.9, conf=2.28)
+Bit  25: 1 (f0=2.3, f1=2.3, conf=1.02)
+Bit  26: 0 (f0=2.1, f1=0.9, conf=2.24)
+Bit  27: 1 (f0=2.2, f1=2.3, conf=1.04)
+Bit  28: 0 (f0=2.0, f1=1.0, conf=2.06)
+Bit  29: 1 (f0=2.2, f1=2.3, conf=1.09)
+
+--- Demodulation Statistics ---
+Average confidence: 2.73
+Weak bits (conf < 1.5): 297 / 1008 (29.5%)
+
+CRC FAIL! Received: 0, Calculated: 47. Frame discarded.
+Diagnostic beep track saved to: D:\fourth_year\cs120\Receiver\Builds\VisualStudio2022\debug_beeps.wav
+
+*** PREAMBLE DETECTED at sample 54132 (t=1.227s)
+    Peak NCC: 0.3370
+    Fine-tuning frame start (searching 44 samples)...
+    Offset correction: -7 samples (clarity score: 0.865)
+
+--- Demodulator Confidence Scores (First 30 bits) ---
+Bit   0: 0 (f0=2.7, f1=0.4, conf=7.40)
+Bit   1: 0 (f0=2.1, f1=1.1, conf=1.86)
+Bit   2: 0 (f0=2.6, f1=0.4, conf=7.17)
+Bit   3: 0 (f0=2.2, f1=1.2, conf=1.78)
+Bit   4: 0 (f0=2.7, f1=0.4, conf=7.04)
+Bit   5: 0 (f0=2.2, f1=1.3, conf=1.65)
+Bit   6: 0 (f0=2.6, f1=0.4, conf=6.25)
+Bit   7: 0 (f0=2.2, f1=1.4, conf=1.56)
+Bit   8: 0 (f0=2.6, f1=0.4, conf=5.96)
+Bit   9: 0 (f0=2.3, f1=1.5, conf=1.49)
+Bit  10: 0 (f0=2.6, f1=0.5, conf=4.98)
+Bit  11: 0 (f0=2.3, f1=1.7, conf=1.35)
+Bit  12: 0 (f0=2.5, f1=0.6, conf=4.55)
+Bit  13: 0 (f0=2.3, f1=1.7, conf=1.35)
+Bit  14: 0 (f0=2.5, f1=0.6, conf=4.25)
+Bit  15: 0 (f0=2.3, f1=1.8, conf=1.26)
+Bit  16: 0 (f0=2.4, f1=0.7, conf=3.68)
+Bit  17: 0 (f0=2.3, f1=1.9, conf=1.21)
+Bit  18: 0 (f0=2.4, f1=0.7, conf=3.41)
+Bit  19: 0 (f0=2.3, f1=2.0, conf=1.14)
+Bit  20: 0 (f0=2.3, f1=0.8, conf=2.89)
+Bit  21: 0 (f0=2.3, f1=2.1, conf=1.08)
+Bit  22: 0 (f0=2.3, f1=0.8, conf=2.77)
+Bit  23: 0 (f0=2.3, f1=2.2, conf=1.06)
+Bit  24: 0 (f0=2.2, f1=0.9, conf=2.50)
+Bit  25: 1 (f0=2.2, f1=2.2, conf=1.01)
+Bit  26: 0 (f0=2.1, f1=0.9, conf=2.30)
+Bit  27: 1 (f0=2.2, f1=2.3, conf=1.02)
+Bit  28: 0 (f0=2.1, f1=0.9, conf=2.23)
+Bit  29: 1 (f0=2.2, f1=2.3, conf=1.05)
+
+--- Demodulation Statistics ---
+Average confidence: 2.72
+Weak bits (conf < 1.5): 285 / 1008 (28.3%)
+
+CRC FAIL! Received: 0, Calculated: 150. Frame discarded.
+Diagnostic beep track saved to: D:\fourth_year\cs120\Receiver\Builds\VisualStudio2022\debug_beeps.wav
+
+*** PREAMBLE DETECTED at sample 54397 (t=1.233s)
+    Peak NCC: 0.3371
+    Fine-tuning frame start (searching 44 samples)...
+    Offset correction: -8 samples (clarity score: 0.840)
+
+--- Demodulator Confidence Scores (First 30 bits) ---
+Bit   0: 0 (f0=2.6, f1=0.4, conf=6.25)
+Bit   1: 0 (f0=2.2, f1=1.4, conf=1.56)
+Bit   2: 0 (f0=2.6, f1=0.4, conf=5.96)
+Bit   3: 0 (f0=2.3, f1=1.5, conf=1.49)
+Bit   4: 0 (f0=2.6, f1=0.5, conf=4.98)
+Bit   5: 0 (f0=2.3, f1=1.7, conf=1.35)
+Bit   6: 0 (f0=2.5, f1=0.6, conf=4.55)
+Bit   7: 0 (f0=2.3, f1=1.7, conf=1.35)
+Bit   8: 0 (f0=2.5, f1=0.6, conf=4.25)
+Bit   9: 0 (f0=2.3, f1=1.8, conf=1.26)
+Bit  10: 0 (f0=2.4, f1=0.7, conf=3.68)
+Bit  11: 0 (f0=2.3, f1=1.9, conf=1.21)
+Bit  12: 0 (f0=2.4, f1=0.7, conf=3.41)
+Bit  13: 0 (f0=2.3, f1=2.0, conf=1.14)
+Bit  14: 0 (f0=2.3, f1=0.8, conf=2.89)
+Bit  15: 0 (f0=2.3, f1=2.1, conf=1.08)
+Bit  16: 0 (f0=2.3, f1=0.8, conf=2.77)
+Bit  17: 0 (f0=2.3, f1=2.2, conf=1.06)
+Bit  18: 0 (f0=2.2, f1=0.9, conf=2.50)
+Bit  19: 1 (f0=2.2, f1=2.2, conf=1.01)
+Bit  20: 0 (f0=2.1, f1=0.9, conf=2.30)
+Bit  21: 1 (f0=2.2, f1=2.3, conf=1.02)
+Bit  22: 0 (f0=2.1, f1=0.9, conf=2.23)
+Bit  23: 1 (f0=2.2, f1=2.3, conf=1.05)
+Bit  24: 0 (f0=2.0, f1=1.0, conf=2.04)
+Bit  25: 1 (f0=2.2, f1=2.3, conf=1.06)
+Bit  26: 0 (f0=2.0, f1=1.0, conf=2.02)
+Bit  27: 1 (f0=2.1, f1=2.3, conf=1.09)
+Bit  28: 0 (f0=1.9, f1=1.0, conf=1.89)
+Bit  29: 1 (f0=2.1, f1=2.3, conf=1.11)
+
+--- Demodulation Statistics ---
+Average confidence: 2.71
+Weak bits (conf < 1.5): 287 / 1008 (28.5%)
+
+CRC FAIL! Received: 2, Calculated: 103. Frame discarded.
+Diagnostic beep track saved to: D:\fourth_year\cs120\Receiver\Builds\VisualStudio2022\debug_beeps.wav
+
+*** PREAMBLE DETECTED at sample 54661 (t=1.239s)
+    Peak NCC: 0.3325
+    Fine-tuning frame start (searching 44 samples)...
+    Offset correction: -7 samples (clarity score: 0.839)
+
+--- Demodulator Confidence Scores (First 30 bits) ---
+Bit   0: 0 (f0=2.5, f1=0.4, conf=6.20)
+Bit   1: 0 (f0=2.1, f1=1.1, conf=1.88)
+Bit   2: 0 (f0=2.5, f1=0.4, conf=6.39)
+Bit   3: 0 (f0=2.1, f1=1.2, conf=1.75)
+Bit   4: 0 (f0=2.5, f1=0.4, conf=5.79)
+Bit   5: 0 (f0=2.2, f1=1.3, conf=1.66)
+Bit   6: 0 (f0=2.5, f1=0.5, conf=5.41)
+Bit   7: 0 (f0=2.2, f1=1.4, conf=1.52)
+Bit   8: 0 (f0=2.4, f1=0.5, conf=4.38)
+Bit   9: 0 (f0=2.1, f1=1.5, conf=1.39)
+Bit  10: 0 (f0=2.4, f1=0.6, conf=4.09)
+Bit  11: 0 (f0=2.2, f1=1.6, conf=1.33)
+Bit  12: 0 (f0=2.3, f1=0.7, conf=3.49)
+Bit  13: 0 (f0=2.1, f1=1.8, conf=1.19)
+Bit  14: 0 (f0=2.2, f1=0.7, conf=3.06)
+Bit  15: 0 (f0=2.2, f1=1.9, conf=1.15)
+Bit  16: 0 (f0=2.2, f1=0.8, conf=2.85)
+Bit  17: 0 (f0=2.1, f1=2.0, conf=1.07)
+Bit  18: 0 (f0=2.1, f1=0.9, conf=2.46)
+Bit  19: 0 (f0=2.1, f1=2.1, conf=1.03)
+Bit  20: 0 (f0=2.1, f1=0.9, conf=2.35)
+Bit  21: 1 (f0=2.1, f1=2.2, conf=1.03)
+Bit  22: 0 (f0=2.0, f1=1.0, conf=2.06)
+Bit  23: 1 (f0=2.1, f1=2.2, conf=1.09)
+Bit  24: 0 (f0=2.0, f1=1.0, conf=1.96)
+Bit  25: 1 (f0=2.1, f1=2.3, conf=1.11)
+Bit  26: 0 (f0=1.9, f1=1.0, conf=1.82)
+Bit  27: 1 (f0=2.0, f1=2.4, conf=1.20)
+Bit  28: 0 (f0=1.9, f1=1.1, conf=1.72)
+Bit  29: 1 (f0=2.0, f1=2.4, conf=1.21)
+
+--- Demodulation Statistics ---
+Average confidence: 2.50
+Weak bits (conf < 1.5): 303 / 1008 (30.1%)
+
+CRC FAIL! Received: 128, Calculated: 59. Frame discarded.
+Diagnostic beep track saved to: D:\fourth_year\cs120\Receiver\Builds\VisualStudio2022\debug_beeps.wav
+
+*** PREAMBLE DETECTED at sample 54926 (t=1.245s)
+    Peak NCC: 0.3300
+    Fine-tuning frame start (searching 44 samples)...
+    Offset correction: -8 samples (clarity score: 0.815)
+
+--- Demodulator Confidence Scores (First 30 bits) ---
+Bit   0: 0 (f0=2.5, f1=0.5, conf=5.41)
+Bit   1: 0 (f0=2.2, f1=1.4, conf=1.52)
+Bit   2: 0 (f0=2.4, f1=0.5, conf=4.38)
+Bit   3: 0 (f0=2.1, f1=1.5, conf=1.39)
+Bit   4: 0 (f0=2.4, f1=0.6, conf=4.09)
+Bit   5: 0 (f0=2.2, f1=1.6, conf=1.33)
+Bit   6: 0 (f0=2.3, f1=0.7, conf=3.49)
+Bit   7: 0 (f0=2.1, f1=1.8, conf=1.19)
+Bit   8: 0 (f0=2.2, f1=0.7, conf=3.06)
+Bit   9: 0 (f0=2.2, f1=1.9, conf=1.15)
+Bit  10: 0 (f0=2.2, f1=0.8, conf=2.85)
+Bit  11: 0 (f0=2.1, f1=2.0, conf=1.07)
+Bit  12: 0 (f0=2.1, f1=0.9, conf=2.46)
+Bit  13: 0 (f0=2.1, f1=2.1, conf=1.03)
+Bit  14: 0 (f0=2.1, f1=0.9, conf=2.35)
+Bit  15: 1 (f0=2.1, f1=2.2, conf=1.03)
+Bit  16: 0 (f0=2.0, f1=1.0, conf=2.06)
+Bit  17: 1 (f0=2.1, f1=2.2, conf=1.09)
+Bit  18: 0 (f0=2.0, f1=1.0, conf=1.96)
+Bit  19: 1 (f0=2.1, f1=2.3, conf=1.11)
+Bit  20: 0 (f0=1.9, f1=1.0, conf=1.82)
+Bit  21: 1 (f0=2.0, f1=2.4, conf=1.20)
+Bit  22: 0 (f0=1.9, f1=1.1, conf=1.72)
+Bit  23: 1 (f0=2.0, f1=2.4, conf=1.21)
+Bit  24: 0 (f0=1.8, f1=1.1, conf=1.68)
+Bit  25: 1 (f0=1.9, f1=2.4, conf=1.26)
+Bit  26: 0 (f0=1.8, f1=1.2, conf=1.59)
+Bit  27: 1 (f0=1.9, f1=2.4, conf=1.30)
+Bit  28: 0 (f0=1.8, f1=1.1, conf=1.59)
+Bit  29: 1 (f0=1.8, f1=2.4, conf=1.31)
+
+--- Demodulation Statistics ---
+Average confidence: 2.49
+Weak bits (conf < 1.5): 304 / 1008 (30.2%)
+
+CRC FAIL! Received: 0, Calculated: 198. Frame discarded.
+Diagnostic beep track saved to: D:\fourth_year\cs120\Receiver\Builds\VisualStudio2022\debug_beeps.wav
+
+*** PREAMBLE DETECTED at sample 55191 (t=1.251s)
+    Peak NCC: 0.3233
+    Fine-tuning frame start (searching 44 samples)...
+    Offset correction: -14 samples (clarity score: 0.836)
+
+--- Demodulator Confidence Scores (First 30 bits) ---
+Bit   0: 0 (f0=2.2, f1=0.4, conf=6.09)
+Bit   1: 0 (f0=1.8, f1=1.5, conf=1.22)
+Bit   2: 0 (f0=2.3, f1=0.4, conf=6.21)
+Bit   3: 0 (f0=1.8, f1=1.6, conf=1.15)
+Bit   4: 0 (f0=2.4, f1=0.4, conf=5.76)
+Bit   5: 0 (f0=1.9, f1=1.6, conf=1.15)
+Bit   6: 0 (f0=2.5, f1=0.4, conf=5.92)
+Bit   7: 0 (f0=1.9, f1=1.7, conf=1.13)
+Bit   8: 0 (f0=2.5, f1=0.5, conf=5.24)
+Bit   9: 0 (f0=2.0, f1=1.8, conf=1.12)
+Bit  10: 0 (f0=2.6, f1=0.5, conf=5.41)
+Bit  11: 0 (f0=2.1, f1=1.8, conf=1.16)
+Bit  12: 0 (f0=2.7, f1=0.5, conf=5.01)
+Bit  13: 0 (f0=2.1, f1=1.9, conf=1.13)
+Bit  14: 0 (f0=2.7, f1=0.6, conf=4.89)
+Bit  15: 0 (f0=2.2, f1=1.9, conf=1.19)
+Bit  16: 0 (f0=2.8, f1=0.6, conf=4.91)
+Bit  17: 0 (f0=2.3, f1=1.9, conf=1.18)
+Bit  18: 0 (f0=2.8, f1=0.6, conf=4.54)
+Bit  19: 0 (f0=2.4, f1=1.9, conf=1.23)
+Bit  20: 0 (f0=2.9, f1=0.6, conf=4.64)
+Bit  21: 0 (f0=2.4, f1=1.9, conf=1.28)
+Bit  22: 0 (f0=2.8, f1=0.7, conf=4.34)
+Bit  23: 0 (f0=2.5, f1=1.9, conf=1.29)
+Bit  24: 0 (f0=2.9, f1=0.7, conf=4.33)
+Bit  25: 0 (f0=2.5, f1=1.9, conf=1.34)
+Bit  26: 0 (f0=2.8, f1=0.7, conf=4.12)
+Bit  27: 0 (f0=2.6, f1=1.9, conf=1.36)
+Bit  28: 0 (f0=2.8, f1=0.7, conf=4.09)
+Bit  29: 0 (f0=2.6, f1=1.8, conf=1.45)
+
+--- Demodulation Statistics ---
+Average confidence: 3.00
+Weak bits (conf < 1.5): 275 / 1008 (27.3%)
+
+CRC FAIL! Received: 0, Calculated: 81. Frame discarded.
+Diagnostic beep track saved to: D:\fourth_year\cs120\Receiver\Builds\VisualStudio2022\debug_beeps.wav
+
+*** PREAMBLE DETECTED at sample 55455 (t=1.257s)
+    Peak NCC: 0.3107
+    Fine-tuning frame start (searching 44 samples)...
+    Offset correction: -13 samples (clarity score: 0.842)
+
+--- Demodulator Confidence Scores (First 30 bits) ---
+Bit   0: 0 (f0=2.2, f1=0.3, conf=6.34)
+Bit   1: 0 (f0=1.8, f1=1.1, conf=1.63)
+Bit   2: 0 (f0=2.2, f1=0.3, conf=6.67)
+Bit   3: 0 (f0=1.8, f1=1.2, conf=1.53)
+Bit   4: 0 (f0=2.3, f1=0.3, conf=7.34)
+Bit   5: 0 (f0=1.9, f1=1.2, conf=1.52)
+Bit   6: 0 (f0=2.4, f1=0.3, conf=7.22)
+Bit   7: 0 (f0=1.9, f1=1.3, conf=1.40)
+Bit   8: 0 (f0=2.5, f1=0.3, conf=7.23)
+Bit   9: 0 (f0=2.0, f1=1.4, conf=1.42)
+Bit  10: 0 (f0=2.6, f1=0.3, conf=7.35)
+Bit  11: 0 (f0=2.0, f1=1.5, conf=1.34)
+Bit  12: 0 (f0=2.6, f1=0.4, conf=6.53)
+Bit  13: 0 (f0=2.1, f1=1.5, conf=1.34)
+Bit  14: 0 (f0=2.7, f1=0.4, conf=6.66)
+Bit  15: 0 (f0=2.2, f1=1.6, conf=1.35)
+Bit  16: 0 (f0=2.7, f1=0.5, conf=5.89)
+Bit  17: 0 (f0=2.2, f1=1.7, conf=1.30)
+Bit  18: 0 (f0=2.8, f1=0.5, conf=5.75)
+Bit  19: 0 (f0=2.3, f1=1.7, conf=1.32)
+Bit  20: 0 (f0=2.8, f1=0.5, conf=5.24)
+Bit  21: 0 (f0=2.3, f1=1.8, conf=1.28)
+Bit  22: 0 (f0=2.8, f1=0.6, conf=5.06)
+Bit  23: 0 (f0=2.4, f1=1.8, conf=1.34)
+Bit  24: 0 (f0=2.9, f1=0.6, conf=4.96)
+Bit  25: 0 (f0=2.4, f1=1.9, conf=1.30)
+Bit  26: 0 (f0=2.8, f1=0.6, conf=4.43)
+Bit  27: 0 (f0=2.5, f1=1.9, conf=1.33)
+Bit  28: 0 (f0=2.8, f1=0.6, conf=4.49)
+Bit  29: 0 (f0=2.6, f1=1.9, conf=1.33)
+
+--- Demodulation Statistics ---
+Average confidence: 2.90
+Weak bits (conf < 1.5): 276 / 1008 (27.4%)
+
+CRC FAIL! Received: 0, Calculated: 255. Frame discarded.
+Diagnostic beep track saved to: D:\fourth_year\cs120\Receiver\Builds\VisualStudio2022\debug_beeps.wav
+
+*** PREAMBLE DETECTED at sample 55720 (t=1.263s)
+    Peak NCC: 0.3015
+    Fine-tuning frame start (searching 44 samples)...
+    Offset correction: -14 samples (clarity score: 0.861)
+
+--- Demodulator Confidence Scores (First 30 bits) ---
+Bit   0: 0 (f0=2.4, f1=0.3, conf=7.22)
+Bit   1: 0 (f0=1.9, f1=1.3, conf=1.40)
+Bit   2: 0 (f0=2.5, f1=0.3, conf=7.23)
+Bit   3: 0 (f0=2.0, f1=1.4, conf=1.42)
+Bit   4: 0 (f0=2.6, f1=0.3, conf=7.35)
+Bit   5: 0 (f0=2.0, f1=1.5, conf=1.34)
+Bit   6: 0 (f0=2.6, f1=0.4, conf=6.53)
+Bit   7: 0 (f0=2.1, f1=1.5, conf=1.34)
+Bit   8: 0 (f0=2.7, f1=0.4, conf=6.66)
+Bit   9: 0 (f0=2.2, f1=1.6, conf=1.35)
+Bit  10: 0 (f0=2.7, f1=0.5, conf=5.89)
+Bit  11: 0 (f0=2.2, f1=1.7, conf=1.30)
+Bit  12: 0 (f0=2.8, f1=0.5, conf=5.75)
+Bit  13: 0 (f0=2.3, f1=1.7, conf=1.32)
+Bit  14: 0 (f0=2.8, f1=0.5, conf=5.24)
+Bit  15: 0 (f0=2.3, f1=1.8, conf=1.28)
+Bit  16: 0 (f0=2.8, f1=0.6, conf=5.06)
+Bit  17: 0 (f0=2.4, f1=1.8, conf=1.34)
+Bit  18: 0 (f0=2.9, f1=0.6, conf=4.96)
+Bit  19: 0 (f0=2.4, f1=1.9, conf=1.30)
+Bit  20: 0 (f0=2.8, f1=0.6, conf=4.43)
+Bit  21: 0 (f0=2.5, f1=1.9, conf=1.33)
+Bit  22: 0 (f0=2.8, f1=0.6, conf=4.49)
+Bit  23: 0 (f0=2.6, f1=1.9, conf=1.33)
+Bit  24: 0 (f0=2.8, f1=0.7, conf=4.05)
+Bit  25: 0 (f0=2.6, f1=1.9, conf=1.33)
+Bit  26: 0 (f0=2.8, f1=0.7, conf=4.11)
+Bit  27: 0 (f0=2.6, f1=1.9, conf=1.39)
+Bit  28: 0 (f0=2.7, f1=0.7, conf=3.83)
+Bit  29: 0 (f0=2.6, f1=1.9, conf=1.35)
+
+--- Demodulation Statistics ---
+Average confidence: 2.89
+Weak bits (conf < 1.5): 277 / 1008 (27.5%)
+
+CRC FAIL! Received: 1, Calculated: 37. Frame discarded.
+Diagnostic beep track saved to: D:\fourth_year\cs120\Receiver\Builds\VisualStudio2022\debug_beeps.wav
+
+*** PREAMBLE DETECTED at sample 56226 (t=1.275s)
+    Peak NCC: 0.3076
+    Fine-tuning frame start (searching 44 samples)...
+    Offset correction: 9 samples (clarity score: 0.876)
+
+--- Demodulator Confidence Scores (First 30 bits) ---
+Bit   0: 0 (f0=2.6, f1=0.3, conf=8.08)
+Bit   1: 0 (f0=2.0, f1=1.2, conf=1.72)
+Bit   2: 0 (f0=2.6, f1=0.3, conf=7.87)
+Bit   3: 0 (f0=2.0, f1=1.3, conf=1.60)
+Bit   4: 0 (f0=2.7, f1=0.3, conf=7.81)
+Bit   5: 0 (f0=2.2, f1=1.3, conf=1.63)
+Bit   6: 0 (f0=2.7, f1=0.4, conf=7.72)
+Bit   7: 0 (f0=2.2, f1=1.4, conf=1.51)
+Bit   8: 0 (f0=2.7, f1=0.4, conf=6.56)
+Bit   9: 0 (f0=2.3, f1=1.5, conf=1.49)
+Bit  10: 0 (f0=2.8, f1=0.4, conf=6.60)
+Bit  11: 0 (f0=2.3, f1=1.6, conf=1.44)
+Bit  12: 0 (f0=2.8, f1=0.5, conf=5.59)
+Bit  13: 0 (f0=2.4, f1=1.7, conf=1.39)
+Bit  14: 0 (f0=2.8, f1=0.5, conf=5.59)
+Bit  15: 0 (f0=2.4, f1=1.7, conf=1.41)
+Bit  16: 0 (f0=2.8, f1=0.6, conf=4.93)
+Bit  17: 0 (f0=2.4, f1=1.8, conf=1.32)
+Bit  18: 0 (f0=2.8, f1=0.6, conf=4.57)
+Bit  19: 0 (f0=2.5, f1=1.9, conf=1.35)
+Bit  20: 0 (f0=2.8, f1=0.6, conf=4.51)
+Bit  21: 0 (f0=2.5, f1=1.9, conf=1.30)
+Bit  22: 0 (f0=2.7, f1=0.7, conf=3.96)
+Bit  23: 0 (f0=2.5, f1=2.0, conf=1.30)
+Bit  24: 0 (f0=2.7, f1=0.7, conf=3.94)
+Bit  25: 0 (f0=2.6, f1=2.0, conf=1.29)
+Bit  26: 0 (f0=2.6, f1=0.7, conf=3.58)
+Bit  27: 0 (f0=2.5, f1=2.0, conf=1.25)
+Bit  28: 0 (f0=2.6, f1=0.7, conf=3.51)
+Bit  29: 0 (f0=2.6, f1=2.0, conf=1.28)
+
+--- Demodulation Statistics ---
+Average confidence: 2.91
+Weak bits (conf < 1.5): 286 / 1008 (28.4%)
+
+CRC FAIL! Received: 0, Calculated: 112. Frame discarded.
+Diagnostic beep track saved to: D:\fourth_year\cs120\Receiver\Builds\VisualStudio2022\debug_beeps.wav
+
+*** PREAMBLE DETECTED at sample 56667 (t=1.285s)
+    Peak NCC: 0.3157
+    Fine-tuning frame start (searching 44 samples)...
+    Offset correction: 9 samples (clarity score: 0.862)
+
+--- Demodulator Confidence Scores (First 30 bits) ---
+Bit   0: 0 (f0=2.6, f1=0.4, conf=7.27)
+Bit   1: 0 (f0=2.0, f1=1.0, conf=1.95)
+Bit   2: 0 (f0=2.6, f1=0.3, conf=7.53)
+Bit   3: 0 (f0=2.1, f1=1.1, conf=1.87)
+Bit   4: 0 (f0=2.7, f1=0.3, conf=8.14)
+Bit   5: 0 (f0=2.2, f1=1.2, conf=1.87)
+Bit   6: 0 (f0=2.7, f1=0.3, conf=7.64)
+Bit   7: 0 (f0=2.2, f1=1.3, conf=1.68)
+Bit   8: 0 (f0=2.7, f1=0.4, conf=7.14)
+Bit   9: 0 (f0=2.3, f1=1.3, conf=1.68)
+Bit  10: 0 (f0=2.7, f1=0.4, conf=7.07)
+Bit  11: 0 (f0=2.3, f1=1.5, conf=1.56)
+Bit  12: 0 (f0=2.7, f1=0.5, conf=5.83)
+Bit  13: 0 (f0=2.3, f1=1.6, conf=1.50)
+Bit  14: 0 (f0=2.7, f1=0.5, conf=5.73)
+Bit  15: 0 (f0=2.4, f1=1.6, conf=1.45)
+Bit  16: 0 (f0=2.7, f1=0.5, conf=4.91)
+Bit  17: 0 (f0=2.4, f1=1.8, conf=1.35)
+Bit  18: 0 (f0=2.7, f1=0.6, conf=4.65)
+Bit  19: 0 (f0=2.4, f1=1.8, conf=1.34)
+Bit  20: 0 (f0=2.6, f1=0.6, conf=4.13)
+Bit  21: 0 (f0=2.4, f1=1.9, conf=1.23)
+Bit  22: 0 (f0=2.5, f1=0.7, conf=3.68)
+Bit  23: 0 (f0=2.4, f1=2.0, conf=1.22)
+Bit  24: 0 (f0=2.5, f1=0.7, conf=3.47)
+Bit  25: 0 (f0=2.4, f1=2.1, conf=1.17)
+Bit  26: 0 (f0=2.4, f1=0.8, conf=3.16)
+Bit  27: 0 (f0=2.4, f1=2.1, conf=1.16)
+Bit  28: 0 (f0=2.4, f1=0.8, conf=3.15)
+Bit  29: 0 (f0=2.4, f1=2.1, conf=1.14)
+
+--- Demodulation Statistics ---
+Average confidence: 2.74
+Weak bits (conf < 1.5): 285 / 1008 (28.3%)
+
+CRC FAIL! Received: 16, Calculated: 105. Frame discarded.
+Diagnostic beep track saved to: D:\fourth_year\cs120\Receiver\Builds\VisualStudio2022\debug_beeps.wav
+
+*** PREAMBLE DETECTED at sample 56932 (t=1.291s)
+    Peak NCC: 0.3138
+    Fine-tuning frame start (searching 44 samples)...
+    Offset correction: 8 samples (clarity score: 0.869)
+
+--- Demodulator Confidence Scores (First 30 bits) ---
+Bit   0: 0 (f0=2.7, f1=0.3, conf=7.64)
+Bit   1: 0 (f0=2.2, f1=1.3, conf=1.68)
+Bit   2: 0 (f0=2.7, f1=0.4, conf=7.14)
+Bit   3: 0 (f0=2.3, f1=1.3, conf=1.68)
+Bit   4: 0 (f0=2.7, f1=0.4, conf=7.07)
+Bit   5: 0 (f0=2.3, f1=1.5, conf=1.56)
+Bit   6: 0 (f0=2.7, f1=0.5, conf=5.83)
+Bit   7: 0 (f0=2.3, f1=1.6, conf=1.50)
+Bit   8: 0 (f0=2.7, f1=0.5, conf=5.73)
+Bit   9: 0 (f0=2.4, f1=1.6, conf=1.45)
+Bit  10: 0 (f0=2.7, f1=0.5, conf=4.91)
+Bit  11: 0 (f0=2.4, f1=1.8, conf=1.35)
+Bit  12: 0 (f0=2.7, f1=0.6, conf=4.65)
+Bit  13: 0 (f0=2.4, f1=1.8, conf=1.34)
+Bit  14: 0 (f0=2.6, f1=0.6, conf=4.13)
+Bit  15: 0 (f0=2.4, f1=1.9, conf=1.23)
+Bit  16: 0 (f0=2.5, f1=0.7, conf=3.68)
+Bit  17: 0 (f0=2.4, f1=2.0, conf=1.22)
+Bit  18: 0 (f0=2.5, f1=0.7, conf=3.47)
+Bit  19: 0 (f0=2.4, f1=2.1, conf=1.17)
+Bit  20: 0 (f0=2.4, f1=0.8, conf=3.16)
+Bit  21: 0 (f0=2.4, f1=2.1, conf=1.16)
+Bit  22: 0 (f0=2.4, f1=0.8, conf=3.15)
+Bit  23: 0 (f0=2.4, f1=2.1, conf=1.14)
+Bit  24: 0 (f0=2.3, f1=0.8, conf=2.81)
+Bit  25: 0 (f0=2.4, f1=2.2, conf=1.10)
+Bit  26: 0 (f0=2.3, f1=0.8, conf=2.77)
+Bit  27: 0 (f0=2.4, f1=2.1, conf=1.11)
+Bit  28: 0 (f0=2.2, f1=0.8, conf=2.65)
+Bit  29: 0 (f0=2.3, f1=2.2, conf=1.08)
+
+--- Demodulation Statistics ---
+Average confidence: 2.73
+Weak bits (conf < 1.5): 286 / 1008 (28.4%)
+
+CRC FAIL! Received: 4, Calculated: 13. Frame discarded.
+Diagnostic beep track saved to: D:\fourth_year\cs120\Receiver\Builds\VisualStudio2022\debug_beeps.wav
+
+*** PREAMBLE DETECTED at sample 57196 (t=1.297s)
+    Peak NCC: 0.3053
+    Fine-tuning frame start (searching 44 samples)...
+    Offset correction: 9 samples (clarity score: 0.848)
+
+--- Demodulator Confidence Scores (First 30 bits) ---
+Bit   0: 0 (f0=2.6, f1=0.4, conf=6.56)
+Bit   1: 0 (f0=2.1, f1=1.0, conf=2.00)
+Bit   2: 0 (f0=2.6, f1=0.4, conf=7.19)
+Bit   3: 0 (f0=2.1, f1=1.1, conf=1.97)
+Bit   4: 0 (f0=2.6, f1=0.4, conf=7.15)
+Bit   5: 0 (f0=2.1, f1=1.2, conf=1.84)
+Bit   6: 0 (f0=2.6, f1=0.4, conf=7.22)
+Bit   7: 0 (f0=2.2, f1=1.2, conf=1.80)
+Bit   8: 0 (f0=2.6, f1=0.4, conf=6.47)
+Bit   9: 0 (f0=2.2, f1=1.4, conf=1.59)
+Bit  10: 0 (f0=2.6, f1=0.5, conf=5.60)
+Bit  11: 0 (f0=2.2, f1=1.4, conf=1.54)
+Bit  12: 0 (f0=2.6, f1=0.5, conf=5.14)
+Bit  13: 0 (f0=2.2, f1=1.6, conf=1.42)
+Bit  14: 0 (f0=2.5, f1=0.6, conf=4.43)
+Bit  15: 0 (f0=2.3, f1=1.7, conf=1.37)
+Bit  16: 0 (f0=2.5, f1=0.6, conf=4.33)
+Bit  17: 0 (f0=2.3, f1=1.8, conf=1.31)
+Bit  18: 0 (f0=2.4, f1=0.7, conf=3.62)
+Bit  19: 0 (f0=2.3, f1=1.9, conf=1.22)
+Bit  20: 0 (f0=2.4, f1=0.7, conf=3.46)
+Bit  21: 0 (f0=2.3, f1=1.9, conf=1.20)
+Bit  22: 0 (f0=2.4, f1=0.7, conf=3.17)
+Bit  23: 0 (f0=2.3, f1=2.0, conf=1.12)
+Bit  24: 0 (f0=2.3, f1=0.8, conf=2.87)
+Bit  25: 0 (f0=2.3, f1=2.1, conf=1.11)
+Bit  26: 0 (f0=2.2, f1=0.8, conf=2.76)
+Bit  27: 0 (f0=2.3, f1=2.2, conf=1.04)
+Bit  28: 0 (f0=2.2, f1=0.9, conf=2.42)
+Bit  29: 1 (f0=2.2, f1=2.2, conf=1.01)
+
+--- Demodulation Statistics ---
+Average confidence: 2.71
+Weak bits (conf < 1.5): 274 / 1008 (27.2%)
+
+CRC FAIL! Received: 18, Calculated: 123. Frame discarded.
+Diagnostic beep track saved to: D:\fourth_year\cs120\Receiver\Builds\VisualStudio2022\debug_beeps.wav
+
+*** PREAMBLE DETECTED at sample 60644 (t=1.375s)
+    Peak NCC: 0.3357
+    Fine-tuning frame start (searching 44 samples)...
+    Offset correction: -7 samples (clarity score: 0.864)
+
+--- Demodulator Confidence Scores (First 30 bits) ---
+Bit   0: 0 (f0=2.6, f1=0.4, conf=7.37)
+Bit   1: 0 (f0=2.2, f1=1.2, conf=1.87)
+Bit   2: 0 (f0=2.6, f1=0.3, conf=7.67)
+Bit   3: 0 (f0=2.2, f1=1.3, conf=1.74)
+Bit   4: 0 (f0=2.6, f1=0.4, conf=6.66)
+Bit   5: 0 (f0=2.2, f1=1.4, conf=1.63)
+Bit   6: 0 (f0=2.6, f1=0.4, conf=6.53)
+Bit   7: 0 (f0=2.3, f1=1.4, conf=1.57)
+Bit   8: 0 (f0=2.6, f1=0.5, conf=5.48)
+Bit   9: 0 (f0=2.2, f1=1.6, conf=1.43)
+Bit  10: 0 (f0=2.5, f1=0.5, conf=5.02)
+Bit  11: 0 (f0=2.3, f1=1.6, conf=1.41)
+Bit  12: 0 (f0=2.5, f1=0.6, conf=4.53)
+Bit  13: 0 (f0=2.3, f1=1.8, conf=1.28)
+Bit  14: 0 (f0=2.4, f1=0.6, conf=3.93)
+Bit  15: 0 (f0=2.3, f1=1.8, conf=1.25)
+Bit  16: 0 (f0=2.4, f1=0.7, conf=3.68)
+Bit  17: 0 (f0=2.3, f1=1.9, conf=1.18)
+Bit  18: 0 (f0=2.3, f1=0.7, conf=3.18)
+Bit  19: 0 (f0=2.3, f1=2.0, conf=1.11)
+Bit  20: 0 (f0=2.3, f1=0.8, conf=3.00)
+Bit  21: 0 (f0=2.3, f1=2.1, conf=1.09)
+Bit  22: 0 (f0=2.2, f1=0.8, conf=2.67)
+Bit  23: 0 (f0=2.2, f1=2.2, conf=1.02)
+Bit  24: 0 (f0=2.1, f1=0.9, conf=2.48)
+Bit  25: 0 (f0=2.2, f1=2.2, conf=1.01)
+Bit  26: 0 (f0=2.1, f1=0.9, conf=2.35)
+Bit  27: 1 (f0=2.2, f1=2.2, conf=1.04)
+Bit  28: 0 (f0=2.0, f1=0.9, conf=2.18)
+Bit  29: 1 (f0=2.1, f1=2.2, conf=1.04)
+
+--- Demodulation Statistics ---
+Average confidence: 2.69
+Weak bits (conf < 1.5): 266 / 1008 (26.4%)
+
+CRC FAIL! Received: 128, Calculated: 28. Frame discarded.
+Diagnostic beep track saved to: D:\fourth_year\cs120\Receiver\Builds\VisualStudio2022\debug_beeps.wav
+
+*** PREAMBLE DETECTED at sample 60997 (t=1.383s)
+    Peak NCC: 0.3376
+    Fine-tuning frame start (searching 44 samples)...
+    Offset correction: -7 samples (clarity score: 0.833)
+
+--- Demodulator Confidence Scores (First 30 bits) ---
+Bit   0: 0 (f0=2.5, f1=0.4, conf=5.99)
+Bit   1: 0 (f0=2.0, f1=1.1, conf=1.87)
+Bit   2: 0 (f0=2.5, f1=0.4, conf=6.41)
+Bit   3: 0 (f0=2.1, f1=1.1, conf=1.93)
+Bit   4: 0 (f0=2.5, f1=0.4, conf=6.55)
+Bit   5: 0 (f0=2.1, f1=1.2, conf=1.78)
+Bit   6: 0 (f0=2.5, f1=0.4, conf=6.11)
+Bit   7: 0 (f0=2.1, f1=1.2, conf=1.74)
+Bit   8: 0 (f0=2.5, f1=0.4, conf=5.86)
+Bit   9: 0 (f0=2.1, f1=1.3, conf=1.61)
+Bit  10: 0 (f0=2.4, f1=0.5, conf=4.90)
+Bit  11: 0 (f0=2.1, f1=1.4, conf=1.47)
+Bit  12: 0 (f0=2.4, f1=0.5, conf=4.50)
+Bit  13: 0 (f0=2.2, f1=1.5, conf=1.40)
+Bit  14: 0 (f0=2.3, f1=0.6, conf=3.81)
+Bit  15: 0 (f0=2.1, f1=1.7, conf=1.25)
+Bit  16: 0 (f0=2.2, f1=0.7, conf=3.37)
+Bit  17: 0 (f0=2.1, f1=1.8, conf=1.21)
+Bit  18: 0 (f0=2.2, f1=0.7, conf=3.07)
+Bit  19: 0 (f0=2.1, f1=1.9, conf=1.11)
+Bit  20: 0 (f0=2.1, f1=0.8, conf=2.70)
+Bit  21: 0 (f0=2.1, f1=2.0, conf=1.08)
+Bit  22: 0 (f0=2.1, f1=0.8, conf=2.60)
+Bit  23: 0 (f0=2.1, f1=2.1, conf=1.02)
+Bit  24: 0 (f0=2.0, f1=0.9, conf=2.24)
+Bit  25: 1 (f0=2.0, f1=2.2, conf=1.06)
+Bit  26: 0 (f0=2.0, f1=0.9, conf=2.08)
+Bit  27: 1 (f0=2.0, f1=2.2, conf=1.09)
+Bit  28: 0 (f0=1.9, f1=1.0, conf=1.93)
+Bit  29: 1 (f0=2.0, f1=2.3, conf=1.16)
+
+--- Demodulation Statistics ---
+Average confidence: 2.50
+Weak bits (conf < 1.5): 284 / 1008 (28.2%)
+
+CRC FAIL! Received: 32, Calculated: 180. Frame discarded.
+Diagnostic beep track saved to: D:\fourth_year\cs120\Receiver\Builds\VisualStudio2022\debug_beeps.wav
+
+*** PREAMBLE DETECTED at sample 61262 (t=1.389s)
+    Peak NCC: 0.3317
+    Fine-tuning frame start (searching 44 samples)...
+    Offset correction: -8 samples (clarity score: 0.836)
+
+--- Demodulator Confidence Scores (First 30 bits) ---
+Bit   0: 0 (f0=2.5, f1=0.4, conf=6.11)
+Bit   1: 0 (f0=2.1, f1=1.2, conf=1.74)
+Bit   2: 0 (f0=2.5, f1=0.4, conf=5.86)
+Bit   3: 0 (f0=2.1, f1=1.3, conf=1.61)
+Bit   4: 0 (f0=2.4, f1=0.5, conf=4.90)
+Bit   5: 0 (f0=2.1, f1=1.4, conf=1.47)
+Bit   6: 0 (f0=2.4, f1=0.5, conf=4.50)
+Bit   7: 0 (f0=2.2, f1=1.5, conf=1.40)
+Bit   8: 0 (f0=2.3, f1=0.6, conf=3.81)
+Bit   9: 0 (f0=2.1, f1=1.7, conf=1.25)
+Bit  10: 0 (f0=2.2, f1=0.7, conf=3.37)
+Bit  11: 0 (f0=2.1, f1=1.8, conf=1.21)
+Bit  12: 0 (f0=2.2, f1=0.7, conf=3.07)
+Bit  13: 0 (f0=2.1, f1=1.9, conf=1.11)
+Bit  14: 0 (f0=2.1, f1=0.8, conf=2.70)
+Bit  15: 0 (f0=2.1, f1=2.0, conf=1.08)
+Bit  16: 0 (f0=2.1, f1=0.8, conf=2.60)
+Bit  17: 0 (f0=2.1, f1=2.1, conf=1.02)
+Bit  18: 0 (f0=2.0, f1=0.9, conf=2.24)
+Bit  19: 1 (f0=2.0, f1=2.2, conf=1.06)
+Bit  20: 0 (f0=2.0, f1=0.9, conf=2.08)
+Bit  21: 1 (f0=2.0, f1=2.2, conf=1.09)
+Bit  22: 0 (f0=1.9, f1=1.0, conf=1.93)
+Bit  23: 1 (f0=2.0, f1=2.3, conf=1.16)
+Bit  24: 0 (f0=1.9, f1=1.0, conf=1.82)
+Bit  25: 1 (f0=1.9, f1=2.3, conf=1.20)
+Bit  26: 0 (f0=1.8, f1=1.0, conf=1.75)
+Bit  27: 1 (f0=1.9, f1=2.4, conf=1.25)
+Bit  28: 0 (f0=1.8, f1=1.1, conf=1.66)
+Bit  29: 1 (f0=1.9, f1=2.4, conf=1.28)
+
+--- Demodulation Statistics ---
+Average confidence: 2.49
+Weak bits (conf < 1.5): 286 / 1008 (28.4%)
+
+CRC FAIL! Received: 0, Calculated: 221. Frame discarded.
+Diagnostic beep track saved to: D:\fourth_year\cs120\Receiver\Builds\VisualStudio2022\debug_beeps.wav
+
+*** PREAMBLE DETECTED at sample 61526 (t=1.395s)
+    Peak NCC: 0.3227
+    Fine-tuning frame start (searching 44 samples)...
+    Offset correction: -13 samples (clarity score: 0.832)
+
+--- Demodulator Confidence Scores (First 30 bits) ---
+Bit   0: 0 (f0=2.1, f1=0.3, conf=5.96)
+Bit   1: 0 (f0=1.7, f1=1.4, conf=1.26)
+Bit   2: 0 (f0=2.1, f1=0.3, conf=6.29)
+Bit   3: 0 (f0=1.8, f1=1.4, conf=1.26)
+Bit   4: 0 (f0=2.2, f1=0.3, conf=6.49)
+Bit   5: 0 (f0=1.8, f1=1.5, conf=1.18)
+Bit   6: 0 (f0=2.3, f1=0.4, conf=6.19)
+Bit   7: 0 (f0=1.8, f1=1.5, conf=1.19)
+Bit   8: 0 (f0=2.4, f1=0.4, conf=6.53)
+Bit   9: 0 (f0=1.8, f1=1.6, conf=1.13)
+Bit  10: 0 (f0=2.4, f1=0.4, conf=5.37)
+Bit  11: 0 (f0=1.9, f1=1.7, conf=1.11)
+Bit  12: 0 (f0=2.6, f1=0.4, conf=5.76)
+Bit  13: 0 (f0=2.0, f1=1.7, conf=1.16)
+Bit  14: 0 (f0=2.6, f1=0.5, conf=5.41)
+Bit  15: 0 (f0=2.0, f1=1.8, conf=1.13)
+Bit  16: 0 (f0=2.7, f1=0.5, conf=5.32)
+Bit  17: 0 (f0=2.2, f1=1.8, conf=1.19)
+Bit  18: 0 (f0=2.7, f1=0.5, conf=5.17)
+Bit  19: 0 (f0=2.2, f1=1.9, conf=1.16)
+Bit  20: 0 (f0=2.7, f1=0.6, conf=4.81)
+Bit  21: 0 (f0=2.3, f1=1.9, conf=1.21)
+Bit  22: 0 (f0=2.8, f1=0.6, conf=4.98)
+Bit  23: 0 (f0=2.3, f1=1.9, conf=1.24)
+Bit  24: 0 (f0=2.8, f1=0.6, conf=4.56)
+Bit  25: 0 (f0=2.4, f1=1.9, conf=1.27)
+Bit  26: 0 (f0=2.8, f1=0.6, conf=4.69)
+Bit  27: 0 (f0=2.5, f1=1.9, conf=1.33)
+Bit  28: 0 (f0=2.8, f1=0.6, conf=4.43)
+Bit  29: 0 (f0=2.5, f1=1.9, conf=1.33)
+
+--- Demodulation Statistics ---
+Average confidence: 2.86
+Weak bits (conf < 1.5): 268 / 1008 (26.6%)
+
+CRC FAIL! Received: 0, Calculated: 206. Frame discarded.
+Diagnostic beep track saved to: D:\fourth_year\cs120\Receiver\Builds\VisualStudio2022\debug_beeps.wav
+
+*** PREAMBLE DETECTED at sample 61791 (t=1.401s)
+    Peak NCC: 0.3185
+    Fine-tuning frame start (searching 44 samples)...
+    Offset correction: -14 samples (clarity score: 0.838)
+
+--- Demodulator Confidence Scores (First 30 bits) ---
+Bit   0: 0 (f0=2.3, f1=0.4, conf=6.19)
+Bit   1: 0 (f0=1.8, f1=1.5, conf=1.19)
+Bit   2: 0 (f0=2.4, f1=0.4, conf=6.53)
+Bit   3: 0 (f0=1.8, f1=1.6, conf=1.13)
+Bit   4: 0 (f0=2.4, f1=0.4, conf=5.37)
+Bit   5: 0 (f0=1.9, f1=1.7, conf=1.11)
+Bit   6: 0 (f0=2.6, f1=0.4, conf=5.76)
+Bit   7: 0 (f0=2.0, f1=1.7, conf=1.16)
+Bit   8: 0 (f0=2.6, f1=0.5, conf=5.41)
+Bit   9: 0 (f0=2.0, f1=1.8, conf=1.13)
+Bit  10: 0 (f0=2.7, f1=0.5, conf=5.32)
+Bit  11: 0 (f0=2.2, f1=1.8, conf=1.19)
+Bit  12: 0 (f0=2.7, f1=0.5, conf=5.17)
+Bit  13: 0 (f0=2.2, f1=1.9, conf=1.16)
+Bit  14: 0 (f0=2.7, f1=0.6, conf=4.81)
+Bit  15: 0 (f0=2.3, f1=1.9, conf=1.21)
+Bit  16: 0 (f0=2.8, f1=0.6, conf=4.98)
+Bit  17: 0 (f0=2.3, f1=1.9, conf=1.24)
+Bit  18: 0 (f0=2.8, f1=0.6, conf=4.56)
+Bit  19: 0 (f0=2.4, f1=1.9, conf=1.27)
+Bit  20: 0 (f0=2.8, f1=0.6, conf=4.69)
+Bit  21: 0 (f0=2.5, f1=1.9, conf=1.33)
+Bit  22: 0 (f0=2.8, f1=0.6, conf=4.43)
+Bit  23: 0 (f0=2.5, f1=1.9, conf=1.33)
+Bit  24: 0 (f0=2.8, f1=0.6, conf=4.34)
+Bit  25: 0 (f0=2.6, f1=1.8, conf=1.41)
+Bit  26: 0 (f0=2.8, f1=0.6, conf=4.29)
+Bit  27: 0 (f0=2.6, f1=1.8, conf=1.41)
+Bit  28: 0 (f0=2.7, f1=0.7, conf=4.04)
+Bit  29: 0 (f0=2.6, f1=1.8, conf=1.47)
+
+--- Demodulation Statistics ---
+Average confidence: 2.85
+Weak bits (conf < 1.5): 266 / 1008 (26.4%)
+
+CRC FAIL! Received: 0, Calculated: 108. Frame discarded.
+Diagnostic beep track saved to: D:\fourth_year\cs120\Receiver\Builds\VisualStudio2022\debug_beeps.wav
+
+*** PREAMBLE DETECTED at sample 62056 (t=1.407s)
+    Peak NCC: 0.3077
+    Fine-tuning frame start (searching 44 samples)...
+    Offset correction: -14 samples (clarity score: 0.866)
+
+--- Demodulator Confidence Scores (First 30 bits) ---
+Bit   0: 0 (f0=2.3, f1=0.3, conf=7.47)
+Bit   1: 0 (f0=1.8, f1=1.2, conf=1.56)
+Bit   2: 0 (f0=2.3, f1=0.3, conf=7.60)
+Bit   3: 0 (f0=1.8, f1=1.3, conf=1.45)
+Bit   4: 0 (f0=2.4, f1=0.3, conf=7.85)
+Bit   5: 0 (f0=1.9, f1=1.3, conf=1.46)
+Bit   6: 0 (f0=2.5, f1=0.3, conf=7.74)
+Bit   7: 0 (f0=1.9, f1=1.4, conf=1.36)
+Bit   8: 0 (f0=2.5, f1=0.4, conf=7.03)
+Bit   9: 0 (f0=2.0, f1=1.5, conf=1.36)
+Bit  10: 0 (f0=2.6, f1=0.4, conf=7.32)
+Bit  11: 0 (f0=2.1, f1=1.5, conf=1.34)
+Bit  12: 0 (f0=2.6, f1=0.4, conf=6.34)
+Bit  13: 0 (f0=2.1, f1=1.6, conf=1.32)
+Bit  14: 0 (f0=2.7, f1=0.4, conf=6.46)
+Bit  15: 0 (f0=2.2, f1=1.7, conf=1.34)
+Bit  16: 0 (f0=2.8, f1=0.5, conf=5.80)
+Bit  17: 0 (f0=2.2, f1=1.7, conf=1.29)
+Bit  18: 0 (f0=2.8, f1=0.5, conf=5.50)
+Bit  19: 0 (f0=2.4, f1=1.8, conf=1.33)
+Bit  20: 0 (f0=2.8, f1=0.5, conf=5.30)
+Bit  21: 0 (f0=2.4, f1=1.8, conf=1.29)
+Bit  22: 0 (f0=2.8, f1=0.6, conf=4.75)
+Bit  23: 0 (f0=2.4, f1=1.9, conf=1.31)
+Bit  24: 0 (f0=2.8, f1=0.6, conf=4.78)
+Bit  25: 0 (f0=2.5, f1=1.9, conf=1.30)
+Bit  26: 0 (f0=2.7, f1=0.7, conf=4.15)
+Bit  27: 0 (f0=2.5, f1=1.9, conf=1.29)
+Bit  28: 0 (f0=2.7, f1=0.6, conf=4.25)
+Bit  29: 0 (f0=2.5, f1=1.9, conf=1.33)
+
+--- Demodulation Statistics ---
+Average confidence: 2.75
+Weak bits (conf < 1.5): 269 / 1008 (26.7%)
+
+CRC FAIL! Received: 0, Calculated: 200. Frame discarded.
+Diagnostic beep track saved to: D:\fourth_year\cs120\Receiver\Builds\VisualStudio2022\debug_beeps.wav
+
+*** PREAMBLE DETECTED at sample 63091 (t=1.431s)
+    Peak NCC: 0.3154
+    Fine-tuning frame start (searching 44 samples)...
+    Offset correction: 8 samples (clarity score: 0.861)
+
+--- Demodulator Confidence Scores (First 30 bits) ---
+Bit   0: 0 (f0=2.7, f1=0.4, conf=7.19)
+Bit   1: 0 (f0=2.2, f1=1.5, conf=1.45)
+Bit   2: 0 (f0=2.7, f1=0.5, conf=5.83)
+Bit   3: 0 (f0=2.2, f1=1.6, conf=1.37)
+Bit   4: 0 (f0=2.7, f1=0.5, conf=5.88)
+Bit   5: 0 (f0=2.3, f1=1.7, conf=1.38)
+Bit   6: 0 (f0=2.7, f1=0.5, conf=5.18)
+Bit   7: 0 (f0=2.3, f1=1.8, conf=1.32)
+Bit   8: 0 (f0=2.7, f1=0.6, conf=4.87)
+Bit   9: 0 (f0=2.4, f1=1.8, conf=1.34)
+Bit  10: 0 (f0=2.7, f1=0.6, conf=4.79)
+Bit  11: 0 (f0=2.4, f1=1.9, conf=1.28)
+Bit  12: 0 (f0=2.6, f1=0.6, conf=4.16)
+Bit  13: 0 (f0=2.5, f1=1.9, conf=1.28)
+Bit  14: 0 (f0=2.6, f1=0.6, conf=4.14)
+Bit  15: 0 (f0=2.5, f1=1.9, conf=1.28)
+Bit  16: 0 (f0=2.6, f1=0.7, conf=3.74)
+Bit  17: 0 (f0=2.5, f1=2.0, conf=1.23)
+Bit  18: 0 (f0=2.5, f1=0.7, conf=3.64)
+Bit  19: 0 (f0=2.5, f1=2.0, conf=1.26)
+Bit  20: 0 (f0=2.5, f1=0.7, conf=3.41)
+Bit  21: 0 (f0=2.4, f1=2.0, conf=1.21)
+Bit  22: 0 (f0=2.4, f1=0.7, conf=3.24)
+Bit  23: 0 (f0=2.5, f1=2.0, conf=1.25)
+Bit  24: 0 (f0=2.4, f1=0.7, conf=3.23)
+Bit  25: 0 (f0=2.4, f1=2.0, conf=1.22)
+Bit  26: 0 (f0=2.2, f1=0.8, conf=2.98)
+Bit  27: 0 (f0=2.4, f1=1.9, conf=1.22)
+Bit  28: 0 (f0=2.2, f1=0.7, conf=2.93)
+Bit  29: 0 (f0=2.3, f1=1.9, conf=1.23)
+
+--- Demodulation Statistics ---
+Average confidence: 2.76
+Weak bits (conf < 1.5): 280 / 1008 (27.8%)
+
+CRC FAIL! Received: 32, Calculated: 171. Frame discarded.
+Diagnostic beep track saved to: D:\fourth_year\cs120\Receiver\Builds\VisualStudio2022\debug_beeps.wav
+
+*** PREAMBLE DETECTED at sample 63444 (t=1.439s)
+    Peak NCC: 0.3133
+    Fine-tuning frame start (searching 44 samples)...
+    Offset correction: 8 samples (clarity score: 0.868)
+
+--- Demodulator Confidence Scores (First 30 bits) ---
+Bit   0: 0 (f0=2.6, f1=0.3, conf=7.59)
+Bit   1: 0 (f0=2.2, f1=1.3, conf=1.70)
+Bit   2: 0 (f0=2.7, f1=0.4, conf=7.57)
+Bit   3: 0 (f0=2.2, f1=1.4, conf=1.56)
+Bit   4: 0 (f0=2.6, f1=0.4, conf=6.28)
+Bit   5: 0 (f0=2.2, f1=1.5, conf=1.51)
+Bit   6: 0 (f0=2.7, f1=0.4, conf=6.17)
+Bit   7: 0 (f0=2.3, f1=1.6, conf=1.46)
+Bit   8: 0 (f0=2.6, f1=0.5, conf=5.24)
+Bit   9: 0 (f0=2.3, f1=1.7, conf=1.36)
+Bit  10: 0 (f0=2.6, f1=0.5, conf=4.95)
+Bit  11: 0 (f0=2.4, f1=1.7, conf=1.35)
+Bit  12: 0 (f0=2.6, f1=0.6, conf=4.43)
+Bit  13: 0 (f0=2.3, f1=1.9, conf=1.26)
+Bit  14: 0 (f0=2.5, f1=0.6, conf=4.04)
+Bit  15: 0 (f0=2.4, f1=1.9, conf=1.26)
+Bit  16: 0 (f0=2.5, f1=0.6, conf=3.91)
+Bit  17: 0 (f0=2.4, f1=2.0, conf=1.20)
+Bit  18: 0 (f0=2.4, f1=0.7, conf=3.42)
+Bit  19: 0 (f0=2.4, f1=2.0, conf=1.16)
+Bit  20: 0 (f0=2.4, f1=0.7, conf=3.27)
+Bit  21: 0 (f0=2.4, f1=2.1, conf=1.14)
+Bit  22: 0 (f0=2.3, f1=0.8, conf=2.98)
+Bit  23: 0 (f0=2.3, f1=2.1, conf=1.10)
+Bit  24: 0 (f0=2.3, f1=0.8, conf=2.88)
+Bit  25: 0 (f0=2.3, f1=2.1, conf=1.10)
+Bit  26: 0 (f0=2.2, f1=0.8, conf=2.70)
+Bit  27: 0 (f0=2.3, f1=2.2, conf=1.04)
+Bit  28: 0 (f0=2.1, f1=0.8, conf=2.54)
+Bit  29: 0 (f0=2.2, f1=2.1, conf=1.05)
+
+--- Demodulation Statistics ---
+Average confidence: 2.72
+Weak bits (conf < 1.5): 276 / 1008 (27.4%)
+
+CRC FAIL! Received: 0, Calculated: 225. Frame discarded.
+Diagnostic beep track saved to: D:\fourth_year\cs120\Receiver\Builds\VisualStudio2022\debug_beeps.wav
+
+*** PREAMBLE DETECTED at sample 63709 (t=1.445s)
+    Peak NCC: 0.3024
+    Fine-tuning frame start (searching 44 samples)...
+    Offset correction: 8 samples (clarity score: 0.855)
+
+--- Demodulator Confidence Scores (First 30 bits) ---
+Bit   0: 0 (f0=2.5, f1=0.4, conf=6.92)
+Bit   1: 0 (f0=2.0, f1=1.0, conf=1.97)
+Bit   2: 0 (f0=2.5, f1=0.4, conf=7.18)
+Bit   3: 0 (f0=2.0, f1=1.1, conf=1.85)
+Bit   4: 0 (f0=2.6, f1=0.3, conf=7.39)
+Bit   5: 0 (f0=2.1, f1=1.2, conf=1.84)
+Bit   6: 0 (f0=2.5, f1=0.4, conf=6.93)
+Bit   7: 0 (f0=2.1, f1=1.3, conf=1.66)
+Bit   8: 0 (f0=2.5, f1=0.4, conf=6.30)
+Bit   9: 0 (f0=2.2, f1=1.3, conf=1.63)
+Bit  10: 0 (f0=2.6, f1=0.4, conf=6.03)
+Bit  11: 0 (f0=2.2, f1=1.5, conf=1.50)
+Bit  12: 0 (f0=2.5, f1=0.5, conf=4.97)
+Bit  13: 0 (f0=2.2, f1=1.6, conf=1.40)
+Bit  14: 0 (f0=2.5, f1=0.5, conf=4.60)
+Bit  15: 0 (f0=2.2, f1=1.7, conf=1.33)
+Bit  16: 0 (f0=2.4, f1=0.6, conf=3.97)
+Bit  17: 0 (f0=2.2, f1=1.8, conf=1.24)
+Bit  18: 0 (f0=2.4, f1=0.6, conf=3.71)
+Bit  19: 0 (f0=2.3, f1=1.9, conf=1.21)
+Bit  20: 0 (f0=2.3, f1=0.7, conf=3.29)
+Bit  21: 0 (f0=2.2, f1=2.0, conf=1.10)
+Bit  22: 0 (f0=2.3, f1=0.8, conf=2.95)
+Bit  23: 0 (f0=2.2, f1=2.0, conf=1.09)
+Bit  24: 0 (f0=2.2, f1=0.8, conf=2.85)
+Bit  25: 0 (f0=2.2, f1=2.1, conf=1.04)
+Bit  26: 0 (f0=2.1, f1=0.8, conf=2.56)
+Bit  27: 0 (f0=2.2, f1=2.2, conf=1.01)
+Bit  28: 0 (f0=2.1, f1=0.8, conf=2.54)
+Bit  29: 0 (f0=2.2, f1=2.2, conf=1.00)
+
+--- Demodulation Statistics ---
+Average confidence: 2.67
+Weak bits (conf < 1.5): 258 / 1008 (25.6%)
+
+CRC FAIL! Received: 0, Calculated: 91. Frame discarded.
+Diagnostic beep track saved to: D:\fourth_year\cs120\Receiver\Builds\VisualStudio2022\debug_beeps.wav
+
+*** PREAMBLE DETECTED at sample 67156 (t=1.523s)
+    Peak NCC: 0.3346
+    Fine-tuning frame start (searching 44 samples)...
+    Offset correction: -7 samples (clarity score: 0.879)
+ERROR: Not enough samples for full frame. Need 44352, have 110942in total, only 43792
+
+*** PREAMBLE DETECTED at sample 67421 (t=1.529s)
+    Peak NCC: 0.3361
+    Fine-tuning frame start (searching 44 samples)...
+    Offset correction: -8 samples (clarity score: 0.846)
+ERROR: Not enough samples for full frame. Need 44352, have 110942in total, only 43528
+
+*** PREAMBLE DETECTED at sample 67774 (t=1.537s)
+    Peak NCC: 0.3303
+    Fine-tuning frame start (searching 44 samples)...
+    Offset correction: -8 samples (clarity score: 0.850)
+ERROR: Not enough samples for full frame. Need 44352, have 110942in total, only 43175
+
+*** PREAMBLE DETECTED at sample 68039 (t=1.543s)
+    Peak NCC: 0.3207
+    Fine-tuning frame start (searching 44 samples)...
+    Offset correction: -14 samples (clarity score: 0.849)
+ERROR: Not enough samples for full frame. Need 44352, have 110942in total, only 42916
+
+*** PREAMBLE DETECTED at sample 68303 (t=1.549s)
+    Peak NCC: 0.3155
+    Fine-tuning frame start (searching 44 samples)...
+    Offset correction: -14 samples (clarity score: 0.869)
+ERROR: Not enough samples for full frame. Need 44352, have 110942in total, only 42652
+
+*** PREAMBLE DETECTED at sample 68568 (t=1.555s)
+    Peak NCC: 0.3040
+    Fine-tuning frame start (searching 44 samples)...
+    Offset correction: -14 samples (clarity score: 0.877)
+ERROR: Not enough samples for full frame. Need 44352, have 110942in total, only 42387
+
+*** PREAMBLE DETECTED at sample 69515 (t=1.576s)
+    Peak NCC: 0.3145
+    Fine-tuning frame start (searching 44 samples)...
+    Offset correction: 8 samples (clarity score: 0.883)
+ERROR: Not enough samples for full frame. Need 44352, have 110942in total, only 41418
+
+*** PREAMBLE DETECTED at sample 69868 (t=1.584s)
+    Peak NCC: 0.3134
+    Fine-tuning frame start (searching 44 samples)...
+    Offset correction: 8 samples (clarity score: 0.894)
+ERROR: Not enough samples for full frame. Need 44352, have 110942in total, only 41065
+
+*** PREAMBLE DETECTED at sample 70132 (t=1.590s)
+    Peak NCC: 0.3044
+    Fine-tuning frame start (searching 44 samples)...
+    Offset correction: 8 samples (clarity score: 0.874)
+ERROR: Not enough samples for full frame. Need 44352, have 110942in total, only 40801
+
+*** PREAMBLE DETECTED at sample 72041 (t=1.634s)
+    Peak NCC: 0.3163
+    Fine-tuning frame start (searching 44 samples)...
+    Offset correction: -16 samples (clarity score: 0.965)
+ERROR: Not enough samples for full frame. Need 44352, have 110942in total, only 38916
+
+Diagnostic NCC waveform saved to: D:\fourth_year\cs120\Receiver\Builds\VisualStudio2022\debug_ncc_output.csv
+Full loopback recording saved to: D:\fourth_year\cs120\Receiver\Builds\VisualStudio2022\debug_loopback_recording.wav

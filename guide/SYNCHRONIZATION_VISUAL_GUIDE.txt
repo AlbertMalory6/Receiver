@@ -1,0 +1,423 @@
+================================================================================
+                    FSK SYNCHRONIZATION VISUAL GUIDE
+================================================================================
+
+1. SIGNAL STRUCTURE
+================================================================================
+
+Transmitted Signal Timeline:
+│
+│  Silent Leader       Preamble          FSK Data + CRC
+│ ┌──────────────┐   ┌────────┐   ┌────────────────────────────┐
+│ │              │   │ Chirp  │   │ 0  1  0  1  1  0  0  1  ... │
+│ │   Silence    │   │1kHz→5k │   │2k 4k 2k 4k 4k 2k 2k 4k ... │
+│ │              │   │ →1kHz  │   │                            │
+│ └──────────────┘   └────────┘   └────────────────────────────┘
+│
+│  0.5 seconds       440 samples     221,352 samples (5008 bits)
+│  (22,050 samples)  (10ms @ 44.1k)  (5.02 seconds)
+│
+Time: 0s           0.5s          0.51s                     5.53s
+
+================================================================================
+
+2. SYNCHRONIZATION PROBLEM VISUALIZATION
+================================================================================
+
+Perfect Alignment:
+┌─────────────────────────────────────────────────────────────────┐
+│ Transmitted:  [---- f0 ----][---- f1 ----][---- f0 ----]       │
+│               2000Hz         4000Hz         2000Hz              │
+│                                                                 │
+│ Sample at:           ^              ^              ^            │
+│                    (bit 0)        (bit 1)        (bit 2)        │
+│                                                                 │
+│ Goertzel Result:    f0             f1             f0            │
+│ Decoded:             0              1              0    ✅      │
+└─────────────────────────────────────────────────────────────────┘
+
+22-Sample Offset (HALF BIT - Worst Case):
+┌─────────────────────────────────────────────────────────────────┐
+│ Transmitted:  [---- f0 ----][---- f1 ----][---- f0 ----]       │
+│               2000Hz         4000Hz         2000Hz              │
+│                                                                 │
+│ Sample at:                ^              ^              ^       │
+│                     (wrong position) (wrong)       (wrong)      │
+│                                                                 │
+│ Goertzel Result:    f0+f1 mix      f1+f0 mix      f0+f1 mix    │
+│ Decoded:              ?              ?              ?    ❌      │
+│                                                                 │
+│ BER = ~50% !                                                    │
+└─────────────────────────────────────────────────────────────────┘
+
+5-Sample Offset (Small but Damaging):
+┌─────────────────────────────────────────────────────────────────┐
+│ Transmitted:  [---- f0 ----][---- f1 ----][---- f0 ----]       │
+│                                                                 │
+│ Sample at:         ^              ^              ^              │
+│                (5 samples late)                                 │
+│                                                                 │
+│ Goertzel Result:  Mostly f0     Mostly f1      Mostly f0       │
+│                   (88% pure)    (88% pure)     (88% pure)      │
+│ Decoded:             0              1              0            │
+│                   (weak)         (weak)         (weak)          │
+│                                                                 │
+│ BER = ~11% (some bits ambiguous)                                │
+└─────────────────────────────────────────────────────────────────┘
+
+================================================================================
+
+3. NCC PEAK DETECTION (Stage 1 - Coarse Sync)
+================================================================================
+
+NCC Correlation Over Time:
+  1.0 ┤
+      │
+  0.8 ┤
+      │
+  0.6 ┤                            ╱╲  ← Peak detected here!
+      │                          ╱    ╲    NCC = 0.654
+  0.4 ┤─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─╱─ ─ ─ ─╲─ ─ ← Threshold (0.35)
+      │                      ╱          ╲
+  0.2 ┤                    ╱              ╲
+      │          ╱╲                          ╲
+  0.0 ┤─────────╱──╲─────────────────────────────────────
+      │   Noise                             Preamble found
+      └────┬────────┬────────┬────────┬────────┬────────
+          0.0     0.2      0.4      0.5      0.6      0.8 seconds
+                                      ↑
+                              Sample index: 23860
+                              Time: 0.541s
+
+Detection Logic:
+1. Compute NCC at every sample
+2. Track local maximum above threshold
+3. When NCC falls for 220 samples (preamble/2), peak is confirmed
+4. Output: preambleEndSample = 23860
+
+Accuracy: ±10 samples (NOT sufficient for bit alignment)
+
+================================================================================
+
+4. OFFSET CORRECTION (Stage 2 - Fine Sync)
+================================================================================
+
+Search Process:
+                  Preamble ends here
+                         ↓
+                    [23860]
+                         │
+         Search range: ±22 samples (±half bit period)
+                         │
+    ├────────────────────┼────────────────────┤
+    ↓                    ↓                    ↓
+  23838               23860                23882
+  (-22)                (0)                 (+22)
+
+For each offset, test first bit:
+                                            
+Offset -22: [test 44 samples starting at 23838]
+            Goertzel(2kHz) = 189.3, Goertzel(4kHz) = 203.7
+            Clarity = |189.3 - 203.7| / 203.7 = 0.071  (poor)
+
+Offset -10: [test 44 samples starting at 23850]
+            Goertzel(2kHz) = 245.8, Goertzel(4kHz) = 312.1
+            Clarity = |245.8 - 312.1| / 312.1 = 0.212  (better)
+
+Offset -8:  [test 44 samples starting at 23852]  ← BEST!
+            Goertzel(2kHz) = 145.2, Goertzel(4kHz) = 432.7
+            Clarity = |145.2 - 432.7| / 432.7 = 0.664  (excellent!)
+
+Offset 0:   [test 44 samples starting at 23860]
+            Goertzel(2kHz) = 234.5, Goertzel(4kHz) = 289.1
+            Clarity = |234.5 - 289.1| / 289.1 = 0.189  (poor)
+
+...
+
+Result: Best offset = -8 samples
+Frame start = 23860 + 1 + (-8) = 23853
+
+Accuracy: ±1-2 samples (excellent!)
+
+================================================================================
+
+5. DEMODULATION WITH CONFIDENCE TRACKING
+================================================================================
+
+Bit Demodulation:
+Frame starts at sample 23853
+│
+│  Bit 0 (samples 23853-23896):
+│  ├─ Goertzel(2kHz) = 145.2
+│  ├─ Goertzel(4kHz) = 432.7
+│  ├─ Decision: 432.7 > 145.2 → bit = 1
+│  └─ Confidence: 432.7 / 145.2 = 2.98 (excellent)
+│
+│  Bit 1 (samples 23897-23940):
+│  ├─ Goertzel(2kHz) = 389.4
+│  ├─ Goertzel(4kHz) = 156.3
+│  ├─ Decision: 389.4 > 156.3 → bit = 0
+│  └─ Confidence: 389.4 / 156.3 = 2.49 (good)
+│
+│  Bit 2 (samples 23941-23984):
+│  ├─ Goertzel(2kHz) = 401.2
+│  ├─ Goertzel(4kHz) = 421.8
+│  ├─ Decision: 421.8 > 401.2 → bit = 1
+│  └─ Confidence: 421.8 / 401.2 = 1.05 (weak! potential error)
+│
+│  ...
+│
+│  Bit 5007 (last):
+│  └─ CRC bit
+
+Confidence Interpretation:
+  3.0+ ████████████████ Excellent (very clear signal)
+  2.0  ████████████     Good (reliable)
+  1.5  ████████         Acceptable (borderline)
+  1.2  ██████           Weak (likely error)
+  1.0  ████             Ambiguous (coin flip)
+
+================================================================================
+
+6. ERROR PATTERN DIAGNOSIS
+================================================================================
+
+Scenario A: Frame Start Offset Error
+┌─────────────────────────────────────────────────────────────────┐
+│ Error Distribution:                                             │
+│                                                                 │
+│  100%┤ █                                                        │
+│      │ █                                                        │
+│   50%┤ █                                                        │
+│      │ █                                                        │
+│    0%┤ █░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░     │
+│      └────────────────────────────────────────────────────     │
+│        First 20%      Middle 60%           Last 20%            │
+│                                                                 │
+│ Diagnosis: EARLY ERROR CONCENTRATION                            │
+│ Cause: Frame start is wrong (offset correction failed)          │
+│ Fix: Widen search range or manual offset adjustment             │
+└─────────────────────────────────────────────────────────────────┘
+
+Scenario B: Clock Drift Error
+┌─────────────────────────────────────────────────────────────────┐
+│ Error Distribution:                                             │
+│                                                                 │
+│  100%┤                                                       █  │
+│      │                                                       █  │
+│   50%┤                                          ░            █  │
+│      │                          ░               ░            █  │
+│    0%┤░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░█  │
+│      └────────────────────────────────────────────────────     │
+│        First 20%      Middle 60%           Last 20%            │
+│                                                                 │
+│ Diagnosis: LATE ERROR CONCENTRATION                             │
+│ Cause: Sample rate mismatch (clock drift)                       │
+│ Fix: Verify sample rates match, implement adaptive timing       │
+└─────────────────────────────────────────────────────────────────┘
+
+Scenario C: Noise/Interference
+┌─────────────────────────────────────────────────────────────────┐
+│ Error Distribution:                                             │
+│                                                                 │
+│  100%┤                                                          │
+│      │    █           █              █       █                  │
+│   50%┤    █           █     █        █       █        █         │
+│      │    █     █     █     █        █       █        █         │
+│    0%┤░░░░█░░░░░█░░░░░█░░░░░█░░░░░░░░█░░░░░░░█░░░░░░░░█░░░░░░   │
+│      └────────────────────────────────────────────────────     │
+│        First 20%      Middle 60%           Last 20%            │
+│                                                                 │
+│ Diagnosis: RANDOM ERRORS (distributed)                          │
+│ Cause: Low SNR, interference, or acoustic reflections           │
+│ Fix: Improve environment, increase volume, use cable loopback   │
+└─────────────────────────────────────────────────────────────────┘
+
+================================================================================
+
+7. DIAGNOSTIC WORKFLOW
+================================================================================
+
+┌─────────────┐
+│ Run Receiver│
+│   Program   │
+└──────┬──────┘
+       │
+       ├─────────────────┐
+       │                 │
+       ▼                 ▼
+┌──────────────┐   ┌──────────────────┐
+│ Console      │   │ Debug Files:     │
+│ Output       │   │ • ncc_output.csv │
+└──────────────┘   │ • recording.wav  │
+       │           │ • beeps.wav      │
+       │           └────────┬─────────┘
+       │                    │
+       ▼                    ▼
+┌──────────────────────────────────────┐
+│ Run: python diagnose_sync_offset.py  │
+└────────────────┬─────────────────────┘
+                 │
+                 ▼
+┌────────────────────────────────────────┐
+│ NCC Analysis:                          │
+│ • Peaks detected?                      │
+│ • Peak values above threshold?         │
+│ • Alignment errors within ±10 samples? │
+└────────────┬───────────────────────────┘
+             │
+    ┌────────┴────────┐
+    │                 │
+    ▼ YES             ▼ NO
+┌─────────┐      ┌──────────────────┐
+│ Run:    │      │ Adjust:          │
+│ python  │      │ • Lower threshold│
+│ test_   │      │ • Increase volume│
+│ sync.py │      └──────────────────┘
+└────┬────┘
+     │
+     ▼
+┌────────────────────────────────────┐
+│ BER Analysis:                      │
+│ • BER < 1%? → Success!             │
+│ • BER 1-5%? → Check error pattern  │
+│ • BER > 5%? → Re-tune system       │
+└────────────────────────────────────┘
+
+================================================================================
+
+8. KEY PARAMETERS QUICK REFERENCE
+================================================================================
+
+┌───────────────────────────────────────────────────────────────────────┐
+│ Parameter               Location    Default   Description              │
+├───────────────────────────────────────────────────────────────────────┤
+│ NCC_DETECTION_THRESHOLD Line 145    0.35      Preamble sensitivity     │
+│                                                (lower = more sensitive) │
+├───────────────────────────────────────────────────────────────────────┤
+│ silentLeaderSamples     Line 74     22050     Pre-transmission silence │
+│                                                (0.5 seconds)            │
+├───────────────────────────────────────────────────────────────────────┤
+│ searchRange             Line 211    44        Offset search window     │
+│                                                (±22 samples)            │
+├───────────────────────────────────────────────────────────────────────┤
+│ Hysteresis delay        Line 161    220       Peak confirmation time   │
+│                                                (preambleSamples / 2)    │
+├───────────────────────────────────────────────────────────────────────┤
+│ samplesPerBit           Line 12     44        Bit period at 44.1kHz    │
+│                                                (1000 bps)               │
+└───────────────────────────────────────────────────────────────────────┘
+
+================================================================================
+
+9. CONSOLE OUTPUT EXAMPLES
+================================================================================
+
+SUCCESSFUL RUN:
+--------------------------------------------------------------------------------
+Read 5000 bits from INPUT.txt
+Press ENTER to start...
+
+--- Playing and recording simultaneously... ---
+
+--- Analyzing Recorded Audio & Detecting Frames ---
+Detection threshold: 0.35
+
+*** PREAMBLE DETECTED at sample 23860 (t=0.541s)
+    Peak NCC: 0.6543
+    Fine-tuning frame start (searching 44 samples)...
+    Offset correction: -8 samples (clarity score: 0.847)
+
+--- Demodulator Confidence Scores (First 30 bits) ---
+Bit   0: 1 (f0=145.2, f1=432.7, conf=2.98)
+Bit   1: 0 (f0=389.4, f1=156.3, conf=2.49)
+Bit   2: 1 (f0=234.5, f1=421.8, conf=1.80)
+...
+
+--- Demodulation Statistics ---
+Average confidence: 2.76
+Weak bits (conf < 1.5): 89 / 5008 (1.8%)
+
+CRC OK! Writing 5000 bits to OUTPUT.txt  ✅
+
+Diagnostic NCC waveform saved to: debug_ncc_output.csv
+Full loopback recording saved to: debug_loopback_recording.wav
+
+--- Analysis Complete ---
+--------------------------------------------------------------------------------
+
+FAILED RUN (No Detection):
+--------------------------------------------------------------------------------
+--- Analyzing Recorded Audio & Detecting Frames ---
+Detection threshold: 0.35
+
+Diagnostic NCC waveform saved to: debug_ncc_output.csv
+Full loopback recording saved to: debug_loopback_recording.wav
+
+--- Analysis Complete ---
+
+⚠️  No preamble detected!  ❌
+Next step: Run python diagnose_sync_offset.py
+--------------------------------------------------------------------------------
+
+FAILED RUN (CRC Error):
+--------------------------------------------------------------------------------
+*** PREAMBLE DETECTED at sample 23860 (t=0.541s)
+    Peak NCC: 0.4123
+    Fine-tuning frame start (searching 44 samples)...
+    Offset correction: 2 samples (clarity score: 0.234)  ← Low clarity!
+
+--- Demodulation Statistics ---
+Average confidence: 1.42  ← Low confidence!
+Weak bits (conf < 1.5): 1897 / 5008 (37.9%)  ← Too many weak bits!
+
+CRC FAIL! Received: 145, Calculated: 78. Frame discarded.  ❌
+
+⚠️  Synchronization or signal quality issue detected
+--------------------------------------------------------------------------------
+
+================================================================================
+
+10. TROUBLESHOOTING DECISION TREE
+================================================================================
+
+                           ┌─────────────────┐
+                           │ Run Receiver    │
+                           └────────┬────────┘
+                                    │
+                                    ▼
+                        ┌───────────────────────┐
+                        │ Preamble detected?    │
+                        └─────┬───────────┬─────┘
+                              │           │
+                          YES │           │ NO
+                              ▼           ▼
+                    ┌──────────────┐  ┌──────────────────┐
+                    │ CRC passes?  │  │ Check NCC file:  │
+                    └──┬────────┬──┘  │ Max value?       │
+                       │        │     └────────┬─────────┘
+                   YES │        │ NO           │
+                       ▼        ▼              ▼
+                  ┌───────┐ ┌─────────────┐ ┌──────────────┐
+                  │SUCCESS│ │Avg conf<1.8?│ │ < 0.25?      │
+                  └───────┘ └──┬──────┬───┘ └──┬───────┬───┘
+                               │      │        │       │
+                           YES │      │ NO  YES│       │NO
+                               ▼      ▼        ▼       ▼
+                      ┌────────────┐┌────────┐┌──────┐┌─────────┐
+                      │Frame offset││Noise/  ││Lower ││Increase │
+                      │wrong: Widen││Inter-  ││thres-││volume,  │
+                      │search range││ference ││hold  ││check    │
+                      └────────────┘└────────┘└──────┘│signal   │
+                                                       └─────────┘
+
+================================================================================
+
+END OF VISUAL GUIDE
+================================================================================
+
+For detailed theory:       See SYNCHRONIZATION_GUIDE.md
+For implementation details: See OFFSET_FIXES_SUMMARY.md
+For testing procedures:    See TESTING_GUIDE.md
+For quick reference:       See README_SYNCHRONIZATION.md
+
