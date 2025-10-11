@@ -9,8 +9,8 @@
 // --- SHARED PARAMETERS AND FUNCTIONS (must be identical for sender and receiver logic) ---
 namespace FSK {
     constexpr double sampleRate = 44100.0;
-    constexpr double f0 = 4000.0;
-    constexpr double f1 = 8000.0;
+    constexpr double f0 = 2000.0;
+    constexpr double f1 = 4000.0;
     constexpr double bitRate = 1000.0;
     constexpr int samplesPerBit = static_cast<int>(sampleRate / bitRate);
     constexpr int preambleSamples = 440;
@@ -137,7 +137,7 @@ public:
 #if FORCE_DEMODULATION
         std::cout << "*** FORCED DEMODULATION MODE ENABLED ***" << std::endl;
         // Assume preamble ends and data begins exactly after the silent leader
-        int frameStartSample = FSK::sampleRate * 0.5;
+        int frameStartSample = FSK::sampleRate * 0.1;
         std::cout << "Attempting to demodulate frame starting at sample " << frameStartSample << std::endl;
 
         if (frameStartSample + FSK::totalFrameDataSamples <= recordedAudio.getNumSamples()) {

@@ -1,0 +1,149 @@
+This test measures actual acoustic channel characteristics.
+Results will show system latency and clock offsets.
+
+================================================================================
+REAL-TIME CHIRP DETECTION TEST (Acoustic Loopback)
+================================================================================
+
+Ensure your microphone can hear your speakers!
+Press ENTER to start tests...
+
+
+--------------------------------------------------------------------------------
+TEST: Short Offset (5000 samples = 0.113s)
+Expected chirp at sample 5000 (time: 0.113379s)
+--------------------------------------------------------------------------------
+Playing test signal...
+Recording complete.
+Saved: realtime_chirp_5000.wav
+
+--- NCC Detection ---
+Expected position: 5000 samples
+Detected position: 8920 samples
+Offset: 3920 samples (88.8889 ms)
+Detection score: 0.5009
+Confidence: 1.0227
+Success: NO
+Offset exceeds tolerance
+  Possible causes:
+  - Acoustic propagation delay
+  - System audio buffer latency
+  - Clock drift between playback/record
+
+--- SamplePHY(corrected) Detection ---
+Expected position: 5000 samples
+Detected position: -441 samples
+Offset: -5441 samples (123.3787 ms)
+Detection score: 0.0000
+Confidence: 0.0000
+Success: NO
+Offset exceeds tolerance
+  Possible causes:
+  - Acoustic propagation delay
+  - System audio buffer latency
+  - Clock drift between playback/record
+
+Press ENTER for next test...
+
+
+--------------------------------------------------------------------------------
+TEST: Medium Offset (22050 samples = 0.5s)
+Expected chirp at sample 22050 (time: 0.5000s)
+--------------------------------------------------------------------------------
+Playing test signal...
+Recording complete.
+Saved: realtime_chirp_22050.wav
+
+--- NCC Detection ---
+Expected position: 22050 samples
+Detected position: 28007 samples
+Offset: 5957 samples (135.0794 ms)
+Detection score: 0.5055
+Confidence: 1.0145
+Success: NO
+Offset exceeds tolerance
+  Possible causes:
+  - Acoustic propagation delay
+  - System audio buffer latency
+  - Clock drift between playback/record
+
+--- SamplePHY(corrected) Detection ---
+Expected position: 22050 samples
+Detected position: -441 samples
+Offset: -22491 samples (510.0000 ms)
+Detection score: 0.0000
+Confidence: 0.0000
+Success: NO
+Offset exceeds tolerance
+  Possible causes:
+  - Acoustic propagation delay
+  - System audio buffer latency
+  - Clock drift between playback/record
+
+Press ENTER for next test...
+
+
+--------------------------------------------------------------------------------
+TEST: Long Offset (44100 samples = 1.0s)
+Expected chirp at sample 44100 (time: 1.0000s)
+--------------------------------------------------------------------------------
+Playing test signal...
+Recording complete.
+Saved: realtime_chirp_44100.wav
+
+--- NCC Detection ---
+Expected position: 44100 samples
+Detected position: 48019 samples
+Offset: 3919 samples (88.8662 ms)
+Detection score: 0.4897
+Confidence: 1.0103
+Success: NO
+Offset exceeds tolerance
+  Possible causes:
+  - Acoustic propagation delay
+  - System audio buffer latency
+  - Clock drift between playback/record
+
+--- SamplePHY(corrected) Detection ---
+Expected position: 44100 samples
+Detected position: -441 samples
+Offset: -44541 samples (1010.0000 ms)
+Detection score: 0.0000
+Confidence: 0.0000
+Success: NO
+Offset exceeds tolerance
+  Possible causes:
+  - Acoustic propagation delay
+  - System audio buffer latency
+  - Clock drift between playback/record
+
+Press ENTER for next test...
+
+
+================================================================================
+ALL REAL-TIME TESTS COMPLETE
+================================================================================
+
+================================================================================
+SUMMARY OF ALL TESTS
+================================================================================
+
+Total tests: 3
+Sample-level accurate (鈮? sample): 0
+Sub-millisecond accurate (鈮?0 samples): 0
+Average offset: 4598.67 samples
+Max offset: 5957.00 samples
+
+>>> CLOCK OFFSET COMPENSATION:
+    Apply offset of 4598 samples (104.28 ms)
+    to achieve sample-level synchronization.
+
+================================================================================
+
+
+Recordings saved for inspection:
+  - realtime_chirp_5000.wav
+  - realtime_chirp_22050.wav
+  - realtime_chirp_44100.wav
+
+Press ENTER to exit...

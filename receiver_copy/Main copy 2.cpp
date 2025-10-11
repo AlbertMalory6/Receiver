@@ -2,10 +2,8 @@
 #include <fstream>
 #include <iostream>
 #include <iomanip>
-#include <string>
-#include <algorithm> // For std::reverse
 
-// --- SHARED PARAMETERS AND FUNCTIONS ---
+// --- SHARED PARAMETERS AND FUNCTIONS (must be identical for sender and receiver logic) ---
 namespace FSK {
     constexpr double sampleRate = 44100.0;
     constexpr double f0 = 2000.0;
@@ -13,7 +11,7 @@ namespace FSK {
     constexpr double bitRate = 1000.0;
     constexpr int samplesPerBit = static_cast<int>(sampleRate / bitRate);
     constexpr int preambleSamples = 440;
-    constexpr int payloadBits = 5000;
+    constexpr int payloadBits = 1000;
     constexpr int crcBits = 8;
     constexpr int totalFrameBits = payloadBits + crcBits;
     constexpr int totalFrameDataSamples = totalFrameBits * samplesPerBit;
@@ -30,15 +28,6 @@ namespace FSK {
         }
         return crc;
     }
-
-    // Helper to convert byte to binary string for debug
-    std::string byteToBinary(uint8_t byte) {
-        std::string binaryString;
-        for (int i = 7; i >= 0; --i) {
-            binaryString += ((byte >> i) & 1) ? '1' : '0';
-        }
-        return binaryString;
-    }
 }
 
 // ==============================================================================
@@ -47,16 +36,27 @@ namespace FSK {
 class FSKSignalSource : public juce::AudioSource
 {
 public:
-    FSKSignalSource(const std::vector<bool>& bitsToSend) { generateFullSignal(bitsToSend); }
+    FSKSignalSource(const std::vector<bool>& bitsToSend) {
+        generateFullSignal(bitsToSend);
+    }
+
     bool isFinished() const { return isPlaybackFinished; }
     int getNumSamples() const { return signalBuffer.getNumSamples(); }
-    void prepareToPlay(int, double) override { position = 0; isPlaybackFinished = false; }
+
+    void prepareToPlay(int, double) override {
+        position = 0;
+        isPlaybackFinished = false;
+    }
     void releaseResources() override {}
     void getNextAudioBlock(const juce::AudioSourceChannelInfo& bufferToFill) override
     {
-        if (isPlaybackFinished) { bufferToFill.clearActiveBufferRegion(); return; }
+        if (isPlaybackFinished) {
+            bufferToFill.clearActiveBufferRegion();
+            return;
+        }
         auto remainingSamples = signalBuffer.getNumSamples() - position;
         auto samplesThisTime = juce::jmin(bufferToFill.numSamples, remainingSamples);
+
         if (samplesThisTime > 0) {
             for (int chan = 0; chan < bufferToFill.buffer->getNumChannels(); ++chan)
                 bufferToFill.buffer->copyFrom(chan, bufferToFill.startSample, signalBuffer, 0, position, samplesThisTime);
@@ -68,8 +68,11 @@ public:
         }
     }
 private:
-    void generateFullSignal(const std::vector<bool>& bits) {
+    void FSKSignalSource::generateFullSignal(const std::vector<bool>& bits)
+    {
+        // NEW: Add a silent leader to ensure the recorder is ready
         const int silentLeaderSamples = FSK::sampleRate * 0.5; // 0.5 seconds of silence
+
         auto payloadWithCrcBits = bits;
         uint8_t crc = FSK::calculateCRC8(bits);
         for (int i = 7; i >= 0; --i) payloadWithCrcBits.push_back((crc >> i) & 1);
@@ -78,11 +81,12 @@ private:
         const int totalSignalSamples = silentLeaderSamples + FSK::preambleSamples + totalDataSamples;
 
         signalBuffer.setSize(1, totalSignalSamples);
-        signalBuffer.clear();
+        signalBuffer.clear(); // Zeros out the buffer, creating the silent leader
 
         auto* signal = signalBuffer.getWritePointer(0);
         double currentPhase = 0.0;
 
+        // Generate preamble AFTER the silent leader
         for (int i = 0; i < FSK::preambleSamples; ++i) {
             double freq;
             if (i < FSK::preambleSamples / 2)
@@ -94,6 +98,7 @@ private:
             signal[silentLeaderSamples + i] = std::sin(currentPhase) * 0.5;
         }
 
+        // Generate FSK data after the preamble
         int sampleIndex = silentLeaderSamples + FSK::preambleSamples;
         for (bool bit : payloadWithCrcBits) {
             double freq = bit ? FSK::f1 : FSK::f0;
@@ -105,6 +110,7 @@ private:
         }
         signalBuffer.applyGain(0.9f / signalBuffer.getMagnitude(0, signalBuffer.getNumSamples()));
     }
+
     juce::AudioBuffer<float> signalBuffer;
     int position = 0;
     bool isPlaybackFinished = true;
@@ -121,72 +127,69 @@ public:
         preambleTemplateEnergy = calculateEnergy(preambleTemplate.getReadPointer(0), FSK::preambleSamples);
     }
 
-    void analyzeRecording(const juce::AudioBuffer<float>& recordedAudio)
+    void FSKOfflineProcessor::analyzeRecording(const juce::AudioBuffer<float>& recordedAudio)
     {
-        std::cout << "\n--- Analyzing Recorded Audio & Generating Debug Files ---" << std::endl;
+        std::cout << "\n--- Analyzing Recorded Audio & Detecting Frames ---" << std::endl;
         const float* signal = recordedAudio.getReadPointer(0);
 
-        // --- Generate the full NCC waveform for debugging (still useful for general signal check) ---
+        // --- NCC Detection with Peak Tracking ---
         juce::File nccFile = juce::File::getCurrentWorkingDirectory().getChildFile("debug_ncc_output.csv");
         std::ofstream nccStream(nccFile.getFullPathName().toStdString());
 
         juce::AudioBuffer<float> circularBuffer(1, FSK::preambleSamples * 2);
         int circularBufferPos = 0;
 
-        // --- Preamble Detection Variables ---
-        double peakNCC = 0.0;
-        int peakSampleIndex = -1;
-        bool preambleFound = false;
+        // Synchronization state
+        double syncPowerLocalMax = 0.0;
+        int peakSampleIndex = 0;
+        static constexpr double NCC_DETECTION_THRESHOLD = 0.3; // Adjust based on your NCC plot
 
-        // Tune this value! Use your NCC plot to pick a threshold above noise but below true peak.
-        // For your current plot, 0.5 is a good starting point.
-        static constexpr double NCC_DETECTION_THRESHOLD = 0.3;
-
-        // --- THIS IS THE OFFSET TO TUNE ---
-        // Adjust this value based on debug_beeps.wav and confidence scores
-        // Try values from -20 to +20, and fine-tune by 1s if needed.
-        constexpr int SYNC_OFFSET = 5;
+        std::cout << "Detection threshold: " << NCC_DETECTION_THRESHOLD << std::endl;
 
         for (int i = 0; i < recordedAudio.getNumSamples(); ++i)
         {
             circularBuffer.setSample(0, circularBufferPos, signal[i]);
             double ncc = calculateNormalizedCrossCorrelation(circularBuffer, circularBufferPos);
-            nccStream << ncc << "\n";
+            nccStream << i << "," << ncc << "\n"; // Include sample index for plotting
 
-            // --- Robust Preamble Peak Detection ---
-            if (!preambleFound) {
-                if (ncc > NCC_DETECTION_THRESHOLD) {
-                    if (ncc > peakNCC) {
-                        peakNCC = ncc;
-                        peakSampleIndex = i;
-                    }
-                }
-                else if (peakSampleIndex != -1) { // We had a peak, but now NCC dropped below threshold
-                    std::cout << "\n\n*** Preamble DETECTED at " << (double)peakSampleIndex / FSK::sampleRate << "s! Peak NCC: " << peakNCC << " ***\n" << std::endl;
-
-                    int frameStartSample = peakSampleIndex + 1 + SYNC_OFFSET;
-
-                    if (frameStartSample + FSK::totalFrameDataSamples <= recordedAudio.getNumSamples()) {
-                        juce::AudioBuffer<float> frameData(1, FSK::totalFrameDataSamples);
-                        frameData.copyFrom(0, 0, recordedAudio, 0, frameStartSample, FSK::totalFrameDataSamples);
-
-                        // Pass the original recording to create the debug beep track
-                        demodulateFrame(frameData, recordedAudio, frameStartSample);
-                        preambleFound = true; // Stop searching after first potential frame
-                    }
-                    else {
-                        std::cerr << "ERROR: Not enough samples for full frame. Need "
-                            << FSK::totalFrameDataSamples << ", have "
-                            << (recordedAudio.getNumSamples() - frameStartSample) << std::endl;
-                    }
-                    peakNCC = 0.0;
-                    peakSampleIndex = -1;
-                }
+            // --- Peak Detection Logic ---
+            if (ncc > syncPowerLocalMax && ncc > NCC_DETECTION_THRESHOLD) {
+                // Rising NCC - potential new peak
+                syncPowerLocalMax = ncc;
+                peakSampleIndex = i;
             }
+            else if (peakSampleIndex != 0 && (i - peakSampleIndex) > (FSK::preambleSamples / 2)) {
+                // NCC has fallen for preambleSamples/2 - peak confirmed
+                std::cout << "\n*** PREAMBLE DETECTED at sample " << peakSampleIndex
+                    << " (t=" << std::fixed << std::setprecision(3)
+                    << (double)peakSampleIndex / FSK::sampleRate << "s)" << std::endl;
+                std::cout << "    Peak NCC: " << std::setprecision(4) << syncPowerLocalMax << std::endl;
+
+                // Calculate frame start with offset correction
+                int frameStartSample = findOptimalFrameStart(recordedAudio, peakSampleIndex);
+
+                if (frameStartSample + FSK::totalFrameDataSamples <= recordedAudio.getNumSamples()) {
+                    juce::AudioBuffer<float> frameData(1, FSK::totalFrameDataSamples);
+                    frameData.copyFrom(0, 0, recordedAudio, 0, frameStartSample, FSK::totalFrameDataSamples);
+                    demodulateFrame(frameData, recordedAudio, frameStartSample);
+                }
+                else {
+                    std::cerr << "ERROR: Not enough samples for full frame. Need "
+                        << FSK::totalFrameDataSamples << ", have "
+						<< recordedAudio.getNumSamples() << "in total, only "
+                        << (recordedAudio.getNumSamples() - frameStartSample) << std::endl;
+                }
+
+                // Reset for next frame
+                peakSampleIndex = 0;
+                syncPowerLocalMax = 0.0;
+            }
+
             circularBufferPos = (circularBufferPos + 1) % circularBuffer.getNumSamples();
         }
+
         nccStream.close();
-        std::cout << "Diagnostic correlation waveform saved to: " << nccFile.getFullPathName() << std::endl;
+        std::cout << "\nDiagnostic NCC waveform saved to: " << nccFile.getFullPathName() << std::endl;
 
         // --- Save the actual recording for inspection ---
         juce::File recordingFile = juce::File::getCurrentWorkingDirectory().getChildFile("debug_loopback_recording.wav");
@@ -198,17 +201,132 @@ public:
         }
 
         std::cout << "\n--- Analysis Complete ---" << std::endl;
-        if (!preambleFound) {
-            std::cout << "No preamble detected above threshold. Check your NCC plot and threshold." << std::endl;
-        }
-        else {
-            std::cout << "Review debug_beeps.wav and console output (CRC & bit confidence) to fine-tune SYNC_OFFSET." << std::endl;
-        }
     }
 private:
+
+    // NEW: Fine-tune frame start using first bit energy analysis
+    int findOptimalFrameStart(const juce::AudioBuffer<float>& recording, int preambleEndSample)
+    {
+        // The preamble ends at peakSampleIndex, data should start immediately after
+        int searchStart = preambleEndSample + 1;
+        int searchRange = FSK::samplesPerBit; // Search within one bit period
+
+        double bestScore = -1.0;
+        int bestOffset = 0;
+
+        std::cout << "    Fine-tuning frame start (searching " << searchRange << " samples)..." << std::endl;
+
+        // Try different offsets and find the one that gives clearest first bit
+        for (int offset = -searchRange / 2; offset < searchRange / 2; ++offset) {
+            int testStart = searchStart + offset;
+            if (testStart < 0 || testStart + FSK::samplesPerBit >= recording.getNumSamples()) continue;
+
+            const float* samples = recording.getReadPointer(0) + testStart;
+            double mag_f0 = goertzelMagnitude(FSK::samplesPerBit, FSK::f0, samples);
+            double mag_f1 = goertzelMagnitude(FSK::samplesPerBit, FSK::f1, samples);
+
+            // Score is the ratio difference - higher means clearer signal
+            double score = std::abs(mag_f0 - mag_f1) / std::max(mag_f0, mag_f1);
+
+            if (score > bestScore) {
+                bestScore = score;
+                bestOffset = offset;
+            }
+        }
+
+        int finalStart = searchStart + bestOffset;
+        std::cout << "    Offset correction: " << bestOffset << " samples (clarity score: "
+            << std::setprecision(3) << bestScore << ")" << std::endl;
+
+        return finalStart;
+    }
+
+    // NEW: demodulateFrame now takes the original buffer to create the debug file
+    void demodulateFrame(const juce::AudioBuffer<float>& frameData, const juce::AudioBuffer<float>& originalRecording, int frameStartSample)
+    {
+        std::vector<bool> receivedBits;
+        receivedBits.reserve(FSK::totalFrameBits);
+        const float* data = frameData.getReadPointer(0);
+
+        std::cout << "\n--- Demodulator Confidence Scores (First 30 bits) ---" << std::endl;
+
+        double avgConfidence = 0.0;
+        int weakBits = 0;
+
+        for (int i = 0; i < FSK::totalFrameBits; ++i) {
+            const float* bitSamples = data + (i * FSK::samplesPerBit);
+            double mag_f0 = goertzelMagnitude(FSK::samplesPerBit, FSK::f0, bitSamples);
+            double mag_f1 = goertzelMagnitude(FSK::samplesPerBit, FSK::f1, bitSamples);
+            bool bit = mag_f1 > mag_f0;
+            receivedBits.push_back(bit);
+
+            double confidence = (mag_f0 > mag_f1) ? (mag_f0 / mag_f1) : (mag_f1 / mag_f0);
+            avgConfidence += confidence;
+            if (confidence < 1.5) weakBits++;
+
+            if (i < 30) { // Print confidence for the first 30 bits
+                std::cout << "Bit " << std::setw(3) << i << ": " << (bit ? "1" : "0")
+                    << " (f0=" << std::setprecision(1) << mag_f0
+                    << ", f1=" << mag_f1
+                    << ", conf=" << std::setprecision(2) << confidence << ")" << std::endl;
+            }
+        }
+
+        avgConfidence /= FSK::totalFrameBits;
+        std::cout << "\n--- Demodulation Statistics ---" << std::endl;
+        std::cout << "Average confidence: " << std::setprecision(2) << avgConfidence << std::endl;
+        std::cout << "Weak bits (conf < 1.5): " << weakBits << " / " << FSK::totalFrameBits
+            << " (" << std::setprecision(1) << (100.0 * weakBits / FSK::totalFrameBits) << "%)" << std::endl;
+
+        // --- CRC Check ---
+        std::vector<bool> payload(receivedBits.begin(), receivedBits.begin() + FSK::payloadBits);
+        uint8_t receivedCrcByte = 0;
+        for (int i = 0; i < FSK::crcBits; ++i)
+            if (receivedBits[FSK::payloadBits + i])
+                receivedCrcByte |= (1 << (7 - i));
+
+        uint8_t calculatedCrc = FSK::calculateCRC8(payload);
+
+        if (calculatedCrc == receivedCrcByte) {
+            std::cout << "\nCRC OK! Writing " << payload.size() << " bits to OUTPUT.txt" << std::endl;
+            std::ofstream outputFile("OUTPUT.txt");
+            for (bool b : payload) outputFile << (b ? '1' : '0');
+        }
+        else {
+            std::cout << "\nCRC FAIL! Received: " << (int)receivedCrcByte << ", Calculated: " << (int)calculatedCrc << ". Frame discarded." << std::endl;
+        }
+
+        // --- NEW: Generate Debug Beep Track ---
+        createBeepTrack(originalRecording, frameStartSample);
+    }
+
+    void createBeepTrack(const juce::AudioBuffer<float>& originalRecording, int frameStartSample)
+    {
+        juce::File beepFile = juce::File::getCurrentWorkingDirectory().getChildFile("debug_beeps.wav");
+        juce::AudioBuffer<float> beepBuffer(originalRecording.getNumChannels(), originalRecording.getNumSamples());
+        beepBuffer.copyFrom(0, 0, originalRecording, 0, 0, originalRecording.getNumSamples());
+
+        // Add beeps
+        for (int i = 0; i < FSK::totalFrameBits; ++i) {
+            int beepPos = frameStartSample + (i * FSK::samplesPerBit);
+            if (beepPos + 5 < beepBuffer.getNumSamples()) {
+                for (int j = 0; j < 5; ++j) { // A 5-sample click
+                    beepBuffer.setSample(0, beepPos + j, 1.0f);
+                }
+            }
+        }
+
+        juce::WavAudioFormat wavFormat;
+        std::unique_ptr<juce::AudioFormatWriter> writer(wavFormat.createWriterFor(new juce::FileOutputStream(beepFile), 44100.0, 1, 16, {}, 0));
+        if (writer != nullptr) {
+            writer->writeFromAudioSampleBuffer(beepBuffer, 0, beepBuffer.getNumSamples());
+            std::cout << "Diagnostic beep track saved to: " << beepFile.getFullPathName() << std::endl;
+        }
+    }
+
+    // (Other helper methods: generatePreambleTemplate, calculateEnergy, calculateNormalizedCrossCorrelation, goertzelMagnitude are unchanged)
     juce::AudioBuffer<float> preambleTemplate;
     double preambleTemplateEnergy = 0.0;
-
     void generatePreambleTemplate() {
         preambleTemplate.setSize(1, FSK::preambleSamples);
         auto* signal = preambleTemplate.getWritePointer(0);
@@ -259,77 +377,47 @@ private:
         double imag = q1 * std::sin(w);
         return std::sqrt(real * real + imag * imag);
     }
-
-    // NEW: demodulateFrame now takes the original buffer to create the debug file
-    void demodulateFrame(const juce::AudioBuffer<float>& frameData, const juce::AudioBuffer<float>& originalRecording, int frameStartSample)
-    {
+    void demodulateFrame(const juce::AudioBuffer<float>& frameData) {
         std::vector<bool> receivedBits;
         receivedBits.reserve(FSK::totalFrameBits);
         const float* data = frameData.getReadPointer(0);
-
-        std::cout << "\n--- Demodulator Output & Confidence Scores (First 100 bits) ---" << std::endl;
         for (int i = 0; i < FSK::totalFrameBits; ++i) {
             const float* bitSamples = data + (i * FSK::samplesPerBit);
             double mag_f0 = goertzelMagnitude(FSK::samplesPerBit, FSK::f0, bitSamples);
             double mag_f1 = goertzelMagnitude(FSK::samplesPerBit, FSK::f1, bitSamples);
-            bool bit = mag_f1 > mag_f0;
-            receivedBits.push_back(bit);
-
-            if (i < 100) { // Print confidence for the first 100 bits
-                double confidence = (mag_f0 > mag_f1) ? (mag_f0 / mag_f1) : (mag_f1 / mag_f0);
-                std::cout << "Bit " << std::setw(3) << i << ": " << (bit ? "1" : "0") << " (Conf: " << std::fixed << std::setprecision(2) << confidence << ")" << std::endl;
-            }
+            receivedBits.push_back(mag_f1 > mag_f0);
         }
-
-        // --- CRC Check ---
         std::vector<bool> payload(receivedBits.begin(), receivedBits.begin() + FSK::payloadBits);
         uint8_t receivedCrcByte = 0;
         for (int i = 0; i < FSK::crcBits; ++i)
             if (receivedBits[FSK::payloadBits + i])
                 receivedCrcByte |= (1 << (7 - i));
-
         uint8_t calculatedCrc = FSK::calculateCRC8(payload);
-
-        std::cout << "\n--- CRC Validation ---" << std::endl;
-        std::cout << "Received CRC (Dec): " << (int)receivedCrcByte << " (Bin): " << FSK::byteToBinary(receivedCrcByte) << std::endl;
-        std::cout << "Calculated CRC (Dec): " << (int)calculatedCrc << " (Bin): " << FSK::byteToBinary(calculatedCrc) << std::endl;
-
         if (calculatedCrc == receivedCrcByte) {
-            std::cout << "\nCRC OK! Writing " << payload.size() << " bits to OUTPUT.txt" << std::endl;
+            std::cout << "CRC OK! Writing " << payload.size() << " bits to OUTPUT.txt" << std::endl;
             std::ofstream outputFile("OUTPUT.txt");
-            for (bool b : payload) outputFile << (b ? '1' : '0');
+            for (bool bit : payload)
+                outputFile << (bit ? '1' : '0');
             outputFile.close();
         }
         else {
-            std::cout << "\nCRC FAIL! Frame discarded." << std::endl;
-        }
+            std::cout << "\nCRC FAIL! Received: " << (int)receivedCrcByte << ", Calculated: " << (int)calculatedCrc << ". Frame discarded." << std::endl;
 
-        // --- Generate Debug Beep Track ---
-        createBeepTrack(originalRecording, frameStartSample);
-    }
-
-    void createBeepTrack(const juce::AudioBuffer<float>& originalRecording, int frameStartSample)
-    {
-        juce::File beepFile = juce::File::getCurrentWorkingDirectory().getChildFile("debug_beeps.wav");
-        juce::AudioBuffer<float> beepBuffer(originalRecording.getNumChannels(), originalRecording.getNumSamples());
-        beepBuffer.copyFrom(0, 0, originalRecording, 0, 0, originalRecording.getNumSamples());
-
-        // Add beeps
-        for (int i = 0; i < FSK::totalFrameBits; ++i) {
-            int beepPos = frameStartSample + (i * FSK::samplesPerBit);
-            if (beepPos + 5 < beepBuffer.getNumSamples()) {
-                for (int j = 0; j < 5; ++j) { // A 5-sample click
-                    beepBuffer.setSample(0, beepPos + j, 1.0f);
-                }
+            // --- NEW: FULL BITSTREAM DUMP ON FAILURE ---
+            std::cout << "\n--- Full Decoded Bitstream ---" << std::endl;
+            std::cout << "Payload (" << FSK::payloadBits << " bits):" << std::endl;
+            for (size_t i = 0; i < payload.size(); ++i) {
+                std::cout << (payload[i] ? '1' : '0');
+                if ((i + 1) % 8 == 0) std::cout << " "; // Add a space every 8 bits for readability
+                if ((i + 1) % 64 == 0) std::cout << std::endl; // Newline every 8 bytes
             }
+            std::cout << "\n\nReceived CRC (8 bits):" << std::endl;
+            for (size_t i = 0; i < FSK::crcBits; ++i) {
+                std::cout << (receivedBits[FSK::payloadBits + i] ? '1' : '0');
+            }
+            std::cout << std::endl;
         }
 
-        juce::WavAudioFormat wavFormat;
-        std::unique_ptr<juce::AudioFormatWriter> writer(wavFormat.createWriterFor(new juce::FileOutputStream(beepFile), 44100.0, 1, 16, {}, 0));
-        if (writer != nullptr) {
-            writer->writeFromAudioSampleBuffer(beepBuffer, 0, beepBuffer.getNumSamples());
-            std::cout << "Diagnostic beep track saved to: " << beepFile.getFullPathName() << std::endl;
-        }
     }
 };
 
@@ -355,9 +443,12 @@ public:
         float* const* outputChannelData, int numOutputChannels,
         int numSamples, const juce::AudioIODeviceCallbackContext&) override {
         if (numOutputChannels > 0) {
+            //juce::AudioSourceChannelInfo bufferToFill(outputChannelData, numOutputChannels, numSamples);
             juce::AudioSourceChannelInfo bufferToFill;
             juce::AudioBuffer<float> tempBuffer(const_cast<float**>(outputChannelData), numOutputChannels, numSamples);
-            bufferToFill.buffer = &tempBuffer;            bufferToFill.startSample = 0;            fskSource.getNextAudioBlock(bufferToFill);
+            bufferToFill.buffer = &tempBuffer;            bufferToFill.startSample = 0;
+            bufferToFill.numSamples = numSamples;
+            fskSource.getNextAudioBlock(bufferToFill);
         }
         if (numInputChannels > 0) {
             if (samplesRecorded + numSamples <= recordedAudio.getNumSamples()) {
@@ -409,7 +500,9 @@ int main(int argc, char* argv[])
     deviceManager.addAudioCallback(&tester);
     std::cout << "--- Playing and recording simultaneously... ---" << std::endl;
 
+
     std::cin.get();
+
 
     deviceManager.removeAudioCallback(&tester);
     std::cout << "--- Play/Record finished. ---" << std::endl;

@@ -1,4 +1,4 @@
-Read 5000 bits from INPUT.txt
+Read 1000 bits from INPUT.txt
 Acoustic loopback test is ready.
 Ensure your microphone can hear your speakers.
 Press ENTER to start the play/record process...
@@ -7,262 +7,70 @@ Press ENTER to start the play/record process...
 
 --- Play/Record finished. ---
 
---- Analyzing Recorded Audio ---
-
-
-*** Preamble DETECTED at 0.171814s! Peak NCC: 0.374421 ***
-
-CRC FAIL! Received: 1, Calculated: 47. Frame discarded.
-
-
-*** Preamble DETECTED at 0.289456s! Peak NCC: 0.373642 ***
-
-CRC FAIL! Received: 0, Calculated: 147. Frame discarded.
-
-
-*** Preamble DETECTED at 0.316463s! Peak NCC: 0.362147 ***
-
-CRC FAIL! Received: 2, Calculated: 97. Frame discarded.
-
-
-*** Preamble DETECTED at 0.391678s! Peak NCC: 0.376144 ***
-
-CRC FAIL! Received: 0, Calculated: 141. Frame discarded.
-
-
-*** Preamble DETECTED at 0.407143s! Peak NCC: 0.356229 ***
-
-CRC FAIL! Received: 192, Calculated: 153. Frame discarded.
-Peak NCC in 0.0-0.5s: 0.3761
-
-
-*** Preamble DETECTED at 0.5533s! Peak NCC: 0.3623 ***
-
-CRC FAIL! Received: 0, Calculated: 19. Frame discarded.
-
-
-*** Preamble DETECTED at 0.6008s! Peak NCC: 0.3568 ***
-
-CRC FAIL! Received: 0, Calculated: 5. Frame discarded.
-
-
-*** Preamble DETECTED at 0.6088s! Peak NCC: 0.3782 ***
-
-CRC FAIL! Received: 140, Calculated: 129. Frame discarded.
-
-
-*** Preamble DETECTED at 0.6168s! Peak NCC: 0.3934 ***
-
-CRC FAIL! Received: 0, Calculated: 213. Frame discarded.
-
-
-*** Preamble DETECTED at 0.7245s! Peak NCC: 0.3885 ***
-
-CRC FAIL! Received: 0, Calculated: 196. Frame discarded.
-
-
-*** Preamble DETECTED at 0.8871s! Peak NCC: 0.3848 ***
-
-CRC FAIL! Received: 0, Calculated: 245. Frame discarded.
-
-
-*** Preamble DETECTED at 0.9041s! Peak NCC: 0.3638 ***
-
-CRC FAIL! Received: 0, Calculated: 188. Frame discarded.
-
-
-*** Preamble DETECTED at 0.9713s! Peak NCC: 0.3547 ***
-
-CRC FAIL! Received: 0, Calculated: 207. Frame discarded.
-Peak NCC in 0.5-1.0s: 0.3934
-
-
-*** Preamble DETECTED at 0.9993s! Peak NCC: 0.3623 ***
-
-CRC FAIL! Received: 0, Calculated: 53. Frame discarded.
-
-
-*** Preamble DETECTED at 1.0278s! Peak NCC: 0.3737 ***
-
-Preamble found, but not enough data for a full frame. Aborting.
-
-
-*** Preamble DETECTED at 1.0558s! Peak NCC: 0.3665 ***
-
-Preamble found, but not enough data for a full frame. Aborting.
-
-
-*** Preamble DETECTED at 1.1570s! Peak NCC: 0.3541 ***
-
-Preamble found, but not enough data for a full frame. Aborting.
-
-
-*** Preamble DETECTED at 1.4598s! Peak NCC: 0.3673 ***
-
-Preamble found, but not enough data for a full frame. Aborting.
-Peak NCC in 1.0-1.5s: 0.3737
-
-
-*** Preamble DETECTED at 1.5690s! Peak NCC: 0.3847 ***
-
-Preamble found, but not enough data for a full frame. Aborting.
-
-
-*** Preamble DETECTED at 1.5770s! Peak NCC: 0.3650 ***
-
-Preamble found, but not enough data for a full frame. Aborting.
-
-
-*** Preamble DETECTED at 1.6195s! Peak NCC: 0.3753 ***
-
-Preamble found, but not enough data for a full frame. Aborting.
-
-
-*** Preamble DETECTED at 1.7871s! Peak NCC: 0.3569 ***
-
-Preamble found, but not enough data for a full frame. Aborting.
-
-
-*** Preamble DETECTED at 1.7951s! Peak NCC: 0.3742 ***
-
-Preamble found, but not enough data for a full frame. Aborting.
-
-
-*** Preamble DETECTED at 1.8593s! Peak NCC: 0.3588 ***
-
-Preamble found, but not enough data for a full frame. Aborting.
-Peak NCC in 1.5-2.0s: 0.3847
-
-
-*** Preamble DETECTED at 2.0775s! Peak NCC: 0.3618 ***
-
-Preamble found, but not enough data for a full frame. Aborting.
-
-
-*** Preamble DETECTED at 2.2071s! Peak NCC: 0.3548 ***
-
-Preamble found, but not enough data for a full frame. Aborting.
-Peak NCC in 2.0-2.5s: 0.3618
-
-
-*** Preamble DETECTED at 2.4975s! Peak NCC: 0.3550 ***
-
-Preamble found, but not enough data for a full frame. Aborting.
-
-
-*** Preamble DETECTED at 2.6531s! Peak NCC: 0.3687 ***
-
-Preamble found, but not enough data for a full frame. Aborting.
-
-
-*** Preamble DETECTED at 2.6631s! Peak NCC: 0.3553 ***
-
-Preamble found, but not enough data for a full frame. Aborting.
-
-
-*** Preamble DETECTED at 2.8058s! Peak NCC: 0.3963 ***
-
-Preamble found, but not enough data for a full frame. Aborting.
-
-
-*** Preamble DETECTED at 2.8198s! Peak NCC: 0.3617 ***
-
-Preamble found, but not enough data for a full frame. Aborting.
-
-
-*** Preamble DETECTED at 2.8268s! Peak NCC: 0.4313 ***
-
-Preamble found, but not enough data for a full frame. Aborting.
-Peak NCC in 2.5-3.0s: 0.4313
-
-
-*** Preamble DETECTED at 3.4115s! Peak NCC: 0.4720 ***
-
-Preamble found, but not enough data for a full frame. Aborting.
-
-
-*** Preamble DETECTED at 3.4214s! Peak NCC: 0.3898 ***
-
-Preamble found, but not enough data for a full frame. Aborting.
-Peak NCC in 3.0-3.5s: 0.4720
-
-
-*** Preamble DETECTED at 3.5641s! Peak NCC: 0.3582 ***
-
-Preamble found, but not enough data for a full frame. Aborting.
-
-
-*** Preamble DETECTED at 3.6758s! Peak NCC: 0.3619 ***
-
-Preamble found, but not enough data for a full frame. Aborting.
-
-
-*** Preamble DETECTED at 3.9525s! Peak NCC: 0.3634 ***
-
-Preamble found, but not enough data for a full frame. Aborting.
-
-
-*** Preamble DETECTED at 3.9801s! Peak NCC: 0.4418 ***
-
-Preamble found, but not enough data for a full frame. Aborting.
-Peak NCC in 3.5-4.0s: 0.4418
-
-
-*** Preamble DETECTED at 4.0011s! Peak NCC: 0.3631 ***
-
-Preamble found, but not enough data for a full frame. Aborting.
-
-
-*** Preamble DETECTED at 4.0671s! Peak NCC: 0.3585 ***
-
-Preamble found, but not enough data for a full frame. Aborting.
-
-
-*** Preamble DETECTED at 4.2834s! Peak NCC: 0.3502 ***
-
-Preamble found, but not enough data for a full frame. Aborting.
-Peak NCC in 4.0-4.5s: 0.3631
-
-
-*** Preamble DETECTED at 4.5512s! Peak NCC: 0.4130 ***
-
-Preamble found, but not enough data for a full frame. Aborting.
-
-
-*** Preamble DETECTED at 4.5747s! Peak NCC: 0.3594 ***
-
-Preamble found, but not enough data for a full frame. Aborting.
-
-
-*** Preamble DETECTED at 4.5948s! Peak NCC: 0.4311 ***
-
-Preamble found, but not enough data for a full frame. Aborting.
-
-
-*** Preamble DETECTED at 4.7204s! Peak NCC: 0.3607 ***
-
-Preamble found, but not enough data for a full frame. Aborting.
-
-
-*** Preamble DETECTED at 4.7354s! Peak NCC: 0.3525 ***
-
-Preamble found, but not enough data for a full frame. Aborting.
-
-
-*** Preamble DETECTED at 4.8790s! Peak NCC: 0.3930 ***
-
-Preamble found, but not enough data for a full frame. Aborting.
-
-
-*** Preamble DETECTED at 4.8890s! Peak NCC: 0.4036 ***
-
-Preamble found, but not enough data for a full frame. Aborting.
-
-
-*** Preamble DETECTED at 4.9031s! Peak NCC: 0.4463 ***
-
-Preamble found, but not enough data for a full frame. Aborting.
-Peak NCC in 4.5-5.0s: 0.4463
-Peak NCC in 5.0-5.5s: 0.3452
-Peak NCC in 5.5-6.0s: 0.1812
-D:\fourth_year\cs120\Sender\Builds\VisualStudio2022\INPUT.txt
+--- Analyzing Recorded Audio & Detecting Frames ---
+Detection threshold: 0.35
+
+*** PREAMBLE DETECTED at sample 26214 (t=0.594s)
+    Peak NCC: 0.4669
+    Fine-tuning frame start (searching 44 samples)...
+    Offset correction: 17 samples (clarity score: 0.929)
+ERROR: Not enough samples for full frame. Need 220352, have 84710
+
+*** PREAMBLE DETECTED at sample 29627 (t=0.672s)
+    Peak NCC: 0.4000
+    Fine-tuning frame start (searching 44 samples)...
+    Offset correction: -3 samples (clarity score: 0.841)
+ERROR: Not enough samples for full frame. Need 220352, have 81317
+
+*** PREAMBLE DETECTED at sample 34242 (t=0.776s)
+    Peak NCC: 0.3523
+    Fine-tuning frame start (searching 44 samples)...
+    Offset correction: -18 samples (clarity score: 0.979)
+ERROR: Not enough samples for full frame. Need 220352, have 76717
+
+*** PREAMBLE DETECTED at sample 34815 (t=0.789s)
+    Peak NCC: 0.3765
+    Fine-tuning frame start (searching 44 samples)...
+    Offset correction: -18 samples (clarity score: 0.947)
+ERROR: Not enough samples for full frame. Need 220352, have 76144
+
+*** PREAMBLE DETECTED at sample 36006 (t=0.816s)
+    Peak NCC: 0.3558
+    Fine-tuning frame start (searching 44 samples)...
+    Offset correction: 9 samples (clarity score: 0.929)
+ERROR: Not enough samples for full frame. Need 220352, have 74926
+
+*** PREAMBLE DETECTED at sample 48899 (t=1.109s)
+    Peak NCC: 0.3638
+    Fine-tuning frame start (searching 44 samples)...
+    Offset correction: 5 samples (clarity score: 0.912)
+ERROR: Not enough samples for full frame. Need 220352, have 62037
+
+*** PREAMBLE DETECTED at sample 60112 (t=1.363s)
+    Peak NCC: 0.3546
+    Fine-tuning frame start (searching 44 samples)...
+    Offset correction: -9 samples (clarity score: 0.852)
+ERROR: Not enough samples for full frame. Need 220352, have 50838
+
+*** PREAMBLE DETECTED at sample 68611 (t=1.556s)
+    Peak NCC: 0.3922
+    Fine-tuning frame start (searching 44 samples)...
+    Offset correction: 4 samples (clarity score: 0.942)
+ERROR: Not enough samples for full frame. Need 220352, have 42326
+
+*** PREAMBLE DETECTED at sample 68920 (t=1.563s)
+    Peak NCC: 0.3522
+    Fine-tuning frame start (searching 44 samples)...
+    Offset correction: -20 samples (clarity score: 0.935)
+ERROR: Not enough samples for full frame. Need 220352, have 42041
+
+*** PREAMBLE DETECTED at sample 71695 (t=1.626s)
+    Peak NCC: 0.3580
+    Fine-tuning frame start (searching 44 samples)...
+    Offset correction: -9 samples (clarity score: 0.967)
+ERROR: Not enough samples for full frame. Need 220352, have 39255
+
+Diagnostic NCC waveform saved to: D:\fourth_year\cs120\Receiver\Builds\VisualStudio2022\debug_ncc_output.csv
+Full loopback recording saved to: D:\fourth_year\cs120\Receiver\Builds\VisualStudio2022\debug_loopback_recording.wav
+
+--- Analysis Complete ---

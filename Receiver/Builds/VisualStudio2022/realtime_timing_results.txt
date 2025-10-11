@@ -1,0 +1,10 @@
+Real-Time Chirp Detection Results
+================================
+
+Test Configuration:
+  Sample Rate: 44100 Hz
+  Chirp Duration: 0.00997732 s
+  Playback Gain: 0.6
+
+Timing Results:
+Expected(sample)	Detected(sample)	Error(samples)	Error(ms)	Confidence

@@ -8,7 +8,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from pathlib import Path
 
-def analyze_ncc_file(ncc_csv_path="debug_ncc_output.csv"):
+def analyze_ncc_file(ncc_csv_path="Receiver\Builds\VisualStudio2022\debug_ncc_output.csv"):
     """Analyze the NCC correlation output to detect synchronization issues"""
     
     if not Path(ncc_csv_path).exists():

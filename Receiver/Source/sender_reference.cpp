@@ -2,7 +2,7 @@
 //  main.cpp
 //  cs120_pj1_source
 //
-//  Created by ÕÔÞÈ²© on 2021/10/14.
+//  Created by ���Ȳ� on 2021/10/14.
 //
 
 #include <iostream>
