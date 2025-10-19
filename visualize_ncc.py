@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import sys
 
-def load_ncc_data(filename='ncc_values.txt'):
+def load_ncc_data(filename="Receiver\Builds\VisualStudio2022/ncc_values.txt"):
     """Load NCC data from file"""
     try:
         data = np.loadtxt(filename)
@@ -46,10 +46,10 @@ def plot_ncc_analysis(indices, ncc_values, power_values, sample_rate=48000):
     # Plot 1: NCC values
     ax1 = axes[0]
     ax1.plot(time, ncc_values, 'b-', linewidth=0.5, label='NCC')
-    ax1.axhline(y=0.01, color='r', linestyle='--', linewidth=1, label='Threshold (0.01)')
+    ax1.axhline(y=0.05, color='r', linestyle='--', linewidth=1, label='Threshold (0.05)')
     
     # Find peaks above threshold
-    threshold = 0.01
+    threshold = 0.05
     peaks = np.where(ncc_values > threshold)[0]
     if len(peaks) > 0:
         ax1.plot(time[peaks], ncc_values[peaks], 'ro', markersize=3, label='Above threshold')
@@ -75,12 +75,12 @@ def plot_ncc_analysis(indices, ncc_values, power_values, sample_rate=48000):
     
     # Plot 3: Detection criteria
     ax3 = axes[2]
-    criteria = (ncc_values > power_values * 2) & (ncc_values > 0.01)
+    criteria = (ncc_values > power_values * 2) & (ncc_values > 0.05)
     ax3.plot(time, criteria.astype(float), 'r-', linewidth=1)
     ax3.fill_between(time, 0, criteria.astype(float), alpha=0.3, color='red')
     ax3.set_xlabel('Time (seconds)')
     ax3.set_ylabel('Detection Criteria Met')
-    ax3.set_title('Detection Criteria: (NCC > Power×2) AND (NCC > 0.01)')
+    ax3.set_title('Detection Criteria: (NCC > Power×2) AND (NCC > 0.05)')
     ax3.set_ylim([-0.1, 1.1])
     ax3.grid(True, alpha=0.3)
     
@@ -96,7 +96,7 @@ def plot_ncc_analysis(indices, ncc_values, power_values, sample_rate=48000):
     print(f"  Max NCC value: {np.max(ncc_values):.4f}")
     print(f"  Mean NCC value: {np.mean(ncc_values):.4f}")
     print(f"  Std NCC value: {np.std(ncc_values):.4f}")
-    print(f"  Samples above 0.01: {np.sum(ncc_values > 0.01)}")
+    print(f"  Samples above 0.05: {np.sum(ncc_values > 0.05)}")
     
     if len(power_values) > 0 and np.max(power_values) > 0:
         print(f"\nPower Statistics:")
@@ -106,12 +106,12 @@ def plot_ncc_analysis(indices, ncc_values, power_values, sample_rate=48000):
         
         # Detection analysis
         crit_a = ncc_values > power_values * 2
-        crit_b = ncc_values > 0.01
+        crit_b = ncc_values > 0.05
         combined = crit_a & crit_b
         
         print(f"\nDetection Criteria:")
         print(f"  Samples where NCC > Power×2: {np.sum(crit_a)}")
-        print(f"  Samples where NCC > 0.01: {np.sum(crit_b)}")
+        print(f"  Samples where NCC > 0.05: {np.sum(crit_b)}")
         print(f"  Samples meeting both: {np.sum(combined)}")
         
         if np.sum(combined) > 0:
