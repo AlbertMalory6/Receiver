@@ -251,9 +251,7 @@ int main(int argc, char* argv[])
     deviceManager.addAudioCallback(&player);
     std::cout << "\n TRANSMITTING... (Make sure Receiver is recording)" << std::endl;
 
-    while (!player.isFinished()) {
-        juce::Thread::sleep(100);
-    }
+    std::cin.get();
     
     deviceManager.removeAudioCallback(&player);
     std::cout << "\n✓ Transmission complete." << std::endl;

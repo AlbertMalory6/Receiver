@@ -1,200 +1,296 @@
 ﻿/*
- * PRECISE AUDIO QUALITY TESTER (v4 - Recording Logic Corrected)
+ * ==============================================================================
+ * CHIRP DETECTOR - STANDALONE TEST
+ * ==============================================================================
  *
- * This version corrects a critical flaw in the audio recording logic.
+ * This program performs an isolated test of the chirp detection logic.
  *
- * THE FIX:
- * 1.  Single-Channel Recording: Instead of summing all available input
- * channels (which mixes in noise and unwanted signals), this version
- * records *only* from the first available input channel (inputChannelData[0]).
- * This is the standard and correct approach for capturing a clean signal.
+ * 1. Generates a test signal:
+ * [0.5s Silence] + [Click Marker] + [Chirp] + [Click Marker]
  *
- * 2.  Efficient Block Copying: The inefficient sample-by-sample `for` loop
- * has been replaced with `recordedAudio.copyFrom()`. This is a highly
- * optimized, single function call that copies a block of audio data,
- * reducing CPU overhead and potential for errors.
+ * 2. Saves the generated signal to:
+ * D:\fourth_year\cs120\debug_pic\chirp\generated_chirp_signal.wav
  *
- * 3.  Robust Buffer Handling: The code now calculates the exact number of
- * samples to copy in each block to prevent any possibility of writing
- * past the end of the destination buffer.
+ * 3. Plays the signal while simultaneously recording from the microphone.
+ *
+ * 4. Saves the recording to:
+ * D:\fourth_year\cs120\debug_pic\chirp\recorded_chirp_signal.wav
+ *
+ * 5. Analyzes the *entire* recording by sliding the chirp template across
+ * it and calculating the Normalized Cross-Correlation (NCC) at every
+ * sample.
+ *
+ * 6. Saves the correlation data to:
+ * D:\fourth_year\cs120\debug_pic\chirp\chirp_correlation_log.csv
+ *
+ * 7. Use the accompanying Python script 'plot_chirp_analysis.py' to
+ * visualize the results.
  */
 
 #include <JuceHeader.h>
 #include <iostream>
+#include <fstream>
 #include <vector>
 #include <cmath>
-#include <string>
+#include <iomanip> // For formatting output
 
  // ==============================================================================
  //  CONFIGURATION
  // ==============================================================================
-namespace Config {
-    constexpr double desiredSampleRate = 44100.0;
-    constexpr int desiredBufferSize = 512;
-    constexpr int durationSeconds = 5;
-    // IMPORTANT: Change this to a valid path on your system!
-    const std::string outputPath = "D:\\fourth_year\\cs120\\debug_pic\\audio_debug\\";
-    //"D:\fourth_year\cs120\debug_pic\audio_debug\recorded_audio.wav"
+#define USE_NCC_DETECTION 1 // 1 = NCC, 0 = Dot Product
+
+namespace FSK {
+    constexpr double sampleRate = 48000.0;
+    constexpr int preambleSamples = 440; // Chirp length
+
+    // Chirp parameters (matching sender/receiver)
+    double chirp_f_start = 500.0;
+    double chirp_f_mid = 4000.0;
+
+    // Output Path
+    const std::string outputPath = "D:\\fourth_year\\cs120\\debug_pic\\chirp\\";
 }
 
 // ==============================================================================
-//  HELPER FUNCTIONS
+//  SIGNAL GENERATOR
 // ==============================================================================
-#pragma region HelperFunctions
-juce::AudioBuffer<float> generateTestAudio() {
-    int numSamples = static_cast<int>(Config::desiredSampleRate * Config::durationSeconds);
-    juce::AudioBuffer<float> buffer(1, numSamples);
-    auto* signal = buffer.getWritePointer(0);
-    double currentPhase = 0.0;
-    std::cout << "Generating test audio signal (" << numSamples << " samples)..." << std::endl;
-
-    for (int i = 0; i < numSamples; ++i) {
-        double time = i / Config::desiredSampleRate;
-        double freq = 0.0;
-        if (time < 0.5) freq = 500.0;
-        else if (time >= 0.75 && time < 1.25) freq = 1500.0;
-        else if (time >= 1.5 && time < 2.0) freq = 3000.0;
-        else if (time >= 2.5 && time < 3.5) freq = juce::jmap(time, 2.5, 3.5, 500.0, 4000.0);
-        else if (time >= 3.5 && time < 4.5) freq = juce::jmap(time, 3.5, 4.5, 4000.0, 500.0);
-
-        if (freq > 0.0) {
-            double phaseIncrement = 2.0 * juce::MathConstants<double>::pi * freq / Config::desiredSampleRate;
-            currentPhase += phaseIncrement;
-            signal[i] = static_cast<float>(std::sin(currentPhase) * 0.5);
-        }
-        else {
-            signal[i] = 0.0f;
-            currentPhase = 0.0;
-        }
-    }
-    return buffer;
-}
-
-bool saveWavFile(const std::string& filePath, const juce::AudioBuffer<float>& buffer, double sampleRate) {
-    juce::File outFile(filePath);
-    if (outFile.exists()) outFile.deleteFile();
-
-    auto range = buffer.findMinMax(0, 0, buffer.getNumSamples());
-    std::cout << "\nSaving buffer to " << filePath << std::endl;
-    std::cout << "  - NumSamples: " << buffer.getNumSamples() << std::endl;
-    std::cout << "  - SampleRate: " << sampleRate << std::endl;
-    std::cout << "  - Buffer Range: " << range.getStart() << " to " << range.getEnd() << std::endl;
-    if (range.getStart() == 0.0f && range.getEnd() == 0.0f)
-    {
-        std::cout << "  - >>> WARNING: Buffer is completely silent! <<<" << std::endl;
-    }
-
-    juce::WavAudioFormat wavFormat;
-    std::unique_ptr<juce::AudioFormatWriter> writer(
-        wavFormat.createWriterFor(new juce::FileOutputStream(outFile),
-            sampleRate, 1, 16, {}, 0));
-    if (writer != nullptr) {
-        writer->writeFromAudioSampleBuffer(buffer, 0, buffer.getNumSamples());
-        std::cout << "  -> Successfully saved." << std::endl;
-        return true;
-    }
-    std::cerr << "  -> ERROR: Could not create writer for file." << std::endl;
-    return false;
-}
-#pragma endregion
-
-// ==============================================================================
-//  AUDIO TESTER WITH CORRECTED RECORDING LOGIC
-// ==============================================================================
-class AudioTester : public juce::AudioIODeviceCallback {
+class SignalGenerator {
 public:
-    AudioTester(const juce::AudioBuffer<float>& source)
-        : audioToPlay(source), actualSampleRate(Config::desiredSampleRate) {
-        recordedAudio.setSize(1, source.getNumSamples());
-        recordedAudio.clear();
-    }
+    /** Generates the preamble chirp */
+    static juce::AudioBuffer<float> generateChirp() {
+        juce::AudioBuffer<float> chirp(1, FSK::preambleSamples);
+        auto* signal = chirp.getWritePointer(0);
 
-    void audioDeviceAboutToStart(juce::AudioIODevice* device) override {
-        actualSampleRate = device->getCurrentSampleRate();
-        std::cout << "\n" << std::string(50, '*') << std::endl;
-        std::cout << "AUDIO DEVICE STARTED" << std::endl;
-        std::cout << "  Actual Sample Rate: " << actualSampleRate << " Hz" << std::endl;
-        std::cout << "  Actual Buffer Size: " << device->getCurrentBufferSizeSamples() << " samples" << std::endl;
-        std::cout << std::string(50, '*') << "\n" << std::endl;
-
-        if (actualSampleRate != Config::desiredSampleRate) {
-            std::cout << "WARNING: Sample Rate Mismatch!" << std::endl;
-            int actualSamples = static_cast<int>(actualSampleRate * Config::durationSeconds);
-            recordedAudio.setSize(1, actualSamples, false, true, true);
-            recordedAudio.clear();
-            std::cout << "  Resized recording buffer to " << actualSamples << " samples." << std::endl;
+        double currentPhase = 0.0;
+        for (int i = 0; i < FSK::preambleSamples; ++i) {
+            double freq;
+            if (i < FSK::preambleSamples / 2) {
+                freq = juce::jmap((double)i, 0.0, (double)FSK::preambleSamples / 2.0,
+                    FSK::chirp_f_start, FSK::chirp_f_mid);
+            }
+            else {
+                freq = juce::jmap((double)i, (double)FSK::preambleSamples / 2.0,
+                    (double)FSK::preambleSamples, FSK::chirp_f_mid, FSK::chirp_f_start);
+            }
+            double phaseIncrement = 2.0 * juce::MathConstants<double>::pi * freq / FSK::sampleRate;
+            currentPhase += phaseIncrement;
+            signal[i] = std::sin(currentPhase) * 0.5; // 0.5 amplitude
         }
+        return chirp;
     }
 
+    /** Generates a short, loud click marker */
+    static juce::AudioBuffer<float> generateClick(int numSamples = 5) {
+        juce::AudioBuffer<float> click(1, numSamples);
+        juce::FloatVectorOperations::fill(click.getWritePointer(0), 0.8f, numSamples); // A simple, loud square pulse
+        return click;
+    }
+
+    /** Generates silence */
+    static juce::AudioBuffer<float> generateSilence(int numSamples) {
+        juce::AudioBuffer<float> silence(1, numSamples);
+        silence.clear();
+        return silence;
+    }
+};
+
+// ==============================================================================
+//  AUDIO PLAYER (Same as sender)
+// ==============================================================================
+class AudioPlayer : public juce::AudioIODeviceCallback {
+public:
+    AudioPlayer(const juce::AudioBuffer<float>& bufferToPlay)
+        : sourceBuffer(bufferToPlay), samplesPlayed(0) {
+    }
+
+    void audioDeviceAboutToStart(juce::AudioIODevice*) override {}
     void audioDeviceStopped() override {}
 
-    // ---
-    // !!! THIS FUNCTION CONTAINS THE CORRECTED RECORDING LOGIC !!!
-    // ---
-    void audioDeviceIOCallbackWithContext(const float* const* inputChannelData, int numInputChannels,
-        float* const* outputChannelData, int numOutputChannels,
+    void audioDeviceIOCallbackWithContext(const float* const*, int,
+        float* const* output, int numOut,
         int numSamples,
-        const juce::AudioIODeviceCallbackContext&) {
+        const juce::AudioIODeviceCallbackContext&) override
+    {
+        int samplesRemaining = sourceBuffer.getNumSamples() - samplesPlayed;
+        int samplesToPlay = std::min(numSamples, samplesRemaining);
 
-        // --- Recording (Corrected) ---
-        // We only record if there is at least one input channel available and its data pointer is valid.
-        if (numInputChannels > 0 && inputChannelData[0] != nullptr)
-        {
-            // Check if there is still space left in our recording buffer.
-            if (samplesRecorded < recordedAudio.getNumSamples())
-            {
-                // Calculate how many samples we can safely copy without overflowing the buffer.
-                int samplesToCopy = std::min(numSamples, recordedAudio.getNumSamples() - samplesRecorded);
-
-                // **THE FIX**: Copy a block of audio from the *first input channel only*.
-                // This avoids summing channels, which was the source of noise and interference.
-                // This method is also far more efficient than a sample-by-sample loop.
-                recordedAudio.copyFrom(0,                  // Destination channel index
-                    samplesRecorded,    // Start sample in destination
-                    inputChannelData[0],// Source buffer (channel 0)
-                    samplesToCopy);     // Number of samples to copy
-
-                // Increment our counter by the number of samples we actually copied.
-                samplesRecorded += samplesToCopy;
-            }
-        }
-
-        // --- Playback (Logic from original test harness) ---
-        // This part plays the generated test tone.
-        if (samplesPlayed < audioToPlay.getNumSamples()) {
-            int samplesToPlay = std::min(numSamples, audioToPlay.getNumSamples() - samplesPlayed);
-
-            for (int chan = 0; chan < numOutputChannels; ++chan) {
-                if (outputChannelData[chan] != nullptr)
-                {
-                    // 复制音频数据到输出缓冲区
-                    std::memcpy(outputChannelData[chan],
-                        audioToPlay.getReadPointer(0, samplesPlayed),
-                        sizeof(float) * samplesToPlay);
+        if (samplesToPlay > 0) {
+            const float* src = sourceBuffer.getReadPointer(0, samplesPlayed);
+            for (int i = 0; i < numOut; ++i) {
+                if (output[i] != nullptr) {
+                    std::memcpy(output[i], src, sizeof(float) * samplesToPlay);
+                    if (samplesToPlay < numSamples) {
+                        juce::FloatVectorOperations::clear(output[i] + samplesToPlay, numSamples - samplesToPlay);
+                    }
                 }
             }
             samplesPlayed += samplesToPlay;
         }
         else {
-            // If playback is finished, just output silence.
-            for (int chan = 0; chan < numOutputChannels; ++chan) {
-                if (outputChannelData[chan] != nullptr) {
-                    juce::FloatVectorOperations::clear(outputChannelData[chan], numSamples);
+            for (int i = 0; i < numOut; ++i) {
+                if (output[i] != nullptr) {
+                    juce::FloatVectorOperations::clear(output[i], numSamples);
                 }
             }
         }
     }
 
+private:
+    const juce::AudioBuffer<float>& sourceBuffer;
+    int samplesPlayed;
+};
+
+// ==============================================================================
+//  AUDIO RECORDER (Same as receiver)
+// ==============================================================================
+class AudioRecorder : public juce::AudioIODeviceCallback {
+public:
+    AudioRecorder(int durationSeconds) {
+        int requiredSamples = static_cast<int>(FSK::sampleRate * durationSeconds);
+        recordedAudio.setSize(1, requiredSamples);
+        recordedAudio.clear();
+        samplesRecorded = 0;
+    }
+
+    void audioDeviceAboutToStart(juce::AudioIODevice*) override {}
+    void audioDeviceStopped() override {}
+
+    void audioDeviceIOCallbackWithContext(const float* const* input, int numIn,
+        float* const*, int,
+        int numSamples,
+        const juce::AudioIODeviceCallbackContext&) override {
+        if (numIn > 0 && input[0] != nullptr) {
+            if (samplesRecorded + numSamples <= recordedAudio.getNumSamples()) {
+                recordedAudio.copyFrom(0, samplesRecorded, input[0], numSamples);
+                samplesRecorded += numSamples;
+            }
+        }
+    }
+
     const juce::AudioBuffer<float>& getRecording() const { return recordedAudio; }
-    double getActualSampleRate() const { return actualSampleRate; }
+    int getSamplesRecorded() const { return samplesRecorded; }
 
 private:
-    const juce::AudioBuffer<float>& audioToPlay;
     juce::AudioBuffer<float> recordedAudio;
-    int samplesPlayed{ 0 };
-    int samplesRecorded{ 0 };
-    double actualSampleRate;
+    int samplesRecorded;
 };
+
+// ==============================================================================
+//  CHIRP DETECTOR (Modified for full analysis logging)
+// ==============================================================================
+class ChirpDetector {
+private:
+    juce::AudioBuffer<float> template_;
+    double templateEnergy_;
+
+    double calculateEnergy(const float* buffer, int numSamples) {
+        double energy = 0.0;
+        for (int i = 0; i < numSamples; ++i) {
+            energy += buffer[i] * buffer[i];
+        }
+        return energy;
+    }
+
+public:
+    ChirpDetector() {
+        template_ = SignalGenerator::generateChirp();
+        templateEnergy_ = calculateEnergy(template_.getReadPointer(0), template_.getNumSamples());
+        std::cout << "Chirp template generated: " << template_.getNumSamples() << " samples" << std::endl;
+        std::cout << "Template energy: " << templateEnergy_ << std::endl;
+    }
+
+    /**
+     * This function analyzes the *entire* signal and logs the
+     * correlation score at *every* sample index to a CSV file.
+     */
+    void logCorrelation(const juce::AudioBuffer<float>& signal, const std::string& logFilePath)
+    {
+        const float* sigData = signal.getReadPointer(0);
+        const float* tempData = template_.getReadPointer(0);
+        const int sigLen = signal.getNumSamples();
+        const int tempLen = template_.getNumSamples();
+
+        std::ofstream logFile(logFilePath);
+        if (!logFile.is_open()) {
+            std::cerr << "ERROR: Could not open log file: " << logFilePath << std::endl;
+            return;
+        }
+
+        std::cout << "\nAnalyzing " << sigLen << " samples..." << std::endl;
+        std::cout << "Logging correlation scores to: " << logFilePath << std::endl;
+
+#if USE_NCC_DETECTION
+        logFile << "Sample_Index,NCC_Value\n";
+#else
+        logFile << "Sample_Index,Dot_Product_Value\n";
+#endif
+
+        double maxScore = -1e10;
+        int maxPos = -1;
+
+        for (int i = 0; i <= sigLen - tempLen; ++i) {
+            double dotProduct = 0.0;
+            double signalEnergy = 0.0;
+            double score = 0.0;
+
+            for (int j = 0; j < tempLen; ++j) {
+                dotProduct += sigData[i + j] * tempData[j];
+#if USE_NCC_DETECTION
+                signalEnergy += sigData[i + j] * sigData[i + j];
+#endif
+            }
+
+#if USE_NCC_DETECTION
+            if (signalEnergy < 1e-10 || templateEnergy_ < 1e-10) {
+                score = 0.0;
+            }
+            else {
+                score = dotProduct / std::sqrt(signalEnergy * templateEnergy_);
+            }
+#else
+            score = dotProduct;
+#endif
+
+            logFile << i << "," << std::fixed << std::setprecision(8) << score << "\n";
+
+            if (score > maxScore) {
+                maxScore = score;
+                maxPos = i;
+            }
+
+            if ((i + 1) % 100000 == 0) {
+                std::cout << "  Analyzed " << (i + 1) << " / " << sigLen << " samples..." << std::endl;
+            }
+        }
+
+        logFile.close();
+        std::cout << "\n✓ Analysis complete." << std::endl;
+#if USE_NCC_DETECTION
+        std::cout << "  Max NCC Score: " << maxScore << " at sample " << maxPos << std::endl;
+#else
+        std::cout << "  Max Dot Product: " << maxScore << " at sample " << maxPos << std::endl;
+#endif
+    }
+};
+
+// ==============================================================================
+//  SAVEWAV UTILITY
+// ==============================================================================
+void saveWavFile(const juce::AudioBuffer<float>& buffer, const juce::File& file, int numSamples)
+{
+    juce::WavAudioFormat wavFormat;
+    std::unique_ptr<juce::AudioFormatWriter> writer(
+        wavFormat.createWriterFor(new juce::FileOutputStream(file),
+            FSK::sampleRate, 1, 16, {}, 0));
+    if (writer != nullptr) {
+        writer->writeFromAudioSampleBuffer(buffer, 0, numSamples);
+        std::cout << "✓ Audio saved to: " << file.getFullPathName() << std::endl;
+    }
+    else {
+        std::cerr << "ERROR: Could not save to " << file.getFullPathName() << std::endl;
+    }
+}
+
 
 // ==============================================================================
 //  MAIN APPLICATION
@@ -203,60 +299,91 @@ int main(int argc, char* argv[])
 {
     juce::ScopedJuceInitialiser_GUI juceInit;
 
-    std::cout << "\n╔══════════════════════════════════════════╗\n";
-    std::cout << "║   PRECISE AUDIO RECORDING TEST (v4-FIXED)  ║\n";
-    std::cout << "╚══════════════════════════════════════════╝\n\n";
+    std::cout << "\n";
+    std::cout << "╔════════════════════════════════════════════════════════════════╗\n";
+    std::cout << "║            CHIRP DETECTION - STANDALONE TEST                   ║\n";
+    std::cout << "╚════════════════════════════════════════════════════════════════╝\n";
 
-    auto originalAudio = generateTestAudio();
-    saveWavFile(Config::outputPath + "original_audio.wav", originalAudio, Config::desiredSampleRate);
-
-    juce::AudioDeviceManager deviceManager;
-
-    auto setup = deviceManager.getAudioDeviceSetup();
-    setup.sampleRate = Config::desiredSampleRate;
-    setup.bufferSize = Config::desiredBufferSize;
-    // Request at least 1 input channel and 2 output channels
-    setup.inputChannels.setRange(0, 1, true);
-    setup.outputChannels.setRange(0, 2, true);
-
-    juce::String initError = deviceManager.initialise(
-        setup.inputChannels.countNumberOfSetBits(),
-        setup.outputChannels.countNumberOfSetBits(),
-        nullptr, true, "", &setup
-    );
-
-    if (!initError.isEmpty()) {
-        std::cerr << "ERROR initializing device: " << initError.toStdString() << std::endl;
-        return 1;
+    // Ensure output directory exists
+    juce::File outputDir(FSK::outputPath);
+    if (!outputDir.exists()) {
+        auto result = outputDir.createDirectory();
+        if (result.failed()) {
+            std::cerr << "CRITICAL ERROR: Could not create output directory!" << std::endl;
+            std::cerr << "Path: " << FSK::outputPath << std::endl;
+            std::cerr << "Please create this directory manually and try again." << std::endl;
+            std::cin.get();
+            return 1;
+        }
+        std::cout << "Created output directory: " << FSK::outputPath << std::endl;
     }
 
-    std::cout << "Device initialized with requested settings:" << std::endl;
-    std::cout << "  Input Device:  " << deviceManager.getCurrentAudioDevice()->getName() << std::endl;
-    std::cout << "  Output Device: " << deviceManager.getCurrentAudioDevice()->getName() << std::endl;
+    // 1. GENERATE SIGNAL
+    std::cout << "\nSTEP 1: Generating test signal..." << std::endl;
+    auto silence = SignalGenerator::generateSilence(static_cast<int>(FSK::sampleRate * 0.5));
+    auto click = SignalGenerator::generateClick(5);
+    auto chirp = SignalGenerator::generateChirp();
 
+    int totalSamples = silence.getNumSamples() + click.getNumSamples() + chirp.getNumSamples() + click.getNumSamples();
+    juce::AudioBuffer<float> finalSignal(1, totalSamples);
 
-    AudioTester tester(originalAudio);
+    int currentSample = 0;
+    finalSignal.copyFrom(0, currentSample, silence, 0, 0, silence.getNumSamples());
+    currentSample += silence.getNumSamples();
 
-    std::cout << "\n>>> IMPORTANT: Connect audio output to input for loopback test. <<<" << std::endl;
-    std::cout << ">>> 1. Set your 'Line In' or 'Stereo Mix' as the DEFAULT Recording Device." << std::endl;
-    std::cout << ">>> 2. Ensure its volume is NOT muted." << std::endl;
-    std::cout << ">>> Press ENTER to start the " << Config::durationSeconds << "-second play/record test..." << std::endl;
+    finalSignal.copyFrom(0, currentSample, click, 0, 0, click.getNumSamples());
+    currentSample += click.getNumSamples();
+
+    finalSignal.copyFrom(0, currentSample, chirp, 0, 0, chirp.getNumSamples());
+    currentSample += chirp.getNumSamples();
+
+    finalSignal.copyFrom(0, currentSample, click, 0, 0, click.getNumSamples());
+
+    std::cout << "Signal generated (" << totalSamples << " samples)" << std::endl;
+
+    // 2. SAVE GENERATED SIGNAL
+    std::cout << "\nSTEP 2: Saving generated signal..." << std::endl;
+    saveWavFile(finalSignal, outputDir.getChildFile("generated_chirp_signal.wav"), totalSamples);
+
+    // 3. SETUP AUDIO
+    juce::AudioDeviceManager deviceManager;
+    deviceManager.initialiseWithDefaultDevices(1, 2); // 1 input, 2 output
+    AudioPlayer player(finalSignal);
+    AudioRecorder recorder(10); // 10 second recording capacity
+
+    // 4. PLAY AND RECORD
+    std::cout << "\nSTEP 3: Play and Record" << std::endl;
+    std::cout << "Press ENTER to start playing and recording..." << std::endl;
     std::cin.get();
 
-    deviceManager.addAudioCallback(&tester);
-    std::cout << "\n🔴 Playing and Recording... Please wait." << std::endl;
+    deviceManager.addAudioCallback(&recorder);
+    deviceManager.addAudioCallback(&player);
 
-    juce::Thread::sleep((Config::durationSeconds + 1) * 1000);
+    std::cout << "\n... PLAYING AND RECORDING ...\n" << std::endl;
+    std::cout << "(Ensure microphone can hear the speaker)" << std::endl;
+    std::cout << "Press ENTER to stop." << std::endl;
+    std::cin.get();
 
-    deviceManager.removeAudioCallback(&tester);
-    std::cout << "\n✓ Test finished." << std::endl;
+    deviceManager.removeAudioCallback(&player);
+    deviceManager.removeAudioCallback(&recorder);
+    std::cout << "\nStopped. Recorded " << recorder.getSamplesRecorded() << " samples." << std::endl;
 
-    saveWavFile(Config::outputPath + "recorded_audio.wav",
-        tester.getRecording(),
-        tester.getActualSampleRate());
+    // 5. SAVE RECORDED SIGNAL
+    std::cout << "\nSTEP 4: Saving recorded signal..." << std::endl;
+    saveWavFile(recorder.getRecording(), outputDir.getChildFile("recorded_chirp_signal.wav"), recorder.getSamplesRecorded());
 
-    std::cout << "\nTest complete. The 'recorded_audio.wav' should now be clean." << std::endl;
-    std::cout << "Press ENTER to exit..." << std::endl;
+    // 6. ANALYZE RECORDING
+    std::cout << "\nSTEP 5: Analyzing recording..." << std::endl;
+    ChirpDetector detector;
+    detector.logCorrelation(recorder.getRecording(), FSK::outputPath + "chirp_correlation_log.csv");
+
+    std::cout << "\n" << std::string(60, '=') << std::endl;
+    std::cout << "TEST COMPLETE" << std::endl;
+    std::cout << std::string(60, '=') << std::endl;
+    std::cout << "\nAll files saved to: " << FSK::outputPath << std::endl;
+    std::cout << "Next step: Run 'plot_chirp_analysis.py' to see the results." << std::endl;
+
+    std::cout << "\nPress ENTER to exit..." << std::endl;
     std::cin.get();
 
     return 0;

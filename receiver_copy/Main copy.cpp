@@ -22,12 +22,12 @@
 
 namespace FSK {
     constexpr double sampleRate = 44100.0;
-    constexpr double f0 = 2000.0;
-    constexpr double f1 = 4000.0;
+    constexpr double f0 = 1000.0;
+    constexpr double f1 = 2000.0;
     constexpr double bitRate = 1000.0;
     constexpr int samplesPerBit = static_cast<int>(sampleRate / bitRate);
     constexpr int preambleSamples = 440;
-    constexpr int payloadBits = 10000;
+    constexpr int payloadBits = 1000;
     constexpr int crcBits = 8;
     constexpr int totalFrameBits = payloadBits + crcBits;
     constexpr int totalFrameDataSamples = totalFrameBits * samplesPerBit;
@@ -36,6 +36,9 @@ namespace FSK {
     constexpr double chirpF0 = f0 - 1000.0;  // 1000 Hz
     constexpr double chirpF1 = f1 + 1000.0;  // 5000 Hz
 }
+const std::string outputPath = "D:\\fourth_year\\cs120\\debug_pic\\audio_debug\\";
+//"D:\\fourth_year\\cs120\\debug_pic\\audio_debug\\"
+
 
 // ==============================================================================
 //  CRC-8 CALCULATION
@@ -276,7 +279,32 @@ private:
     juce::AudioBuffer<float> recordedAudio;
     int samplesRecorded;
 };
+bool saveWavFile(const std::string& filePath, const juce::AudioBuffer<float>& buffer, double sampleRate) {
+    juce::File outFile(filePath);
+    if (outFile.exists()) outFile.deleteFile();
 
+    auto range = buffer.findMinMax(0, 0, buffer.getNumSamples());
+    std::cout << "\nSaving buffer to " << filePath << std::endl;
+    std::cout << "  - NumSamples: " << buffer.getNumSamples() << std::endl;
+    std::cout << "  - SampleRate: " << sampleRate << std::endl;
+    std::cout << "  - Buffer Range: " << range.getStart() << " to " << range.getEnd() << std::endl;
+    if (range.getStart() == 0.0f && range.getEnd() == 0.0f)
+    {
+        std::cout << "  - >>> WARNING: Buffer is completely silent! <<<" << std::endl;
+    }
+
+    juce::WavAudioFormat wavFormat;
+    std::unique_ptr<juce::AudioFormatWriter> writer(
+        wavFormat.createWriterFor(new juce::FileOutputStream(outFile),
+            sampleRate, 1, 16, {}, 0));
+    if (writer != nullptr) {
+        writer->writeFromAudioSampleBuffer(buffer, 0, buffer.getNumSamples());
+        std::cout << "  -> Successfully saved." << std::endl;
+        return true;
+    }
+    std::cerr << "  -> ERROR: Could not create writer for file." << std::endl;
+    return false;
+}
 // ==============================================================================
 //  MAIN APPLICATION
 // ==============================================================================
@@ -296,6 +324,31 @@ int main(int argc, char* argv[])
 
     // Setup audio device
     juce::AudioDeviceManager deviceManager;
+
+    // Find your device by name (replace with your card's name from the log)
+    juce::String myDeviceName = "Line In (My External Soundcard)";
+
+    juce::AudioDeviceManager::AudioDeviceSetup setup;
+    deviceManager.getAudioDeviceSetup(setup); // Get current setup
+
+    setup.inputDeviceName = myDeviceName;
+    setup.inputChannels.setRange(0, 1, true); // Request 1 input channel
+
+    // Try to initialize with these settings
+    juce::String error = deviceManager.initialise(
+        setup.inputChannels.countNumberOfSetBits(), // Num inputs
+        0,                                          // Num outputs
+        nullptr,                                    // XML state
+        true,                                       // Select default channels
+        myDeviceName,                               // Preferred device name
+        &setup                                      // Our setup object
+    );
+
+    if (error.isNotEmpty())
+    {
+        std::cerr << "ERROR: Could not initialise audio device: " << error << std::endl;
+        return 1;
+    }
     deviceManager.initialiseWithDefaultDevices(1, 0);  // Input only
 
     // Create recorder (20 seconds capacity)
@@ -306,7 +359,7 @@ int main(int argc, char* argv[])
     std::cin.get();
 
     deviceManager.addAudioCallback(&recorder);
-    std::cout << "\n🔴 RECORDING... (make sure Sender is playing)" << std::endl;
+    std::cout << "\n RECORDING... (make sure Sender is playing)" << std::endl;
     std::cout << "Press ENTER when transmission is complete..." << std::endl;
     std::cin.get();
 
@@ -315,15 +368,9 @@ int main(int argc, char* argv[])
         << " samples (" << (recorder.getSamplesRecorded() / FSK::sampleRate) << " seconds)" << std::endl;
 
     // Save recording for debugging
-    juce::File outFile = juce::File::getCurrentWorkingDirectory().getChildFile("debug_recording.wav");
-    juce::WavAudioFormat wavFormat;
-    std::unique_ptr<juce::AudioFormatWriter> writer(
-        wavFormat.createWriterFor(new juce::FileOutputStream(outFile),
-            FSK::sampleRate, 1, 16, {}, 0));
-    if (writer != nullptr) {
-        writer->writeFromAudioSampleBuffer(recorder.getRecording(), 0, recorder.getSamplesRecorded());
-        std::cout << "Recording saved to: debug_recording.wav" << std::endl;
-    }
+    saveWavFile(outputPath + "recorded_audio.wav",
+        recorder.getRecording(),
+        FSK::sampleRate);
 
     // STEP 1: Detect chirp
     std::cout << "\n" << std::string(60, '=') << std::endl;
@@ -334,7 +381,7 @@ int main(int argc, char* argv[])
     int chirpPosition = detector.detectChirp(recorder.getRecording());
 
     if (chirpPosition < 0) {
-        std::cerr << "\n✗ ERROR: Chirp not detected!" << std::endl;
+        std::cerr << "\nERROR: Chirp not detected!" << std::endl;
         std::cerr << "Possible causes:" << std::endl;
         std::cerr << "  - No signal received (check audio connections)" << std::endl;
         std::cerr << "  - Signal too weak (increase sender volume)" << std::endl;
@@ -342,7 +389,7 @@ int main(int argc, char* argv[])
         return 1;
     }
 
-    std::cout << "\n✓ Chirp detected at sample " << chirpPosition << std::endl;
+    std::cout << "\n Chirp detected at sample " << chirpPosition << std::endl;
     std::cout << "  Time offset: " << (chirpPosition / FSK::sampleRate) << " seconds" << std::endl;
 
     // STEP 2: Extract data frame
@@ -354,16 +401,16 @@ int main(int argc, char* argv[])
     std::cout << "Frame data starts at sample " << frameStartSample << std::endl;
 
     if (frameStartSample + FSK::totalFrameDataSamples > recorder.getSamplesRecorded()) {
-        std::cerr << "\n✗ ERROR: Not enough samples for full frame!" << std::endl;
+        std::cerr << "\nERROR: Not enough samples for full frame!" << std::endl;
         std::cerr << "  Need: " << (frameStartSample + FSK::totalFrameDataSamples) << " samples" << std::endl;
         std::cerr << "  Have: " << recorder.getSamplesRecorded() << " samples" << std::endl;
         std::cerr << "  Missing: " << (frameStartSample + FSK::totalFrameDataSamples - recorder.getSamplesRecorded()) << " samples" << std::endl;
-        return 1;
+        //return 1;
     }
 
     juce::AudioBuffer<float> frameData(1, FSK::totalFrameDataSamples);
     frameData.copyFrom(0, 0, recorder.getRecording(), 0, frameStartSample, FSK::totalFrameDataSamples);
-    std::cout << "✓ Extracted " << FSK::totalFrameDataSamples << " samples" << std::endl;
+    std::cout << "Extracted " << FSK::totalFrameDataSamples << " samples" << std::endl;
 
     // STEP 3: Demodulate
     std::cout << "\n" << std::string(60, '=') << std::endl;
@@ -391,10 +438,10 @@ int main(int argc, char* argv[])
     std::cout << "Received CRC:   0x" << std::hex << (int)receivedCRCValue << std::dec << std::endl;
 
     if (calculatedCRC == receivedCRCValue) {
-        std::cout << "✓ CRC CHECK PASSED - Data integrity verified!" << std::endl;
+        std::cout << "CRC CHECK PASSED - Data integrity verified!" << std::endl;
     }
     else {
-        std::cout << "✗ CRC CHECK FAILED - Data may be corrupted" << std::endl;
+        std::cout << "CRC CHECK FAILED - Data may be corrupted" << std::endl;
     }
 
     // STEP 5: Save output
@@ -402,7 +449,7 @@ int main(int argc, char* argv[])
     std::cout << "STEP 5: SAVE OUTPUT" << std::endl;
     std::cout << std::string(60, '=') << std::endl;
 
-    std::ofstream outputFile("OUTPUT.txt");
+    std::ofstream outputFile(outputPath + "OUTPUT.txt");
     if (!outputFile.is_open()) {
         std::cerr << "ERROR: Could not open OUTPUT.txt for writing" << std::endl;
         return 1;
@@ -413,7 +460,7 @@ int main(int argc, char* argv[])
     }
     outputFile.close();
 
-    std::cout << "✓ Saved " << payload.size() << " bits to OUTPUT.txt" << std::endl;
+    std::cout << "Saved " << payload.size() << " bits to OUTPUT.txt" << std::endl;
 
     // Calculate bit error rate (if INPUT.txt exists)
     std::ifstream inputFile("INPUT.txt");
@@ -433,7 +480,7 @@ int main(int argc, char* argv[])
             }
 
             double ber = (double)errors / payload.size();
-            std::cout << "\n📊 BIT ERROR RATE: " << errors << " / " << payload.size()
+            std::cout << "\n BIT ERROR RATE: " << errors << " / " << payload.size()
                 << " = " << (ber * 100.0) << "%" << std::endl;
         }
     }
