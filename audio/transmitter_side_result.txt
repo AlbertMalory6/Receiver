@@ -45,3 +45,87 @@ Detecting preambles and decoding frames (dot product method)...
 [Detection] SyncPower at sample 30025: 0.128640 (power*2.0=1.378516)
 [Detection] SyncPower at sample 30039: 0.973281 (power*2.0=1.419642)
 [Detection] SyncPower at sample 30040: 1.251007 (power*2.0=1.410693)
+
+
+[Recording Diagnostics]
+  Min value: -1.000000
+  Max value: 0.999939
+  Mean: 0.000537
+  Std deviation: 0.781281
+
+Demodulate this recording? (y/n): y
+Use verbose output? (y/n): y
+
+Detecting preambles and decoding frames (dot product method)...
+[Detection] SyncPower at sample 3486: 0.145373 (power*2.0=1.374656)
+[Detection] SyncPower at sample 3499: 0.424333 (power*2.0=1.407894)
+[Detection] SyncPower at sample 3500: 1.188810 (power*2.0=1.416824)
+
+[Frame Detection #1] Peak at sample 3500 (max syncPower=1.188810)
+  Frame ID: 1 | CRC: INVALID | Data bits: 0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+[Detection] SyncPower at sample 8739: 0.112688 (power*2.0=1.368644)
+[Detection] SyncPower at sample 8740: 0.141301 (power*2.0=1.378419)
+[Detection] SyncPower at sample 8753: 0.818825 (power*2.0=1.411144)
+[Detection] SyncPower at sample 8754: 1.274141 (power*2.0=1.410657)
+
+[Frame Detection #2] Peak at sample 8754 (max syncPower=1.274141)
+  Frame ID: 2 | CRC: INVALID | Data bits: 0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+[Detection] SyncPower at sample 14131: 0.116731 (power*2.0=1.370672)
+[Detection] SyncPower at sample 14132: 0.138048 (power*2.0=1.380440)
+[Detection] SyncPower at sample 14145: 0.865320 (power*2.0=1.413226)
+[Detection] SyncPower at sample 14146: 1.271353 (power*2.0=1.410968)
+
+[Frame Detection #3] Peak at sample 14146 (max syncPower=1.271353)
+  Frame ID: 3 | CRC: INVALID | Data bits: 0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+[Detection] SyncPower at sample 19490: 0.116746 (power*2.0=1.370546)
+[Detection] SyncPower at sample 19491: 0.138071 (power*2.0=1.380311)
+[Detection] SyncPower at sample 19504: 0.865270 (power*2.0=1.413109)
+[Detection] SyncPower at sample 19505: 1.271289 (power*2.0=1.410867)
+
+[Frame Detection #4] Peak at sample 19505 (max syncPower=1.271289)
+  Frame ID: 4 | CRC: INVALID | Data bits: 0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+[Detection] SyncPower at sample 24745: 0.116823 (power*2.0=1.370732)
+[Detection] SyncPower at sample 24746: 0.138191 (power*2.0=1.380473)
+[Detection] SyncPower at sample 24759: 0.865200 (power*2.0=1.413163)
+[Detection] SyncPower at sample 24760: 1.271163 (power*2.0=1.410943)
+
+[Frame Detection #5] Peak at sample 24760 (max syncPower=1.271163)
+  Frame ID: 5 | CRC: INVALID | Data bits: 0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+[Detection] SyncPower at sample 30023: 0.116791 (power*2.0=1.370640)
+[Detection] SyncPower at sample 30024: 0.138143 (power*2.0=1.380387)
+[Detection] SyncPower at sample 30037: 0.865203 (power*2.0=1.413120)
+[Detection] SyncPower at sample 30038: 1.271180 (power*2.0=1.410893)
+
+[Frame Detection #6] Peak at sample 30038 (max syncPower=1.271180)
+  Frame ID: 6 | CRC: INVALID | Data bits: 0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+[Detection] SyncPower at sample 35303: 0.116782 (power*2.0=1.370599)
+[Detection] SyncPower at sample 35304: 0.138128 (power*2.0=1.380346)
+[Detection] SyncPower at sample 35317: 0.865192 (power*2.0=1.413064)
+[Detection] SyncPower at sample 35318: 1.271176 (power*2.0=1.410824)
+
+[Frame Detection #7] Peak at sample 35318 (max syncPower=1.271176)
+  Frame ID: 7 | CRC: INVALID | Data bits: 0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+[Detection] SyncPower at sample 40597: 0.116776 (power*2.0=1.370523)
+[Detection] SyncPower at sample 40598: 0.138115 (power*2.0=1.380272)
+[Detection] SyncPower at sample 40611: 0.865205 (power*2.0=1.413030)
+[Detection] SyncPower at sample 40612: 1.271183 (power*2.0=1.410800)
+
+[Frame Detection #8] Peak at sample 40612 (max syncPower=1.271183)
+  Frame ID: 8 | CRC: INVALID | Data bits: 0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+[Detection] SyncPower at sample 45955: 0.116722 (power*2.0=1.370598)
+[Detection] SyncPower at sample 45956: 0.138045 (power*2.0=1.380360)
+[Detection] SyncPower at sample 45969: 0.865262 (power*2.0=1.413136)
+[Detection] SyncPower at sample 45970: 1.271280 (power*2.0=1.410872)
+
+[Frame Detection #9] Peak at sample 45970 (max syncPower=1.271280)
+  Frame ID: 9 | CRC: INVALID | Data bits: 0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+[Detection] SyncPower at sample 51273: 0.109827 (power*2.0=1.365141)
+[Detection] SyncPower at sample 51274: 0.142664 (power*2.0=1.374979)
+[Detection] SyncPower at sample 51287: 0.788796 (power*2.0=1.407857)
+[Detection] SyncPower at sample 51288: 1.274186 (power*2.0=1.410717)
+
+[Frame Detection #10] Peak at sample 51288 (max syncPower=1.274186)
+  Frame ID: 10 | CRC: INVALID | Data bits: 0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+[Detection] SyncPower at sample 56537: 0.144596 (power*2.0=1.380035)
+[Detection] SyncPower at sample 56550: 0.390656 (power*2.0=1.412319)
+[Detection] SyncPower at sample 56551: 1.174490 (power*2.0=1.421464)
