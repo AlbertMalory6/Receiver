@@ -48,7 +48,7 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--length", "-n", type=int, default=10000,
                    help="number of bits to generate (default: 10000)")
     p.add_argument("--outdir", "-o", type=Path,
-                   default=Path(r"D:\fourth_year\cs120\Receiver\Builds\VisualStudio2022"),
+                   default=Path(r"D:\fourth-year\computer_network\acoustic project\Builds\VisualStudio2022"),
                    help="output directory path")
     p.add_argument("--seed", type=int, default=None,
                    help="optional RNG seed for reproducible output")
