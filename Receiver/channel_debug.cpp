@@ -118,30 +118,56 @@ public:
 // ==============================================================================
 class TestSignalBuilder {
 public:
-    /** Test 1: Multiple chirps with noise/silence between */
-    static juce::AudioBuffer<float> buildChirpDetectionTest(int numChirps = 10, int silenceBetween = 2000) {
+    /** Test 1: Multiple chirps with silence between - NO DATA */
+    static juce::AudioBuffer<float> buildChirpDetectionTest(int numChirps = 100, int silenceBetween = 5000) {
         auto chirp = TestSignalGenerator::generatePreamble();
         
         std::vector<float> signal;
         
-        std::cout << "\nBuilding Chirp Detection Test Signal:" << std::endl;
+        std::cout << "\nBuilding Chirp-Only Detection Test:" << std::endl;
         std::cout << "  Number of chirps: " << numChirps << std::endl;
-        std::cout << "  Silence between: " << silenceBetween << " samples" << std::endl;
+        std::cout << "  Silence between: " << silenceBetween << " samples (" 
+                  << (silenceBetween / 44100.0 * 1000) << " ms)" << std::endl;
+        std::cout << "  Total duration: " << ((numChirps * (440 + silenceBetween)) / 44100.0) << " seconds" << std::endl;
 
         for (int i = 0; i < numChirps; ++i) {
-            // Add some noise before chirp
-            auto noise = TestSignalGenerator::generateNoise(500, 0.05f);
-            for (int j = 0; j < noise.getNumSamples(); ++j) {
-                signal.push_back(noise.getSample(0, j));
+            // Add chirp (NO noise before, for clean detection)
+            for (int j = 0; j < chirp.getNumSamples(); ++j) {
+                signal.push_back(chirp.getSample(0, j));
             }
 
+            // Add silence after
+            for (int j = 0; j < silenceBetween; ++j) {
+                signal.push_back(0.0f);
+            }
+        }
+
+        juce::AudioBuffer<float> result(1, (int)signal.size());
+        for (size_t i = 0; i < signal.size(); ++i) {
+            result.setSample(0, (int)i, signal[i]);
+        }
+
+        return result;
+    }
+    
+    /** Test 1b: Continuous chirps with minimal gap - stress test */
+    static juce::AudioBuffer<float> buildContinuousChirpsTest(int numChirps = 50) {
+        auto chirp = TestSignalGenerator::generatePreamble();
+        
+        std::vector<float> signal;
+        
+        std::cout << "\nBuilding Continuous Chirps Test:" << std::endl;
+        std::cout << "  Number of chirps: " << numChirps << std::endl;
+        std::cout << "  Gap between: 100 samples (2.3 ms)" << std::endl;
+
+        for (int i = 0; i < numChirps; ++i) {
             // Add chirp
             for (int j = 0; j < chirp.getNumSamples(); ++j) {
                 signal.push_back(chirp.getSample(0, j));
             }
 
-            // Add silence
-            for (int j = 0; j < silenceBetween; ++j) {
+            // Minimal gap (just enough for detector to reset)
+            for (int j = 0; j < 100; ++j) {
                 signal.push_back(0.0f);
             }
         }
@@ -342,11 +368,12 @@ int main(int argc, char* argv[]) {
     while (running) {
         std::cout << "\n" << std::string(60, '=') << std::endl;
         std::cout << "SELECT TEST SIGNAL:" << std::endl;
-        std::cout << "  1. Multiple chirps (test chirp detection)" << std::endl;
-        std::cout << "  2. Alternating bits 010101... (test bit demodulation)" << std::endl;
-        std::cout << "  3. All ones frame (test high signal)" << std::endl;
-        std::cout << "  4. All zeros frame (test low signal)" << std::endl;
-        std::cout << "  5. Pattern 11001100... (test phase coherence)" << std::endl;
+        std::cout << "  1. Chirps ONLY - 100 chirps (RECOMMENDED for channel test)" << std::endl;
+        std::cout << "  2. Continuous chirps - 50 chirps (stress test)" << std::endl;
+        std::cout << "  3. Alternating bits 010101... (test bit demodulation)" << std::endl;
+        std::cout << "  4. All ones frame (test high signal)" << std::endl;
+        std::cout << "  5. All zeros frame (test low signal)" << std::endl;
+        std::cout << "  6. Pattern 11001100... (test phase coherence)" << std::endl;
         std::cout << "  0. Exit" << std::endl;
         std::cout << "Enter choice: ";
 
@@ -364,22 +391,26 @@ int main(int argc, char* argv[]) {
 
         switch (choice) {
         case 1:
-            testSignal = TestSignalBuilder::buildChirpDetectionTest(10, 2000);
-            filename = "test_chirps.wav";
+            testSignal = TestSignalBuilder::buildChirpDetectionTest(100, 5000);
+            filename = "test_chirps_only.wav";
             break;
         case 2:
+            testSignal = TestSignalBuilder::buildContinuousChirpsTest(50);
+            filename = "test_chirps_continuous.wav";
+            break;
+        case 3:
             testSignal = TestSignalBuilder::buildAlternatingBitsTest(1000);
             filename = "test_alternating.wav";
             break;
-        case 3:
+        case 4:
             testSignal = TestSignalBuilder::buildAllOnesTest(108);
             filename = "test_all_ones.wav";
             break;
-        case 4:
+        case 5:
             testSignal = TestSignalBuilder::buildAllZerosTest(108);
             filename = "test_all_zeros.wav";
             break;
-        case 5: {
+        case 6: {
             std::vector<bool> pattern = {true, true, false, false};
             testSignal = TestSignalBuilder::buildPatternTest(pattern, 100);
             filename = "test_pattern.wav";
