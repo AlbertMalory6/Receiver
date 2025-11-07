@@ -43,24 +43,41 @@ namespace ASK {
     // Line coding parameters
     constexpr double baseFreq = 2000.0;        // Base tone for line coding (2kHz)
     
-    // Modulation parameters
+    // =========================================================================
+    // SPEED TUNING PARAMETERS - Adjust these to meet timing requirements
+    // =========================================================================
+    // Target: 50,000 bits in 20 seconds = 2,500 bps minimum
+    // Formula: Bit Rate = sampleRate / samplesPerBit
+    // 
+    // Current settings for SPEED:
+    // - NRZ samplesPerBit=11 → 4,009 bps → ~15 seconds for 50k bits ✓
+    // - Manchester samplesPerBit=22 → 2,005 bps → ~25 seconds (TOO SLOW) ✗
+    //
+    // TUNING GUIDE:
+    // samplesPerBit | NRZ bps | Duration | Robustness
+    // -------------|---------|----------|------------
+    //      15      |  2,940  |  17.0s   | Good
+    //      11      |  4,009  |  12.5s   | Medium  <- RECOMMENDED START
+    //       8      |  5,512  |   9.1s   | Marginal
+    //       6      |  7,350  |   6.8s   | Poor (use only if channel is perfect)
+    
 #if USE_MANCHESTER
-    constexpr int samplesPerBit = 88;          // Manchester needs 2x (was 44)
+    constexpr int samplesPerBit = 21;          // Manchester: 2,005 bps (SLOW, may not meet 20s requirement!)
 #else
-    constexpr int samplesPerBit = 44;          // NRZ standard rate
+    constexpr int samplesPerBit = 11;          // NRZ: 4,009 bps (RECOMMENDED for speed)
 #endif
     
     constexpr int bitsPerFrame = 108;            // 8 ID + 100 data + 8 CRC
     constexpr int dataBitsPerFrame = 100;
     constexpr int idBitsPerFrame = 8;
     constexpr int crcBitsPerFrame = 8;
-    constexpr int numFrames = 100;
+    constexpr int numFrames = 500;               // Changed from 100 to handle 50,000 bits (500×100=50,000)
  
      // CRC polynomial: x^8+x^7+x^5+x^2+x+1 = 0xD5 = 0b11010101
      constexpr uint8_t crcPolynomial = 0xD5;
  
      // Input/Output paths
-     const std::string inputPath = "INPUT.txt";
+     const std::string inputPath = "INPUT.bin";  // Use binary file now
      const std::string outputPath = "D:\\fourth_year\\cs120\\debug_pic\\ASK\\";
      const std::string audio_path = "D:\\fourth_year\\cs120\\debug_pic\\ASK\\recorded_signal.wav";
  
@@ -219,38 +236,50 @@ namespace ASK {
  public:
      static std::vector<bool> readInputFile(const std::string& filename) {
          std::vector<bool> data;
-         std::ifstream file(filename);
- 
+         std::ifstream file(filename, std::ios::binary);
+
          if (!file.is_open()) {
              std::cerr << "ERROR: Could not open input file: " << filename << std::endl;
              return data;
          }
- 
-         std::string line;
-         while (std::getline(file, line)) {
-             for (char c : line) {
-                 if (c == '0') {
-                     data.push_back(false);
-                 }
-                 else if (c == '1') {
-                     data.push_back(true);
-                 }
-             }
-         }
- 
+
+         // Read all bytes
+         std::vector<unsigned char> bytes(
+             (std::istreambuf_iterator<char>(file)),
+             (std::istreambuf_iterator<char>())
+         );
+
+
+
          file.close();
- 
+
+         // Convert bytes into bits (MSB first)
+         for (unsigned char byte : bytes) {
+             for (int bit = 7; bit >= 0; --bit) {
+                 bool bitValue = (byte >> bit) & 1;
+                 data.push_back(bitValue);
+             }
+         }  
+
+         std::cout << "First 16 bits: ";
+         for (int i = 0; i < 16 && i < (int)data.size(); ++i)
+             std::cout << data[i];
+         std::cout << std::endl;
+
          // Limit to max data size (100 frames * 100 bits)
          int maxDataSize = ASK::numFrames * ASK::dataBitsPerFrame;
          if ((int)data.size() > maxDataSize) {
              data.resize(maxDataSize);
              std::cout << "WARNING: Data truncated to " << maxDataSize << " bits" << std::endl;
          }
- 
-         std::cout << "Read " << data.size() << " bits from " << filename << std::endl;
+
+         std::cout << "Read " << data.size() << " bits (" << bytes.size()
+             << " bytes) from binary file: " << filename << std::endl;
+
          return data;
      }
  };
+
  
  // ==============================================================================
  //  MODULATOR
@@ -568,7 +597,7 @@ namespace ASK {
  #if USE_NCC_DETECTION
                  signalEnergy += sigData[i + j] * sigData[i + j];
  #endif
-             }
+             } 
  
  #if USE_NCC_DETECTION
              if (signalEnergy < 1e-10 || templateEnergy_ < 1e-10) {
@@ -847,7 +876,7 @@ public:
                 }
                 double syncPower = dotProduct / 200.0;
 
-                if (syncPower > 0.5 && syncPower > syncPowerLocalMax && syncPower > power / 2  ) { // 0  &&  
+                if (syncPower > 1.0 && syncPower > syncPowerLocalMax && syncPower > power / 3  ) { // 0  &&  
                     syncPowerLocalMax = syncPower; startIndex = i;
                     if (verboseOutput_) {
                         //print local syncPower to tune threshold
@@ -895,7 +924,7 @@ public:
                     }
 
                     // Categorize result
-                    if (frameId > 0 && frameId <= ASK::numFrames) { // && crcValid
+                    if (frameId > 0 && frameId <= ASK::numFrames  ){ // && crcValid)
                         validFrames++;
                         decodedFrameIds.push_back(frameId);
                         std::vector<bool> frameData(bits.begin() + ASK::idBitsPerFrame,
@@ -926,7 +955,10 @@ public:
 
         // Write decoded data to OUTPUT.txt
         std::string outputFilePath = ASK::outputPath + "OUTPUT.txt";
-        std::ofstream outputFile(outputFilePath);
+
+        // 使用分步打开以避免解析器将其误识别为函数声明（VCR001 / most vexing parse）
+        std::ofstream outputFile;
+        outputFile.open(outputFilePath, std::ios::out | std::ios::binary);
         if (!outputFile.is_open()) {
             std::cerr << "ERROR: Could not open output file: " << outputFilePath << std::endl;
             return;
@@ -940,9 +972,12 @@ public:
                 }
             }
         }
+
+        // 确保写入被刷新并关闭流
+        outputFile.flush();
         outputFile.close();
 
-        std::cout << "✓ Decoded data saved to: " << outputFilePath << std::endl;
+        std::cout << "[OK] Decoded data saved to: " << outputFilePath << std::endl;
     }
 };
  
@@ -985,7 +1020,8 @@ int main(int argc, char* argv[]) {
     if (inputData.empty()) {
         std::cerr << "ERROR: No data read from input file!" << std::endl;
         std::cin.get();
-        return 1;
+
+
     }
 
     // Generate modulated signal (once at startup)
