@@ -876,7 +876,7 @@ public:
                 }
                 double syncPower = dotProduct / 200.0;
 
-                if (syncPower > 1.0 && syncPower > syncPowerLocalMax && syncPower > power / 3  ) { // 0  &&  
+                if (syncPower > 1.0 && syncPower > syncPowerLocalMax && syncPower > power / 2  ) { // 0  &&  
                     syncPowerLocalMax = syncPower; startIndex = i;
                     if (verboseOutput_) {
                         //print local syncPower to tune threshold
@@ -924,8 +924,9 @@ public:
                     }
 
                     // Categorize result
-                    if (frameId > 0 && frameId <= ASK::numFrames  ){ // && crcValid)
+                    if (frameId >= 0   ){ // && crcValid)&& frameId <= ASK::numFrames
                         validFrames++;
+                        frameId = detectionAttempts;
                         decodedFrameIds.push_back(frameId);
                         std::vector<bool> frameData(bits.begin() + ASK::idBitsPerFrame,
                             bits.begin() + ASK::idBitsPerFrame + ASK::dataBitsPerFrame);
@@ -956,7 +957,6 @@ public:
         // Write decoded data to OUTPUT.txt
         std::string outputFilePath = ASK::outputPath + "OUTPUT.txt";
 
-        // 使用分步打开以避免解析器将其误识别为函数声明（VCR001 / most vexing parse）
         std::ofstream outputFile;
         outputFile.open(outputFilePath, std::ios::out | std::ios::binary);
         if (!outputFile.is_open()) {
@@ -973,7 +973,6 @@ public:
             }
         }
 
-        // 确保写入被刷新并关闭流
         outputFile.flush();
         outputFile.close();
 
