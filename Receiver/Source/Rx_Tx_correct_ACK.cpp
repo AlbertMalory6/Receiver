@@ -483,8 +483,10 @@ private:
 // ==============================================================================
 class MacProtocol {
 public:
-    MacProtocol(juce::AudioDeviceManager& deviceManager, AudioRecorder& recorder)
-        : deviceManager_(deviceManager), recorder_(recorder) {}
+    enum class Mode { Sender, Receiver };
+
+    MacProtocol(juce::AudioDeviceManager& deviceManager, AudioRecorder& recorder, Mode mode)
+        : deviceManager_(deviceManager), recorder_(recorder), mode_(mode) {}
 
     ~MacProtocol() {
         stop();
@@ -530,8 +532,8 @@ public:
     }
 
     std::map<int, std::vector<bool>> getReceivedFrames() const {
-        std::mutex receivedMutex_;        
-        std::map<int, std::vector<bool>> receivedData_;
+
+        std::lock_guard<std::mutex> lock(receivedMutex_);
         return receivedData_;
     }
 
@@ -577,42 +579,66 @@ private:
             }
             lastProcessedSample_ = absoluteSample;
 
-            if (!frame.crcValid) {
-                if (verbose_) {
-                    std::cout << "[MAC] CRC failure for frame ID=" << frame.id << std::endl;
-                }
-                continue;
-            }
-
-            if (frame.type == ASK::FRAME_TYPE_ACK) {
-                if (state_ == State::WaitAck && frame.id == currentFrame_.id) {
-                    if (verbose_) {
-                        std::cout << "[MAC] ACK received for frame " << frame.id << std::endl;
+            if (mode_ == Mode::Sender) {
+                // SENDER MODE: Only process ACK frames
+                // Skip CRC check for ACK frames (as per user requirement)
+                if (frame.type == ASK::FRAME_TYPE_ACK) {
+                    // Check if ID matches the transmitted frame and we're waiting for ACK
+                    if (state_ == State::WaitAck && frame.id == currentFrame_.id) {
+                        if (verbose_) {
+                            std::cout << "[MAC] ACK received for frame " << frame.id << " (no CRC check)" << std::endl;
+                        }
+                        state_ = State::Idle;
+                        resendCount_ = 0;
+                        ackedFrames_++;
+                        // Immediately ready to send next frame (handled in handleTransmissions)
+                    } else if (verbose_) {
+                        std::cout << "[MAC] ACK frame ID=" << frame.id 
+                                  << " ignored (expected " << currentFrame_.id << ")" << std::endl;
                     }
-                    state_ = State::Idle;
-                    resendCount_ = 0;
-                    ackedFrames_++;
                 }
+                // Ignore DATA frames in sender mode
             } else {
-                bool isNew = false;
-                {
-                    std::lock_guard<std::mutex> lock(receivedMutex_);
-                    if (receivedData_.find(frame.id) == receivedData_.end()) {
-                        receivedData_[frame.id] = frame.data;
-                        isNew = true;
+                // RECEIVER MODE: Only process DATA frames with consecutive IDs
+                if (frame.type == ASK::FRAME_TYPE_DATA) {
+                    // Check CRC for DATA frames
+                    if (!frame.crcValid) {
+                        if (verbose_) {
+                            std::cout << "[MAC] DATA frame ID=" << frame.id << " CRC FAIL, dumping" << std::endl;
+                        }
+                        continue;
+                    }
+
+                    // Check if ID is consecutive to previously received ID
+                    bool isConsecutive = (expectedNextId_ == 0) || (frame.id == expectedNextId_);
+                    
+                    if (isConsecutive) {
+                        // Store frame
+                        {
+                            std::lock_guard<std::mutex> lock(receivedMutex_);
+                            receivedData_[frame.id] = frame.data;
+                        }
+                        expectedNextId_ = frame.id + 1;
+                        
+                        if (verbose_) {
+                            std::cout << "[MAC] DATA frame " << frame.id << " stored (consecutive), sending ACK" << std::endl;
+                        }
+                        
+                        // Send ACK immediately
+                        Frame ack;
+                        ack.type = ASK::FRAME_TYPE_ACK;
+                        ack.id = frame.id;  // Echo the ID
+                        ack.data.assign(ASK::dataBitsPerFrame, false);  // No data in ACK
+                        std::lock_guard<std::mutex> lock(queueMutex_);
+                        ackQueue_.push(ack);
+                    } else {
+                        if (verbose_) {
+                            std::cout << "[MAC] DATA frame ID=" << frame.id 
+                                      << " dumped (expected " << expectedNextId_ << ")" << std::endl;
+                        }
                     }
                 }
-                if (isNew) {
-                    if (verbose_) {
-                        std::cout << "[MAC] DATA frame " << frame.id << " stored, queueing ACK" << std::endl;
-                    }
-                    Frame ack;
-                    ack.type = ASK::FRAME_TYPE_ACK;
-                    ack.id = frame.id;
-                    ack.data.assign(ASK::dataBitsPerFrame, false);
-                    std::lock_guard<std::mutex> lock(queueMutex_);
-                    ackQueue_.push(ack);
-                }
+                // Ignore ACK frames in receiver mode (we send them, don't process them)
             }
         }
     }
@@ -719,6 +745,7 @@ private:
     juce::AudioDeviceManager& deviceManager_;
     AudioRecorder& recorder_;
     FrameDemodulator demodulator_;
+    Mode mode_;
 
     std::atomic<bool> running_{ false };
     std::thread macThread_;
@@ -742,8 +769,9 @@ private:
     std::atomic<int> ackedFrames_{ 0 };
     int totalFramesEnqueued_ = 0;
 
-    std::mutex receivedMutex_;
+    mutable std::mutex receivedMutex_;
     std::map<int, std::vector<bool>> receivedData_;
+    int expectedNextId_ = 0;  // For receiver mode: tracks expected consecutive ID
 
     bool verbose_ = false;
 };
@@ -826,7 +854,7 @@ void runSenderMode(juce::AudioDeviceManager& deviceManager,
     recorder.startRecording(recordFile, ASK::sampleRate);
     deviceManager.addAudioCallback(&recorder);
 
-    MacProtocol mac(deviceManager, recorder);
+    MacProtocol mac(deviceManager, recorder, MacProtocol::Mode::Sender);
     mac.setVerbose(verbose);
     mac.start();
 
@@ -879,7 +907,7 @@ void runReceiverMode(juce::AudioDeviceManager& deviceManager, const juce::File& 
     recorder.startRecording(recordFile, ASK::sampleRate);
     deviceManager.addAudioCallback(&recorder);
 
-    MacProtocol mac(deviceManager, recorder);
+    MacProtocol mac(deviceManager, recorder, MacProtocol::Mode::Receiver);
     mac.setVerbose(verbose);
     mac.start();
 
@@ -904,7 +932,7 @@ void runLoopbackTest(juce::AudioDeviceManager& deviceManager,
     recorder.startRecording(tempFile.getFile(), ASK::sampleRate);
     deviceManager.addAudioCallback(&recorder);
 
-    MacProtocol mac(deviceManager, recorder);
+    MacProtocol mac(deviceManager, recorder, MacProtocol::Mode::Sender);
     mac.setVerbose(true);
     mac.start();
 
