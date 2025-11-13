@@ -207,6 +207,69 @@ class FrameDemodulator {
         preambleTemplate_ = SignalGenerator::generatePreamble();
     }
 
+    const juce::AudioBuffer<float>& getPreambleTemplate() const {
+        return preambleTemplate_;
+    }
+
+    // Fast ACK detection: quickly find and discard ACK frames (for receiver mode)
+    // Returns vector of sample positions where ACK frames were detected
+    std::vector<int> fastAckDetect(const std::vector<float>& buffer) const {
+        std::vector<int> ackPositions;
+        if (buffer.empty()) return ackPositions;
+        
+        const float* sigData = buffer.data();
+        const float* preData = preambleTemplate_.getReadPointer(0);
+        const int sigLen = (int)buffer.size();
+        const int preLen = preambleTemplate_.getNumSamples();
+        const int samplesToCheck = ASK::samplesPerBit;  // Only need TYPE bit
+        
+        std::vector<float> syncFIFO((size_t)preLen, 0.0f);
+        double power = 0.0;
+        double syncPowerLocalMax = 0.0;
+        int startIndex = 0;
+        
+        for (int i = 0; i < sigLen; ++i) {
+            power = power * (1.0 - 1.0 / 64.0) + (sigData[i] * sigData[i]) / 64.0;
+            std::rotate(syncFIFO.begin(), syncFIFO.begin() + 1, syncFIFO.end());
+            syncFIFO.back() = (i < sigLen ? sigData[i] : 0.0f);
+            
+            double dotProduct = 0.0;
+            for (int j = 0; j < preLen; ++j) {
+                dotProduct += (double)syncFIFO[j] * (double)preData[j];
+            }
+            double syncPower = dotProduct / 200.0;
+            
+            if (syncPower > 1.0 && syncPower > syncPowerLocalMax && syncPower > power / 2.0) {
+                syncPowerLocalMax = syncPower;
+                startIndex = i;
+            }
+            else if ((i - startIndex > 200) && startIndex != 0) {
+                if (startIndex + preLen + samplesToCheck <= sigLen) {
+                    int pos = startIndex - preLen + 1;
+                    int frameStart = pos + preLen;
+                    
+                    // Check only TYPE bit (first bit after preamble)
+                    int sampleStart = ASK::samplesPerBit / 4;
+                    int sampleEnd = ASK::samplesPerBit - ASK::samplesPerBit / 4;
+                    double sum = 0.0;
+                    for (int j = sampleStart; j < sampleEnd && j < samplesToCheck; ++j) {
+                        sum += sigData[frameStart + j];
+                    }
+                    bool isAck = (sum > 0.0);  // ACK type bit is 1
+                    
+                    if (isAck) {
+                        ackPositions.push_back(pos);
+                    }
+                }
+                syncPowerLocalMax = 0.0;
+                startIndex = 0;
+                std::fill(syncFIFO.begin(), syncFIFO.end(), 0.0f);
+            }
+        }
+        
+        return ackPositions;
+    }
+
     // Fast ACK check: only demodulate first 10 bits (TYPE + ID) for sender mode
     bool fastAckCheck(const std::vector<float>& buffer, int expectedFrameId, int& detectedSamplePos) const {
         if (buffer.empty()) return false;
@@ -652,7 +715,22 @@ private:
             return;  // Don't do full demodulation in sender mode
         }
 
-        // RECEIVER MODE or Sender not waiting: Full demodulation
+        // RECEIVER MODE: Fast check to discard own ACK frames before full demodulation
+        if (mode_ == Mode::Receiver) {
+            std::vector<int> ackPositions = demodulator_.fastAckDetect(bufferCopy);
+            for (int pos : ackPositions) {
+                int64_t absoluteSample = bufferStart + pos;
+                if (absoluteSample > lastProcessedSample_) {
+                    lastProcessedSample_ = absoluteSample;
+                    if (verbose_) {
+                        std::cout << "[MAC] Own ACK frame discarded @ " << absoluteSample 
+                                  << " (fast check, skipped full demodulation)" << std::endl;
+                    }
+                }
+            }
+        }
+
+        // Full demodulation for DATA frames (receiver) or all frames (sender not waiting)
         auto frames = demodulator_.demodulateBuffer(bufferCopy);
         for (const Frame& frame : frames) {
             int64_t absoluteSample = bufferStart + frame.sampleIndex;
@@ -672,20 +750,25 @@ private:
                 for (int i = 0; i < ASK::dataBitsPerFrame && i < (int)frame.data.size(); ++i) {
                     dataBits += frame.data[i] ? '1' : '0';
                 }
-                std::cout << "[RX] Frame @" << absoluteSample
-                    << " TYPE=" << (frame.type ? "ACK" : "DATA")
-                    << " ID=" << frame.id
-                    << " CRC=" << (frame.crcValid ? "OK" : "FAIL") << std::endl;
-                std::cout << "      TYPE bits: " << typeBits << std::endl;
-                std::cout << "      ID   bits: " << idBits << std::endl;
-                std::cout << "      DATA bits: " << dataBits << std::endl;
+                std::cout << "\n" <<  "[RX]                Frame @" << absoluteSample << std::endl;//
+                //    << " TYPE=" << (frame.type ? "ACK" : "DATA")
+                //    << " ID=" << frame.id
+                //    << " CRC=" << (frame.crcValid ? "OK" : "FAIL") << std::endl;
+                //std::cout << "      TYPE bits: " << typeBits << std::endl;
+                //std::cout << "      ID   bits: " << idBits << std::endl;
+                //std::cout << "      DATA bits: " << dataBits << std::endl;
             }
 
             if (mode_ == Mode::Sender) {
                 // Sender mode but not waiting for ACK - ignore all frames
                 continue;
-     }
-     else {
+            }
+            else {
+                // RECEIVER MODE: Skip ACK frames (already discarded by fast check)
+                if (frame.type == ASK::FRAME_TYPE_ACK) {
+                    continue;  // ACK frames already handled by fastAckDetect
+                }
+                
                 // RECEIVER MODE: Only process DATA frames with consecutive IDs
                 if (frame.type == ASK::FRAME_TYPE_DATA) {
                     // Check CRC for DATA frames
@@ -792,12 +875,19 @@ private:
     }
 
     void playFrame(const Frame& frame) {
+        // Get current sample position before sending
+        int64_t txSamplePos = 0;
+        {
+            std::lock_guard<std::mutex> lock(sampleMutex_);
+            txSamplePos = bufferStartSample_ + (int64_t)sampleBuffer_.size();
+        }
+
         juce::AudioBuffer<float> audio = Modulator::modulateFrame(frame);
         if (verbose_) {
-            std::cout << "[TX] Frame ID=" << frame.id
-                << " TYPE=" << (frame.type ? "ACK" : "DATA")
-                << " samples=" << audio.getNumSamples() << std::endl;
-            std::cout << "     Bits: " << frameToBitString(frame) << std::endl;
+            std::cout << "\n" << "[TX] Frame ID=" << frame.id
+                << " " << (frame.type ? "ACK" : "DATA")
+                << "     @sample=" << txSamplePos << std::endl;
+            //std::cout << "     Bits: " << frameToBitString(frame) << std::endl;
         }
 
         AudioPlayer player(audio);
