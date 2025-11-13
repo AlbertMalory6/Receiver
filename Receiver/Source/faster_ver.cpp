@@ -554,8 +554,8 @@ private:
  // ==============================================================================
  class AudioPlayer : public juce::AudioIODeviceCallback {
  public:
-    explicit AudioPlayer(const juce::AudioBuffer<float>& bufferToPlay)
-        : sourceBuffer_(bufferToPlay), samplesPlayed_(0) {
+    explicit AudioPlayer(juce::AudioBuffer<float> bufferToPlay)
+        : sourceBuffer_(std::move(bufferToPlay)), samplesPlayed_(0) {
      }
  
      void audioDeviceAboutToStart(juce::AudioIODevice*) override {
@@ -598,7 +598,7 @@ private:
      }
  
  private:
-    const juce::AudioBuffer<float>& sourceBuffer_;
+    juce::AudioBuffer<float> sourceBuffer_;
     int samplesPlayed_ = 0;
  };
  
@@ -689,12 +689,18 @@ private:
     void processIncomingFrames() {
         std::vector<float> bufferCopy;
         int64_t bufferStart = 0;
+        int64_t currentSamplePos = 0;
         {
             std::lock_guard<std::mutex> lock(sampleMutex_);
             if (sampleBuffer_.size() < minimumFrameSamples_) return;
             bufferCopy = sampleBuffer_;
             bufferStart = bufferStartSample_;
+            currentSamplePos = bufferStart + (int64_t)sampleBuffer_.size();
         }
+
+        // if (verbose_) {
+        //     std::cout << "[DEBUG] processIncomingFrames @sample=" << currentSamplePos << std::endl;
+        // }
 
         if (mode_ == Mode::Sender && state_ == State::WaitAck) {
             // SENDER MODE: Fast ACK check - only demodulate first 10 bits
@@ -751,13 +757,13 @@ private:
                 for (int i = 0; i < ASK::dataBitsPerFrame && i < (int)frame.data.size(); ++i) {
                     dataBits += frame.data[i] ? '1' : '0';
                 }
-                std::cout << "[RX] Frame @" << absoluteSample
+                std::cout << "[RX]                Frame @" << absoluteSample
                     << " TYPE=" << (frame.type ? "ACK" : "DATA")
                     << " ID=" << frame.id
-                    << " CRC=" << (frame.crcValid ? "OK" : "FAIL") << std::endl;
-                std::cout << "      TYPE bits: " << typeBits << std::endl;
-                std::cout << "      ID   bits: " << idBits << std::endl;
-                std::cout << "      DATA bits: " << dataBits << std::endl;
+                    << " CRC=" << (frame.crcValid ? "OK" : "FAIL")<<"\n" << std::endl;
+                //std::cout << "      TYPE bits: " << typeBits << std::endl;
+                //std::cout << "      ID   bits: " << idBits << std::endl;
+                //std::cout << "      DATA bits: " << dataBits << std::endl;
             }
 
             if (mode_ == Mode::Sender) {
@@ -802,6 +808,10 @@ private:
                         ack.data.assign(ASK::dataBitsPerFrame, false);  // No data in ACK
                         std::lock_guard<std::mutex> lock(queueMutex_);
                         ackQueue_.push(ack);
+
+                        // if (verbose_) {
+                        //     std::cout << "[DEBUG] ACK queued for frame " << frame.id << " @sample=" << currentSamplePos << std::endl;
+                        // }
                     }
                     else {
                         if (verbose_) {
@@ -818,6 +828,32 @@ private:
     }
 
     void handleTransmissions() {
+        // if (verbose_) {
+        //     int64_t currentPos = 0;
+        //     {
+        //         std::lock_guard<std::mutex> lock(sampleMutex_);
+        //         currentPos = bufferStartSample_ + (int64_t)sampleBuffer_.size();
+        //     }
+        //     std::cout << "[DEBUG] handleTransmissions @sample=" << currentPos << std::endl;
+        // }
+
+        // Check if current transmission is finished
+        if (isTransmitting_) {
+            auto txElapsed = std::chrono::duration_cast<std::chrono::milliseconds>(
+                std::chrono::steady_clock::now() - transmissionStartTime_).count();
+            if (txElapsed >= transmissionDurationMs_) {
+                isTransmitting_ = false;
+                // if (verbose_) {
+                //     int64_t currentPos = 0;
+                //     {
+                //         std::lock_guard<std::mutex> lock(sampleMutex_);
+                //         currentPos = bufferStartSample_ + (int64_t)sampleBuffer_.size();
+                //     }
+                //     std::cout << "[DEBUG] Transmission finished @sample=" << currentPos << std::endl;
+                // }
+            }
+        }
+
         // ACK frames have priority
         Frame ackFrame;
         bool hasAckFrame = false;
@@ -829,11 +865,19 @@ private:
                 hasAckFrame = true;
             }
         }
-        if (hasAckFrame) {
+        if (hasAckFrame && !isTransmitting_) {
+            // if (verbose_) {
+            //     int64_t currentPos = 0;
+            //     {
+            //         std::lock_guard<std::mutex> lock(sampleMutex_);
+            //         currentPos = bufferStartSample_ + (int64_t)sampleBuffer_.size();
+            //     }
+            //     std::cout << "[DEBUG] Dequeuing ACK for frame " << ackFrame.id << " @sample=" << currentPos << std::endl;
+            // }
             playFrame(ackFrame);
          return;
      }
- 
+
         switch (state_) {
         case State::Idle: {
             std::lock_guard<std::mutex> lock(queueMutex_);
@@ -846,14 +890,16 @@ private:
             break;
         }
         case State::TxPending: {
-            resendCount_++;
-            if (verbose_) {
-                std::cout << "[MAC] Sending DATA frame " << currentFrame_.id
-                    << " (attempt " << resendCount_ << ")" << std::endl;
+            if (!isTransmitting_) {
+                resendCount_++;
+                if (verbose_) {
+                    std::cout << "[MAC] Sending DATA frame " << currentFrame_.id
+                        << " (attempt " << resendCount_ << ")" << std::endl;
+                }
+                playFrame(currentFrame_);
+                timeoutStart_ = std::chrono::steady_clock::now();
+                state_ = State::WaitAck;
             }
-            playFrame(currentFrame_);
-            timeoutStart_ = std::chrono::steady_clock::now();
-            state_ = State::WaitAck;
             break;
         }
         case State::WaitAck: {
@@ -886,22 +932,29 @@ private:
         }
 
         juce::AudioBuffer<float> audio = Modulator::modulateFrame(frame);
+        const int numSamples = audio.getNumSamples();
         if (verbose_) {
-            std::cout << "\n" << "[TX] Frame ID=" << frame.id
+            std::cout  << "[TX] Frame ID=" << frame.id
                 << " " << (frame.type ? "ACK" : "DATA")
-                << "     @sample=" << txSamplePos << std::endl;
+                << "     @sample=" << txSamplePos <<"\n"<< std::endl;
             //std::cout << "     Bits: " << frameToBitString(frame) << std::endl;
         }
 
-        AudioPlayer player(audio);
-        deviceManager_.addAudioCallback(&player);
-        const double durationSec = (double)audio.getNumSamples() / ASK::sampleRate;
-        int remainingMs = static_cast<int>(durationSec * 1000.0) + 60;
-        while (remainingMs > 0 && running_) {
-            std::this_thread::sleep_for(std::chrono::milliseconds(20));
-            remainingMs -= 20;
-        }
-        deviceManager_.removeAudioCallback(&player);
+        // Start non-blocking transmission
+        AudioPlayer* player = new AudioPlayer(std::move(audio));
+        deviceManager_.addAudioCallback(player);
+
+        // Record transmission start
+        isTransmitting_ = true;
+        transmissionStartTime_ = std::chrono::steady_clock::now();
+        transmissionDurationMs_ = static_cast<int>((double)numSamples / ASK::sampleRate * 1000.0) + 5;  // +margin
+
+        // Schedule deletion after transmission
+        std::thread([this, player]() {
+            std::this_thread::sleep_for(std::chrono::milliseconds(transmissionDurationMs_ + 5));
+            deviceManager_.removeAudioCallback(player);
+            delete player;
+        }).detach();
     }
 
     std::string frameToBitString(const Frame& frame) const {
@@ -967,9 +1020,14 @@ private:
     std::atomic<int> ackedFrames_{ 0 };
     int totalFramesEnqueued_ = 0;
 
-    mutable std::mutex receivedMutex_;
+    mutable     std::mutex receivedMutex_;
     std::map<int, std::vector<bool>> receivedData_;
     int expectedNextId_ = 0;  // For receiver mode: tracks expected consecutive ID
+
+    // Transmission tracking for non-blocking sends
+    std::atomic<bool> isTransmitting_{ false };
+    std::chrono::steady_clock::time_point transmissionStartTime_;
+    int transmissionDurationMs_ = 0;
 
     bool verbose_ = false;
 };
