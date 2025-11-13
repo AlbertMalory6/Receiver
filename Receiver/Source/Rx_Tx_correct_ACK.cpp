@@ -16,11 +16,11 @@
  * =========================================================================
  */
 
-#include <JuceHeader.h>
+ #include <JuceHeader.h>
 #include <algorithm>
 #include <atomic>
 #include <chrono>
-#include <cmath>
+ #include <cmath>
 #include <fstream>
 #include <functional>
 #include <iostream>
@@ -29,11 +29,11 @@
 #include <queue>
 #include <string>
 #include <thread>
-#include <vector>
-
-namespace ASK {
+ #include <vector>
+ 
+ namespace ASK {
     constexpr double sampleRate = 44100.0;
-    constexpr int preambleSamples = 440;
+     constexpr int preambleSamples = 440;
     constexpr double chirp_f_start = 1000.0;
     constexpr double chirp_f_end = 4000.0;
     constexpr double baseFreq = 2000.0;
@@ -41,8 +41,8 @@ namespace ASK {
 
     constexpr int typeBitsPerFrame = 1;
     constexpr int idBitsPerFrame = 9;
-    constexpr int dataBitsPerFrame = 100;
-    constexpr int crcBitsPerFrame = 8;
+     constexpr int dataBitsPerFrame = 100;
+     constexpr int crcBitsPerFrame = 8;
     constexpr int bitsPerFrame = typeBitsPerFrame + idBitsPerFrame + dataBitsPerFrame + crcBitsPerFrame;
 
     constexpr int numFrames = 500;
@@ -56,72 +56,72 @@ namespace ASK {
 
     const std::string inputPath = "INPUT.bin";
     const std::string outputPath = "D\\fourth_year\\cs120\\debug_pic\\ASK\\";
-}
-
-// ==============================================================================
+ }
+ 
+ // ==============================================================================
 // CRC8 GENERATOR
-// ==============================================================================
-class CRC8Generator {
-public:
+ // ==============================================================================
+ class CRC8Generator {
+ public:
     explicit CRC8Generator(uint8_t poly) : polynomial_(poly) {}
-
+ 
     std::vector<bool> generate(const std::vector<bool>& data) const {
-        std::vector<bool> result = data;
-        uint8_t crc = 0;
-        for (bool bit : data) {
+         std::vector<bool> result = data;
+         uint8_t crc = 0;
+         for (bool bit : data) {
             bool feedback = ((crc >> 7) & 1) ^ (bit ? 1 : 0);
-            crc <<= 1;
-            if (feedback) {
+             crc <<= 1;
+             if (feedback) {
                 crc ^= polynomial_;
-            }
-        }
-        for (int i = 7; i >= 0; --i) {
-            result.push_back((crc >> i) & 1);
-        }
-        return result;
-    }
-
+             }
+         }
+         for (int i = 7; i >= 0; --i) {
+             result.push_back((crc >> i) & 1);
+         }
+         return result;
+     }
+ 
     bool check(const std::vector<bool>& dataWithCRC) const {
-        if (dataWithCRC.size() < 8) return false;
-        std::vector<bool> data(dataWithCRC.begin(), dataWithCRC.end() - 8);
-        std::vector<bool> computed = generate(data);
-        for (size_t i = 0; i < 8; ++i) {
-            if (computed[data.size() + i] != dataWithCRC[data.size() + i]) {
-                return false;
-            }
-        }
-        return true;
-    }
+         if (dataWithCRC.size() < 8) return false;
+         std::vector<bool> data(dataWithCRC.begin(), dataWithCRC.end() - 8);
+         std::vector<bool> computed = generate(data);
+         for (size_t i = 0; i < 8; ++i) {
+             if (computed[data.size() + i] != dataWithCRC[data.size() + i]) {
+                 return false;
+             }
+         }
+         return true;
+     }
 
 private:
     uint8_t polynomial_;
-};
-
-// ==============================================================================
+ };
+ 
+ // ==============================================================================
 // SIGNAL GENERATOR UTILITIES
-// ==============================================================================
-class SignalGenerator {
-public:
-    static juce::AudioBuffer<float> generatePreamble() {
+ // ==============================================================================
+ class SignalGenerator {
+ public:
+     static juce::AudioBuffer<float> generatePreamble() {
         juce::AudioBuffer<float> buffer(1, ASK::preambleSamples);
         auto* samples = buffer.getWritePointer(0);
-
+ 
         std::vector<double> sweep;
         sweep.reserve(ASK::preambleSamples);
-        for (int i = 0; i < ASK::preambleSamples / 2; ++i) {
-            double freq = juce::jmap((double)i, 0.0, (double)(ASK::preambleSamples / 2 - 1),
-                                     ASK::chirp_f_start, ASK::chirp_f_end);
+         for (int i = 0; i < ASK::preambleSamples / 2; ++i) {
+             double freq = juce::jmap((double)i, 0.0, (double)(ASK::preambleSamples / 2 - 1),
+                 ASK::chirp_f_start, ASK::chirp_f_end);
             sweep.push_back(freq);
-        }
-        for (int i = ASK::preambleSamples / 2; i < ASK::preambleSamples; ++i) {
-            double freq = juce::jmap((double)i, (double)(ASK::preambleSamples / 2),
-                                     (double)(ASK::preambleSamples - 1),
-                                     ASK::chirp_f_end, ASK::chirp_f_start);
+         }
+         for (int i = ASK::preambleSamples / 2; i < ASK::preambleSamples; ++i) {
+             double freq = juce::jmap((double)i, (double)(ASK::preambleSamples / 2),
+                 (double)(ASK::preambleSamples - 1),
+                 ASK::chirp_f_end, ASK::chirp_f_start);
             sweep.push_back(freq);
-        }
-
+         }
+ 
         double phase = 0.0;
-        for (int i = 0; i < ASK::preambleSamples; ++i) {
+         for (int i = 0; i < ASK::preambleSamples; ++i) {
             double phaseIncrement = 2.0 * juce::MathConstants<double>::pi * sweep[i] / ASK::sampleRate;
             phase += phaseIncrement;
             samples[i] = std::sin(phase);
@@ -132,18 +132,18 @@ public:
     static juce::AudioBuffer<float> generateNRZBit(bool bitValue, int samplesPerBit) {
         juce::AudioBuffer<float> buffer(1, samplesPerBit);
         auto* samples = buffer.getWritePointer(0);
-
-        double phase = 0.0;
+ 
+         double phase = 0.0;
         double phaseIncrement = 2.0 * juce::MathConstants<double>::pi * ASK::baseFreq / ASK::sampleRate;
         const float polarity = bitValue ? 1.0f : -1.0f;
-
+ 
         for (int i = 0; i < samplesPerBit; ++i) {
             samples[i] = polarity * std::sin(phase);
-            phase += phaseIncrement;
-            if (phase > 2.0 * juce::MathConstants<double>::pi) {
-                phase -= 2.0 * juce::MathConstants<double>::pi;
-            }
-        }
+             phase += phaseIncrement;
+             if (phase > 2.0 * juce::MathConstants<double>::pi) {
+                 phase -= 2.0 * juce::MathConstants<double>::pi;
+             }
+         }
         return buffer;
     }
 };
@@ -157,13 +157,13 @@ struct Frame {
     std::vector<bool> data = std::vector<bool>(ASK::dataBitsPerFrame, false);
     bool crcValid = false;
     int sampleIndex = -1;  // Preamble start within analysed buffer
-};
-
-// ==============================================================================
+ };
+ 
+ // ==============================================================================
 // MODULATOR
-// ==============================================================================
+ // ==============================================================================
 class Modulator {
-public:
+ public:
     static juce::AudioBuffer<float> modulateFrame(const Frame& frame) {
         CRC8Generator crcGen(ASK::crcPolynomial);
 
@@ -195,19 +195,97 @@ public:
         }
 
         return result;
-    }
-};
-
-// ==============================================================================
+     }
+ };
+ 
+ // ==============================================================================
 // FRAME DEMODULATOR (offline, dot-product detection)
-// ==============================================================================
+ // ==============================================================================
 class FrameDemodulator {
-public:
+ public:
     FrameDemodulator() : crcGen_(ASK::crcPolynomial) {
         preambleTemplate_ = SignalGenerator::generatePreamble();
     }
 
-    std::vector<Frame> demodulateBuffer(const std::vector<float>& buffer, bool verbose) const {
+    // Fast ACK check: only demodulate first 10 bits (TYPE + ID) for sender mode
+    bool fastAckCheck(const std::vector<float>& buffer, int expectedFrameId, int& detectedSamplePos) const {
+        if (buffer.empty()) return false;
+        
+        const float* sigData = buffer.data();
+        const float* preData = preambleTemplate_.getReadPointer(0);
+        const int sigLen = (int)buffer.size();
+        const int preLen = preambleTemplate_.getNumSamples();
+        const int bitsToCheck = 1 + ASK::idBitsPerFrame;  // TYPE + ID = 10 bits
+        const int samplesToCheck = bitsToCheck * ASK::samplesPerBit;
+        
+        // Find preamble using same logic
+        std::vector<int> preamblePositions;
+        std::vector<float> syncFIFO((size_t)preLen, 0.0f);
+        double power = 0.0;
+        double syncPowerLocalMax = 0.0;
+        int startIndex = 0;
+        
+        for (int i = 0; i < sigLen; ++i) {
+            power = power * (1.0 - 1.0 / 64.0) + (sigData[i] * sigData[i]) / 64.0;
+            std::rotate(syncFIFO.begin(), syncFIFO.begin() + 1, syncFIFO.end());
+            syncFIFO.back() = (i < sigLen ? sigData[i] : 0.0f);
+            
+            double dotProduct = 0.0;
+            for (int j = 0; j < preLen; ++j) {
+                dotProduct += (double)syncFIFO[j] * (double)preData[j];
+            }
+            double syncPower = dotProduct / 200.0;
+            
+            if (syncPower > 1.0 && syncPower > syncPowerLocalMax && syncPower > power / 2.0) {
+                syncPowerLocalMax = syncPower;
+                startIndex = i;
+            }
+            else if ((i - startIndex > 200) && startIndex != 0) {
+                if (startIndex + preLen + samplesToCheck <= sigLen) {
+                    preamblePositions.push_back(startIndex - preLen + 1);
+                }
+                syncPowerLocalMax = 0.0;
+                startIndex = 0;
+                std::fill(syncFIFO.begin(), syncFIFO.end(), 0.0f);
+            }
+        }
+        
+        // Check each detected preamble for ACK with matching ID
+        for (int pos : preamblePositions) {
+            int frameStart = pos + preLen;
+            if (frameStart + samplesToCheck > sigLen) continue;
+            
+            // Demodulate only first 10 bits
+            std::vector<bool> bits(bitsToCheck);
+            for (int bitIdx = 0; bitIdx < bitsToCheck; ++bitIdx) {
+                int bitStart = bitIdx * ASK::samplesPerBit;
+                int bitEnd = (bitIdx + 1) * ASK::samplesPerBit;
+                int sampleStart = bitStart + ASK::samplesPerBit / 4;
+                int sampleEnd = bitEnd - ASK::samplesPerBit / 4;
+                double sum = 0.0;
+                for (int j = sampleStart; j < sampleEnd && j < samplesToCheck; ++j) {
+                    sum += sigData[frameStart + j];
+                }
+                bits[bitIdx] = (sum > 0.0);
+            }
+            
+            // Check TYPE and ID
+            bool type = bits[0];
+            int id = 0;
+            for (int j = 0; j < ASK::idBitsPerFrame; ++j) {
+                id = (id << 1) | (bits[1 + j] ? 1 : 0);
+            }
+            
+            if (type == ASK::FRAME_TYPE_ACK && id == expectedFrameId) {
+                detectedSamplePos = pos;
+                return true;
+            }
+        }
+        
+        return false;
+    }
+
+    std::vector<Frame> demodulateBuffer(const std::vector<float>& buffer) const {
         std::vector<Frame> frames;
         if (buffer.empty()) return frames;
 
@@ -241,7 +319,7 @@ public:
             else if ((i - startIndex > 200) && startIndex != 0) {
                 if (startIndex + preLen + frameSamples <= sigLen) {
                     bool farEnough = preamblePositions.empty() ||
-                                     (std::abs(startIndex - preamblePositions.back()) >= preLen);
+                        (std::abs(startIndex - preamblePositions.back()) >= preLen);
                     if (farEnough) {
                         preamblePositions.push_back(startIndex - preLen + 1);
                     }
@@ -273,31 +351,12 @@ public:
 
             frame.crcValid = crcGen_.check(bits);
 
-            if (verbose) {
-                std::string typeBits(1, frame.type ? '1' : '0');
-                std::string idBits;
-                for (int i = ASK::idBitsPerFrame - 1; i >= 0; --i) {
-                    idBits += ((frame.id >> i) & 1) ? '1' : '0';
-                }
-                std::string dataBits;
-                for (int i = 0; i < ASK::dataBitsPerFrame; ++i) {
-                    dataBits += frame.data[i] ? '1' : '0';
-                }
-                std::cout << "[RX] Frame @" << pos
-                          << " TYPE=" << (frame.type ? "ACK" : "DATA")
-                          << " ID=" << frame.id
-                          << " CRC=" << (frame.crcValid ? "OK" : "FAIL") << std::endl;
-                std::cout << "      TYPE bits: " << typeBits << std::endl;
-                std::cout << "      ID   bits: " << idBits << std::endl;
-                std::cout << "      DATA bits: " << dataBits << std::endl;
-            }
-
             frames.push_back(frame);
         }
 
         std::sort(frames.begin(), frames.end(), [](const Frame& a, const Frame& b) {
             return a.sampleIndex < b.sampleIndex;
-        });
+            });
         return frames;
     }
 
@@ -320,62 +379,62 @@ private:
 
     juce::AudioBuffer<float> preambleTemplate_;
     CRC8Generator crcGen_;
-};
-
-// ==============================================================================
+ };
+ 
+ // ==============================================================================
 // AUDIO RECORDER (AudioRecordingDemo pattern with optional sample callback)
-// ==============================================================================
-class AudioRecorder : public juce::AudioIODeviceCallback {
-public:
-    AudioRecorder() {
+ // ==============================================================================
+ class AudioRecorder : public juce::AudioIODeviceCallback {
+ public:
+     AudioRecorder() {
         backgroundThread_.startThread();
-    }
-
-    ~AudioRecorder() override {
-        stop();
+     }
+ 
+     ~AudioRecorder() override {
+         stop();
         backgroundThread_.stopThread(1000);
-    }
-
-    void startRecording(const juce::File& file, double sampleRateToUse) {
-        stop();
-
+     }
+ 
+     void startRecording(const juce::File& file, double sampleRateToUse) {
+         stop();
+ 
         sampleRate_ = sampleRateToUse;
         if (sampleRate_ <= 0) return;
-
-        file.deleteFile();
-        if (std::unique_ptr<juce::OutputStream> fileStream{ file.createOutputStream() }) {
-            juce::WavAudioFormat wavFormat;
-            using Opts = juce::AudioFormatWriterOptions;
-            if (auto writer = wavFormat.createWriterFor(fileStream,
-                                                        Opts{}
-                                                            .withSampleRate(sampleRate_)
-                                                            .withNumChannels(1)
-                                                            .withBitsPerSample(16))) {
+ 
+             file.deleteFile();
+             if (std::unique_ptr<juce::OutputStream> fileStream{ file.createOutputStream() }) {
+                 juce::WavAudioFormat wavFormat;
+                 using Opts = juce::AudioFormatWriterOptions;
+                 if (auto writer = wavFormat.createWriterFor(fileStream,
+                Opts{}
+                .withSampleRate(sampleRate_)
+                     .withNumChannels(1)
+                     .withBitsPerSample(16))) {
                 threadedWriter_.reset(new juce::AudioFormatWriter::ThreadedWriter(writer.release(), backgroundThread_, 32768));
                 const juce::ScopedLock sl(writerLock_);
                 activeWriter_ = threadedWriter_.get();
                 nextSampleNum_ = 0;
                 std::cout << "Recording to: " << file.getFullPathName() << std::endl;
-            }
-        }
-    }
-
-    void stop() {
+             }
+         }
+     }
+ 
+     void stop() {
         const juce::ScopedLock sl(writerLock_);
         activeWriter_ = nullptr;
         threadedWriter_.reset();
-    }
-
-    bool isRecording() const {
+     }
+ 
+     bool isRecording() const {
         return activeWriter_.load() != nullptr;
     }
 
     void setSampleCallback(std::function<void(const float*, int)> cb) {
         const juce::ScopedLock sl(callbackLock_);
         sampleCallback_ = std::move(cb);
-    }
-
-    void audioDeviceAboutToStart(juce::AudioIODevice* device) override {
+     }
+ 
+     void audioDeviceAboutToStart(juce::AudioIODevice* device) override {
         if (device != nullptr && sampleRate_ == 0) {
             sampleRate_ = device->getCurrentSampleRate();
         }
@@ -384,13 +443,13 @@ public:
     void audioDeviceStopped() override {}
 
     void audioDeviceIOCallbackWithContext(const float* const* inputChannelData,
-                                          int numInputChannels,
-                                          float* const* outputChannelData,
-                                          int numOutputChannels,
-                                          int numSamples,
-                                          const juce::AudioIODeviceCallbackContext& context) override {
-        juce::ignoreUnused(context);
-
+        int numInputChannels,
+        float* const* outputChannelData,
+        int numOutputChannels,
+         int numSamples,
+         const juce::AudioIODeviceCallbackContext& context) override {
+         juce::ignoreUnused(context);
+ 
         {
             const juce::ScopedLock sl(writerLock_);
             if (activeWriter_.load() != nullptr && numInputChannels > 0) {
@@ -408,14 +467,14 @@ public:
             callbackCopy(inputChannelData[0], numSamples);
         }
 
-        for (int i = 0; i < numOutputChannels; ++i) {
-            if (outputChannelData[i] != nullptr) {
-                juce::FloatVectorOperations::clear(outputChannelData[i], numSamples);
-            }
-        }
-    }
-
-private:
+         for (int i = 0; i < numOutputChannels; ++i) {
+             if (outputChannelData[i] != nullptr) {
+                 juce::FloatVectorOperations::clear(outputChannelData[i], numSamples);
+             }
+         }
+     }
+ 
+ private:
     juce::TimeSliceThread backgroundThread_{ "Audio Recorder Thread" };
     std::unique_ptr<juce::AudioFormatWriter::ThreadedWriter> threadedWriter_;
     double sampleRate_ = 0.0;
@@ -425,68 +484,71 @@ private:
 
     juce::CriticalSection callbackLock_;
     std::function<void(const float*, int)> sampleCallback_;
-};
-
-// ==============================================================================
+ };
+ 
+ // ==============================================================================
 // AUDIO PLAYER (playback only)
-// ==============================================================================
-class AudioPlayer : public juce::AudioIODeviceCallback {
-public:
+ // ==============================================================================
+ class AudioPlayer : public juce::AudioIODeviceCallback {
+ public:
     explicit AudioPlayer(const juce::AudioBuffer<float>& bufferToPlay)
-        : sourceBuffer_(bufferToPlay), samplesPlayed_(0) {}
-
-    void audioDeviceAboutToStart(juce::AudioIODevice*) override {
+        : sourceBuffer_(bufferToPlay), samplesPlayed_(0) {
+     }
+ 
+     void audioDeviceAboutToStart(juce::AudioIODevice*) override {
         samplesPlayed_ = 0;
-    }
-
-    void audioDeviceStopped() override {}
-
+     }
+ 
+     void audioDeviceStopped() override {}
+ 
     void audioDeviceIOCallbackWithContext(const float* const* inputChannelData,
-                                          int numInputChannels,
-                                          float* const* outputChannelData,
-                                          int numOutputChannels,
-                                          int numSamples,
-                                          const juce::AudioIODeviceCallbackContext& context) override {
-        juce::ignoreUnused(inputChannelData, numInputChannels, context);
-
+        int numInputChannels,
+        float* const* outputChannelData,
+        int numOutputChannels,
+         int numSamples,
+         const juce::AudioIODeviceCallbackContext& context) override {
+         juce::ignoreUnused(inputChannelData, numInputChannels, context);
+ 
         int samplesRemaining = sourceBuffer_.getNumSamples() - samplesPlayed_;
-        int samplesToPlay = std::min(numSamples, samplesRemaining);
-
-        if (samplesToPlay > 0) {
+         int samplesToPlay = std::min(numSamples, samplesRemaining);
+ 
+         if (samplesToPlay > 0) {
             const float* src = sourceBuffer_.getReadPointer(0, samplesPlayed_);
-            for (int i = 0; i < numOutputChannels; ++i) {
-                if (outputChannelData[i] != nullptr) {
-                    std::memcpy(outputChannelData[i], src, sizeof(float) * samplesToPlay);
-                    if (samplesToPlay < numSamples) {
-                        juce::FloatVectorOperations::clear(outputChannelData[i] + samplesToPlay,
-                                                            numSamples - samplesToPlay);
-                    }
-                }
-            }
+             for (int i = 0; i < numOutputChannels; ++i) {
+                 if (outputChannelData[i] != nullptr) {
+                     std::memcpy(outputChannelData[i], src, sizeof(float) * samplesToPlay);
+                     if (samplesToPlay < numSamples) {
+                         juce::FloatVectorOperations::clear(outputChannelData[i] + samplesToPlay,
+                             numSamples - samplesToPlay);
+                     }
+                 }
+             }
             samplesPlayed_ += samplesToPlay;
-        } else {
-            for (int i = 0; i < numOutputChannels; ++i) {
-                if (outputChannelData[i] != nullptr) {
-                    juce::FloatVectorOperations::clear(outputChannelData[i], numSamples);
-                }
-            }
-        }
-    }
-
-private:
+         }
+         else {
+             for (int i = 0; i < numOutputChannels; ++i) {
+                 if (outputChannelData[i] != nullptr) {
+                     juce::FloatVectorOperations::clear(outputChannelData[i], numSamples);
+                 }
+             }
+         }
+     }
+ 
+ private:
     const juce::AudioBuffer<float>& sourceBuffer_;
     int samplesPlayed_ = 0;
-};
-
-// ==============================================================================
+ };
+ 
+ // ==============================================================================
 // MAC PROTOCOL COORDINATOR
-// ==============================================================================
+ // ==============================================================================
 class MacProtocol {
 public:
     enum class Mode { Sender, Receiver };
 
     MacProtocol(juce::AudioDeviceManager& deviceManager, AudioRecorder& recorder, Mode mode)
-        : deviceManager_(deviceManager), recorder_(recorder), mode_(mode) {}
+        : deviceManager_(deviceManager), recorder_(recorder), mode_(mode) {
+    }
 
     ~MacProtocol() {
         stop();
@@ -498,7 +560,7 @@ public:
         if (running_) return;
         recorder_.setSampleCallback([this](const float* samples, int numSamples) {
             onSamples(samples, numSamples);
-        });
+            });
         running_ = true;
         macThread_ = std::thread(&MacProtocol::runLoop, this);
     }
@@ -506,7 +568,7 @@ public:
     void stop() {
         if (!running_) {
             recorder_.setSampleCallback(nullptr);
-            return;
+             return;
         }
         running_ = false;
         if (macThread_.joinable()) {
@@ -571,34 +633,59 @@ private:
             bufferStart = bufferStartSample_;
         }
 
-        auto frames = demodulator_.demodulateBuffer(bufferCopy, verbose_);
+        if (mode_ == Mode::Sender && state_ == State::WaitAck) {
+            // SENDER MODE: Fast ACK check - only demodulate first 10 bits
+            int detectedPos = 0;
+            if (demodulator_.fastAckCheck(bufferCopy, currentFrame_.id, detectedPos)) {
+                int64_t absoluteSample = bufferStart + detectedPos;
+                if (absoluteSample > lastProcessedSample_) {
+                    lastProcessedSample_ = absoluteSample;
+                    if (verbose_) {
+                        std::cout << "[MAC] ACK received for frame " << currentFrame_.id 
+                                  << " (fast check @ " << absoluteSample << ", no CRC)" << std::endl;
+                    }
+                    state_ = State::Idle;
+                    resendCount_ = 0;
+                    ackedFrames_++;
+                }
+            }
+            return;  // Don't do full demodulation in sender mode
+        }
+
+        // RECEIVER MODE or Sender not waiting: Full demodulation
+        auto frames = demodulator_.demodulateBuffer(bufferCopy);
         for (const Frame& frame : frames) {
             int64_t absoluteSample = bufferStart + frame.sampleIndex;
             if (absoluteSample <= lastProcessedSample_) {
-                continue;
+                continue;  // Already processed this frame
             }
             lastProcessedSample_ = absoluteSample;
 
-            if (mode_ == Mode::Sender) {
-                // SENDER MODE: Only process ACK frames
-                // Skip CRC check for ACK frames (as per user requirement)
-                if (frame.type == ASK::FRAME_TYPE_ACK) {
-                    // Check if ID matches the transmitted frame and we're waiting for ACK
-                    if (state_ == State::WaitAck && frame.id == currentFrame_.id) {
-                        if (verbose_) {
-                            std::cout << "[MAC] ACK received for frame " << frame.id << " (no CRC check)" << std::endl;
-                        }
-                        state_ = State::Idle;
-                        resendCount_ = 0;
-                        ackedFrames_++;
-                        // Immediately ready to send next frame (handled in handleTransmissions)
-                    } else if (verbose_) {
-                        std::cout << "[MAC] ACK frame ID=" << frame.id 
-                                  << " ignored (expected " << currentFrame_.id << ")" << std::endl;
-                    }
+            // Verbose output for new frames only
+            if (verbose_) {
+                std::string typeBits(1, frame.type ? '1' : '0');
+                std::string idBits;
+                for (int i = ASK::idBitsPerFrame - 1; i >= 0; --i) {
+                    idBits += ((frame.id >> i) & 1) ? '1' : '0';
                 }
-                // Ignore DATA frames in sender mode
-            } else {
+                std::string dataBits;
+                for (int i = 0; i < ASK::dataBitsPerFrame && i < (int)frame.data.size(); ++i) {
+                    dataBits += frame.data[i] ? '1' : '0';
+                }
+                std::cout << "[RX] Frame @" << absoluteSample
+                    << " TYPE=" << (frame.type ? "ACK" : "DATA")
+                    << " ID=" << frame.id
+                    << " CRC=" << (frame.crcValid ? "OK" : "FAIL") << std::endl;
+                std::cout << "      TYPE bits: " << typeBits << std::endl;
+                std::cout << "      ID   bits: " << idBits << std::endl;
+                std::cout << "      DATA bits: " << dataBits << std::endl;
+            }
+
+            if (mode_ == Mode::Sender) {
+                // Sender mode but not waiting for ACK - ignore all frames
+                continue;
+     }
+     else {
                 // RECEIVER MODE: Only process DATA frames with consecutive IDs
                 if (frame.type == ASK::FRAME_TYPE_DATA) {
                     // Check CRC for DATA frames
@@ -611,7 +698,7 @@ private:
 
                     // Check if ID is consecutive to previously received ID
                     bool isConsecutive = (expectedNextId_ == 0) || (frame.id == expectedNextId_);
-                    
+
                     if (isConsecutive) {
                         // Store frame
                         {
@@ -619,11 +706,11 @@ private:
                             receivedData_[frame.id] = frame.data;
                         }
                         expectedNextId_ = frame.id + 1;
-                        
+
                         if (verbose_) {
                             std::cout << "[MAC] DATA frame " << frame.id << " stored (consecutive), sending ACK" << std::endl;
                         }
-                        
+
                         // Send ACK immediately
                         Frame ack;
                         ack.type = ASK::FRAME_TYPE_ACK;
@@ -631,10 +718,11 @@ private:
                         ack.data.assign(ASK::dataBitsPerFrame, false);  // No data in ACK
                         std::lock_guard<std::mutex> lock(queueMutex_);
                         ackQueue_.push(ack);
-                    } else {
+                    }
+                    else {
                         if (verbose_) {
-                            std::cout << "[MAC] DATA frame ID=" << frame.id 
-                                      << " dumped (expected " << expectedNextId_ << ")" << std::endl;
+                            std::cout << "[MAC] DATA frame ID=" << frame.id
+                                << " dumped (expected " << expectedNextId_ << ")" << std::endl;
                         }
                     }
                 }
@@ -657,9 +745,9 @@ private:
         }
         if (hasAckFrame) {
             playFrame(ackFrame);
-            return;
-        }
-
+         return;
+     }
+ 
         switch (state_) {
         case State::Idle: {
             std::lock_guard<std::mutex> lock(queueMutex_);
@@ -675,7 +763,7 @@ private:
             resendCount_++;
             if (verbose_) {
                 std::cout << "[MAC] Sending DATA frame " << currentFrame_.id
-                          << " (attempt " << resendCount_ << ")" << std::endl;
+                    << " (attempt " << resendCount_ << ")" << std::endl;
             }
             playFrame(currentFrame_);
             timeoutStart_ = std::chrono::steady_clock::now();
@@ -691,9 +779,10 @@ private:
                         std::cout << "[MAC] Timeout, retrying frame " << currentFrame_.id << std::endl;
                     }
                     state_ = State::TxPending;
-                } else {
+                }
+                else {
                     std::cerr << "[MAC] ERROR: Frame " << currentFrame_.id
-                              << " failed after max retries" << std::endl;
+                        << " failed after max retries" << std::endl;
                     state_ = State::Idle;
                 }
             }
@@ -706,8 +795,8 @@ private:
         juce::AudioBuffer<float> audio = Modulator::modulateFrame(frame);
         if (verbose_) {
             std::cout << "[TX] Frame ID=" << frame.id
-                      << " TYPE=" << (frame.type ? "ACK" : "DATA")
-                      << " samples=" << audio.getNumSamples() << std::endl;
+                << " TYPE=" << (frame.type ? "ACK" : "DATA")
+                << " samples=" << audio.getNumSamples() << std::endl;
             std::cout << "     Bits: " << frameToBitString(frame) << std::endl;
         }
 
@@ -789,7 +878,7 @@ public:
             return bits;
         }
         std::vector<unsigned char> bytes((std::istreambuf_iterator<char>(file)),
-                                         (std::istreambuf_iterator<char>()));
+            (std::istreambuf_iterator<char>()));
         for (unsigned char byte : bytes) {
             for (int bit = 7; bit >= 0; --bit) {
                 bits.push_back((byte >> bit) & 1);
@@ -805,13 +894,13 @@ public:
     }
 
     static void writeOutputFile(const std::string& filename,
-                                const std::map<int, std::vector<bool>>& frames) {
+        const std::map<int, std::vector<bool>>& frames) {
         std::ofstream out(filename, std::ios::binary);
         if (!out.is_open()) {
             std::cerr << "ERROR: Unable to write to " << filename << std::endl;
-            return;
-        }
-        for (int i = 1; i <= ASK::numFrames; ++i) {
+             return;
+         }
+         for (int i = 1; i <= ASK::numFrames; ++i) {
             auto it = frames.find(i);
             if (it == frames.end()) continue;
             for (bool b : it->second) {
@@ -820,12 +909,12 @@ public:
         }
         out.close();
         std::cout << "Saved decoded output to " << filename << std::endl;
-    }
-};
-
-// ==============================================================================
+     }
+ };
+ 
+ // ==============================================================================
 // HELPER FUNCTIONS
-// ==============================================================================
+ // ==============================================================================
 std::vector<std::vector<bool>> splitIntoFrames(const std::vector<bool>& inputBits) {
     std::vector<std::vector<bool>> frames(ASK::numFrames, std::vector<bool>(ASK::dataBitsPerFrame, false));
     for (int i = 0; i < ASK::numFrames; ++i) {
@@ -838,8 +927,8 @@ std::vector<std::vector<bool>> splitIntoFrames(const std::vector<bool>& inputBit
 }
 
 void runSenderMode(juce::AudioDeviceManager& deviceManager,
-                   const std::vector<std::vector<bool>>& frames,
-                   const juce::File& outputDir) {
+    const std::vector<std::vector<bool>>& frames,
+    const juce::File& outputDir) {
     std::cout << "\n[SENDER MODE]\nVerbose output? (y/n): ";
     char resp;
     std::cin >> resp;
@@ -847,7 +936,7 @@ void runSenderMode(juce::AudioDeviceManager& deviceManager,
     bool verbose = (resp == 'y' || resp == 'Y');
 
     std::cout << "Press ENTER to start transmission..." << std::endl;
-    std::cin.get();
+             std::cin.get();
 
     AudioRecorder recorder;
     juce::File recordFile = outputDir.getChildFile("sender_record.wav");
@@ -865,9 +954,9 @@ void runSenderMode(juce::AudioDeviceManager& deviceManager,
     std::cout << "Transmitting... Press ENTER to interrupt." << std::endl;
     std::atomic<bool> interrupted{ false };
     std::thread inputThread([&interrupted]() {
-        std::cin.get();
+         std::cin.get();
         interrupted = true;
-    });
+        });
 
     const int totalFrames = (int)frames.size();
     while (!interrupted && mac.getAckedFrameCount() < totalFrames) {
@@ -889,7 +978,7 @@ void runSenderMode(juce::AudioDeviceManager& deviceManager,
     deviceManager.removeAudioCallback(&recorder);
 
     std::cout << "Frames acknowledged: " << mac.getAckedFrameCount()
-              << " / " << totalFrames << std::endl;
+        << " / " << totalFrames << std::endl;
 }
 
 void runReceiverMode(juce::AudioDeviceManager& deviceManager, const juce::File& outputDir) {
@@ -900,53 +989,28 @@ void runReceiverMode(juce::AudioDeviceManager& deviceManager, const juce::File& 
     bool verbose = (resp == 'y' || resp == 'Y');
 
     std::cout << "Press ENTER to start receiving..." << std::endl;
-    std::cin.get();
-
+     std::cin.get();
+ 
     AudioRecorder recorder;
     juce::File recordFile = outputDir.getChildFile("receiver_record.wav");
     recorder.startRecording(recordFile, ASK::sampleRate);
-    deviceManager.addAudioCallback(&recorder);
+     deviceManager.addAudioCallback(&recorder);
 
     MacProtocol mac(deviceManager, recorder, MacProtocol::Mode::Receiver);
     mac.setVerbose(verbose);
     mac.start();
 
     std::cout << "Receiving... Press ENTER to stop." << std::endl;
-    std::cin.get();
+     std::cin.get();
 
     mac.stop();
     auto received = mac.getReceivedFrames();
-
-    recorder.stop();
-    deviceManager.removeAudioCallback(&recorder);
+ 
+     recorder.stop();
+     deviceManager.removeAudioCallback(&recorder);
 
     FileIO::writeOutputFile(outputDir.getChildFile("OUTPUT.txt").getFullPathName().toStdString(), received);
     std::cout << "Frames received: " << received.size() << std::endl;
-}
-
-void runLoopbackTest(juce::AudioDeviceManager& deviceManager,
-                     const std::vector<std::vector<bool>>& frames) {
-    std::cout << "\n[LOOPBACK TEST] Sending first 10 frames locally" << std::endl;
-    AudioRecorder recorder;
-    juce::TemporaryFile tempFile;
-    recorder.startRecording(tempFile.getFile(), ASK::sampleRate);
-    deviceManager.addAudioCallback(&recorder);
-
-    MacProtocol mac(deviceManager, recorder, MacProtocol::Mode::Sender);
-    mac.setVerbose(true);
-    mac.start();
-
-    for (int i = 0; i < std::min(10, (int)frames.size()); ++i) {
-        mac.enqueueDataFrame(i + 1, frames[i]);
-    }
-
-    std::this_thread::sleep_for(std::chrono::seconds(10));
-
-    mac.stop();
-    recorder.stop();
-    deviceManager.removeAudioCallback(&recorder);
-
-    std::cout << "Loopback ACKed frames: " << mac.getAckedFrameCount() << std::endl;
 }
 
 // ==============================================================================
@@ -961,15 +1025,15 @@ int main(int argc, char* argv[]) {
     std::cout << "╚════════════════════════════════════════════════════════════════╝\n";
     std::cout << "Sample rate: " << ASK::sampleRate << " Hz" << std::endl;
     std::cout << "Samples per bit: " << ASK::samplesPerBit
-              << " (raw rate ~" << (int)(ASK::sampleRate / ASK::samplesPerBit) << " bps)" << std::endl;
+        << " (raw rate ~" << (int)(ASK::sampleRate / ASK::samplesPerBit) << " bps)" << std::endl;
 
     juce::File outputDir(ASK::outputPath);
     if (!outputDir.exists()) {
         auto result = outputDir.createDirectory();
         if (result.failed()) {
             std::cerr << "ERROR: Unable to create output directory: " << ASK::outputPath << std::endl;
-            return 1;
-        }
+         return 1;
+     }
     }
 
     juce::AudioDeviceManager deviceManager;
@@ -981,17 +1045,16 @@ int main(int argc, char* argv[]) {
     std::vector<bool> inputBits = FileIO::readInputFile(ASK::inputPath);
     if (inputBits.empty()) {
         std::cerr << "ERROR: No input bits available" << std::endl;
-        return 1;
-    }
+         return 1;
+     }
     auto frames = splitIntoFrames(inputBits);
 
     bool running = true;
     while (running) {
-        std::cout << "\n" << std::string(60, '=') << std::endl;
+     std::cout << "\n" << std::string(60, '=') << std::endl;
         std::cout << "Select mode:" << std::endl;
         std::cout << "  1. Sender (with ACK)" << std::endl;
         std::cout << "  2. Receiver (with ACK)" << std::endl;
-        std::cout << "  3. Loopback test" << std::endl;
         std::cout << "  0. Exit" << std::endl;
         std::cout << "Enter choice: ";
 
@@ -1009,9 +1072,6 @@ int main(int argc, char* argv[]) {
         case 2:
             runReceiverMode(deviceManager, outputDir);
             break;
-        case 3:
-            runLoopbackTest(deviceManager, frames);
-            break;
         default:
             std::cout << "Invalid choice." << std::endl;
             break;
@@ -1019,5 +1079,6 @@ int main(int argc, char* argv[]) {
     }
 
     std::cout << "\nProgram terminated." << std::endl;
-    return 0;
-}
+     return 0;
+ }
+ 
