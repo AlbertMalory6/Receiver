@@ -756,6 +756,7 @@ void runLinkMonitoredSender(juce::AudioDeviceManager& deviceManager,
     const std::vector<bool>& inputBits,
     const juce::File& outputDir) {
     std::cout << "\n[MODE 5: SENDER WITH CHIRP LINK CHECK]\n";
+    std::cout << "Press ENTER at any time to abort and return to main menu.\n" << std::endl;
     auto frameBuffers = Modulator::generateFrameBuffers(inputBits);
     if (frameBuffers.empty()) {
         std::cout << "No frames available for transmission." << std::endl;
@@ -774,32 +775,111 @@ void runLinkMonitoredSender(juce::AudioDeviceManager& deviceManager,
 
     ChirpDetector detector;
     const double handshakeIntervalSec = 5.0;
+    const double powerLossTimeoutSec = 2.0;  // Wait 2 seconds after no power detected
+    const double powerThreshold = 0.01;  // Threshold for signal power detection (adjust as needed)
+    const size_t minSamplesForPowerCheck = static_cast<size_t>(ASK::sampleRate * 0.1);  // 100ms of samples
 
     auto intervalStart = std::chrono::steady_clock::now();
+    auto lastChirpCheck = std::chrono::steady_clock::now();
+    auto noPowerDetectedTime = std::chrono::steady_clock::time_point();
     bool linkError = false;
+    bool noPowerDetected = false;
+    std::atomic<bool> abortRequested{ false };
+
+    // Thread to monitor for Enter key press to abort
+    std::thread inputThread([&abortRequested]() {
+        std::cin.get();
+        abortRequested = true;
+        });
+
+    // Helper function to calculate signal power
+    auto calculateSignalPower = [](const std::vector<float>& samples) -> double {
+        if (samples.empty()) return 0.0;
+        double sumSq = 0.0;
+        for (float s : samples) {
+            sumSq += s * s;
+        }
+        return sumSq / samples.size();  // Average power
+    };
 
     for (size_t frameIdx = 0; frameIdx < frameBuffers.size(); ++frameIdx) {
+        // Check for abort request
+        if (abortRequested.load()) {
+            std::cout << "\n[ABORT] User requested abort. Stopping transmission..." << std::endl;
+            break;
+        }
+
         auto now = std::chrono::steady_clock::now();
         double elapsed = std::chrono::duration<double>(now - intervalStart).count();
         bool chirpDetectedThisIteration = false;
         
-        // Continuously check for chirp detection (non-blocking, no pause)
-        if (elapsed >= handshakeIntervalSec) {
-            auto snapshot = sampleBuffer.snapshot();
-            if (!snapshot.empty() && detector.detectPreamble(snapshot, 0.65)) {
-                std::cout << "[LINK] Chirp detected. Retransmitting current frame." << std::endl;
+        // Continuous signal power monitoring (faster than waiting 5 seconds)
+        auto snapshot = sampleBuffer.snapshot();
+        bool hasPower = false;
+        double signalPower = 0.0;
+        
+        if (snapshot.size() >= minSamplesForPowerCheck) {
+            // Use only recent samples (last 200ms) for faster response to current signal activity
+            size_t recentSampleCount = std::min(snapshot.size(), static_cast<size_t>(ASK::sampleRate * 0.2));
+            std::vector<float> recentSamples(snapshot.end() - recentSampleCount, snapshot.end());
+            signalPower = calculateSignalPower(recentSamples);
+            hasPower = (signalPower > powerThreshold);
+            
+            // Track power loss
+            if (hasPower) {
+                noPowerDetected = false;
+                noPowerDetectedTime = std::chrono::steady_clock::time_point();
+            } else {
+                if (!noPowerDetected) {
+                    // First time detecting no power
+                    noPowerDetected = true;
+                    noPowerDetectedTime = now;
+                } else {
+                    // Check if we've been without power for 2 seconds
+                    double noPowerElapsed = std::chrono::duration<double>(now - noPowerDetectedTime).count();
+                    if (noPowerElapsed >= powerLossTimeoutSec) {
+                        std::cout << "line error" << std::endl;
+                        linkError = true;
+                        abortRequested = true;  // Abort the process
+                        break;
+                    }
+                }
+            }
+            
+            // If signal power detected, immediately check for chirp
+            if (hasPower) {
+                auto timeSinceLastCheck = std::chrono::duration<double>(now - lastChirpCheck).count();
+                // Throttle chirp checks to avoid excessive processing (max once per 50ms for faster response)
+                if (timeSinceLastCheck >= 0.05) {
+                    if (detector.detectPreamble(snapshot, 0.65)) {
+                        sampleBuffer.clear();
+                        intervalStart = std::chrono::steady_clock::now();
+                        lastChirpCheck = now;
+                        chirpDetectedThisIteration = true;
+                        noPowerDetected = false;  // Reset power loss tracking
+                        // Retransmit current frame immediately
+                        std::cout << "[TX] Frame " << (frameIdx + 1) << " / " << frameBuffers.size() << " (retransmit)" << std::endl;
+                        playBufferBlocking(deviceManager, frameBuffers[frameIdx]);
+                    }
+                    lastChirpCheck = now;
+                }
+            }
+        }
+        
+        // Fallback: 5-second timeout check (flag every 5 seconds)
+        if (!chirpDetectedThisIteration && elapsed >= handshakeIntervalSec) {
+            if (snapshot.empty() || !detector.detectPreamble(snapshot, 0.65)) {
+                // No chirp in 5-second check, but don't error yet (power loss check handles that)
+                intervalStart = std::chrono::steady_clock::now();  // Reset timer, continue transmission
+            } else {
+                // Chirp found in timeout check
                 sampleBuffer.clear();
                 intervalStart = std::chrono::steady_clock::now();
+                lastChirpCheck = now;
                 chirpDetectedThisIteration = true;
-                // Retransmit current frame immediately
+                noPowerDetected = false;  // Reset power loss tracking
                 std::cout << "[TX] Frame " << (frameIdx + 1) << " / " << frameBuffers.size() << " (retransmit)" << std::endl;
                 playBufferBlocking(deviceManager, frameBuffers[frameIdx]);
-            } else {
-                std::cout << "[LINK ERROR] No chirp detected after " << handshakeIntervalSec
-                    << " seconds. Transmission halted." << std::endl;
-                std::cout << "WARNING: Link error - handshake chirp missing." << std::endl;
-                linkError = true;
-                break;
             }
         }
 
@@ -810,10 +890,23 @@ void runLinkMonitoredSender(juce::AudioDeviceManager& deviceManager,
         }
     }
 
+    // Clean up input thread
+    if (inputThread.joinable()) {
+        if (abortRequested.load()) {
+            inputThread.join();
+        } else {
+            inputThread.detach();
+        }
+    }
+
     recorder.stop();
     deviceManager.removeAudioCallback(&recorder);
 
-    if (!linkError) {
+    if (linkError) {
+        // "line error" already printed, process aborted
+    } else if (abortRequested.load()) {
+        std::cout << "[SENDER] Transmission aborted by user." << std::endl;
+    } else {
         std::cout << "[SENDER] Completed transmission of " << frameBuffers.size()
             << " frames with periodic link checks." << std::endl;
     }
