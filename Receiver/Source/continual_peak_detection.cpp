@@ -118,7 +118,14 @@ namespace LinkMonitorConfig {
     constexpr int framesPerPause = 125;             // Pause cadence for sender link check
     constexpr double pauseListenSeconds = 0.1;      // Listen window duration during pause
     constexpr double highPowerRmsThreshold = 0.08;  // RMS power threshold to qualify as noise beacon
-    constexpr double highPowerPeakThreshold = 1.3; // Peak amplitude threshold for noise beacon
+    constexpr double highPowerPeakThreshold = 1.1;  // Peak amplitude threshold for noise beacon
+    constexpr double beaconCorrelationThreshold = 0.35; // Matched-filter threshold for receiver beacon
+}
+
+namespace ReceiverBeaconConfig {
+    constexpr double noiseBurstDurationSec = 0.08;       // Duration of receiver noise beacon
+    constexpr float noiseBurstAmplitude = 0.98f;         // Max amplitude for beacon samples
+    constexpr double beaconFrequencyHz = 7500.0;         // Distinct carrier for beacon (outside data band)
 }
 
 // ==============================================================================
@@ -817,6 +824,38 @@ void runLinkMonitoredSender(juce::AudioDeviceManager& deviceManager,
         return peak;
         };
 
+    // Matched-filter reference for receiver beacon frequency
+    std::vector<float> beaconReference(minSamplesForPowerCheck, 0.0f);
+    {
+        double phase = 0.0;
+        const double phaseIncrement = 2.0 * juce::MathConstants<double>::pi
+            * ReceiverBeaconConfig::beaconFrequencyHz / ASK::sampleRate;
+        for (size_t i = 0; i < beaconReference.size(); ++i) {
+            beaconReference[i] = ReceiverBeaconConfig::noiseBurstAmplitude
+                * static_cast<float>(std::sin(phase));
+            phase += phaseIncrement;
+        }
+    }
+
+    auto calculateBeaconCorrelation = [&](const std::vector<float>& samples) -> double {
+        size_t refSize = beaconReference.size();
+        if (samples.size() < refSize || refSize == 0) return 0.0;
+        auto startIt = samples.end() - refSize;
+        double dot = 0.0;
+        double refEnergy = 0.0;
+        double sampEnergy = 0.0;
+        auto it = startIt;
+        for (size_t i = 0; i < refSize; ++i, ++it) {
+            double refVal = beaconReference[i];
+            double sampVal = static_cast<double>(*it);
+            dot += sampVal * refVal;
+            refEnergy += refVal * refVal;
+            sampEnergy += sampVal * sampVal;
+        }
+        if (refEnergy <= 0.0 || sampEnergy <= 0.0) return 0.0;
+        return dot / std::sqrt(refEnergy * sampEnergy); // Normalized correlation [-1,1]
+        };
+
     for (size_t frameIdx = 0; frameIdx < frameBuffers.size(); ++frameIdx) {
         // Check for abort request
         if (abortRequested->load()) {
@@ -850,10 +889,14 @@ void runLinkMonitoredSender(juce::AudioDeviceManager& deviceManager,
 
                     double signalPower = calculateSignalPower(recentSamples);
                     double signalPeak = calculatePeak(recentSamples);
-                    if (signalPower > LinkMonitorConfig::highPowerRmsThreshold
-                        || signalPeak > LinkMonitorConfig::highPowerPeakThreshold) {
+                    double beaconCorrelation = calculateBeaconCorrelation(recentSamples);
+
+                    if (beaconCorrelation > LinkMonitorConfig::beaconCorrelationThreshold
+                        && (signalPower > LinkMonitorConfig::highPowerRmsThreshold
+                            || signalPeak > LinkMonitorConfig::highPowerPeakThreshold)) {
                         signalDetected = true;
-						std::cout << "signal_power is " << signalPower << ", peak is " << signalPeak << std::endl;
+                        std::cout << "[PAUSE] Beacon detected (corr=" << beaconCorrelation
+                            << ", power=" << signalPower << ", peak=" << signalPeak << ")" << std::endl;
                         sampleBuffer.clear();
                         break;
                     }
@@ -1146,14 +1189,18 @@ void runChirpReceiverMode(juce::AudioDeviceManager& deviceManager, const juce::F
     recorder.startRecording(recFile, ASK::sampleRate);
     deviceManager.addAudioCallback(&recorder);
 
-    // Prepare noise burst (high amplitude) to signal sender
-    const double noiseDurationSec = 0.05;
+    // Prepare beacon burst (distinct tone) to signal sender
+    const double noiseDurationSec = ReceiverBeaconConfig::noiseBurstDurationSec;
     const int noiseSamples = (int)(ASK::sampleRate * noiseDurationSec);
     juce::AudioBuffer<float> noiseBuffer(1, noiseSamples);
-    std::mt19937 rng((unsigned)std::chrono::high_resolution_clock::now().time_since_epoch().count());
-    std::uniform_real_distribution<float> dist(-1.0f, 1.0f);
+    double phase = 0.0;
+    const double phaseIncrement = 2.0 * juce::MathConstants<double>::pi
+        * ReceiverBeaconConfig::beaconFrequencyHz / ASK::sampleRate;
     for (int i = 0; i < noiseSamples; ++i) {
-        noiseBuffer.setSample(0, i, dist(rng));
+        float sample = ReceiverBeaconConfig::noiseBurstAmplitude
+            * static_cast<float>(std::sin(phase));
+        noiseBuffer.setSample(0, i, sample);
+        phase += phaseIncrement;
     }
 
     // Buffers for demodulation and intensity monitoring
