@@ -93,10 +93,9 @@ namespace ASK {
 
     constexpr int samplesPerBit = 6;          // NRZ: 4,009 bps (RECOMMENDED for speed)
 
-    constexpr int bitsPerFrame = 108;            // 8 ID + 100 data + 8 CRC
     constexpr int dataBitsPerFrame = 100;
-    constexpr int idBitsPerFrame = 8;
     constexpr int crcBitsPerFrame = 8;
+    constexpr int bitsPerFrame = dataBitsPerFrame + crcBitsPerFrame;
     constexpr int numFrames = 500;               // Changed from 100 to handle 50,000 bits (500×100=50,000)
 
     // CRC polynomial: x^8+x^7+x^5+x^2+x+1 = 0xD5 = 0b11010101
@@ -126,6 +125,7 @@ namespace ReceiverBeaconConfig {
     constexpr double noiseBurstDurationSec = 0.08;       // Duration of receiver noise beacon
     constexpr float noiseBurstAmplitude = 0.98f;         // Max amplitude for beacon samples
     constexpr double beaconFrequencyHz = 7500.0;         // Distinct carrier for beacon (outside data band)
+    constexpr double beaconStartDelaySec = 2.0;          // Wait time before beacon transmissions allowed
 }
 
 // ==============================================================================
@@ -332,13 +332,9 @@ public:
         frameBuffers.reserve(ASK::numFrames);
 
         for (int frameIdx = 0; frameIdx < ASK::numFrames; ++frameIdx) {
-            std::vector<bool> frame(ASK::idBitsPerFrame + ASK::dataBitsPerFrame);
-            int frameId = frameIdx + 1;
-            for (int i = 0; i < ASK::idBitsPerFrame; ++i) {
-                frame[i] = (frameId >> (ASK::idBitsPerFrame - 1 - i)) & 1;
-            }
+            std::vector<bool> frame(ASK::dataBitsPerFrame);
             for (int i = 0; i < ASK::dataBitsPerFrame; ++i) {
-                frame[ASK::idBitsPerFrame + i] = frames[frameIdx][i];
+                frame[i] = frames[frameIdx][i];
             }
 
             std::vector<bool> frameWithCRC = crcGen.generate(frame);
@@ -1078,14 +1074,12 @@ public:
                 if ((int)decodeFIFO.size() >= frameSamples) {
                     std::vector<bool> bits = demodulateFrame(decodeFIFO.data(), frameSamples);
 
-                    // Extract data bits (skip frame ID, use all bits as data)
-                    // Note: We're not extracting or validating frame ID anymore
-                    std::vector<bool> frameData(bits.begin() + ASK::idBitsPerFrame,
-                        bits.begin() + ASK::idBitsPerFrame + ASK::dataBitsPerFrame);
+                    // Extract data bits (entire payload before CRC)
+                    std::vector<bool> frameData(bits.begin(),
+                        bits.begin() + ASK::dataBitsPerFrame);
 
-                    // Check CRC (using ID + data bits)
-                    std::vector<bool> dataBits(bits.begin(), bits.begin() + ASK::idBitsPerFrame + ASK::dataBitsPerFrame);
-                    bool crcValid = crcGen_.check(dataBits);
+                    // Check CRC using entire demodulated frame (data+CRC)
+                    bool crcValid = crcGen_.check(bits);
 
                     // Always show result in verbose mode
                     if (emitLogs && verboseOutput_) {
@@ -1270,6 +1264,8 @@ void runChirpReceiverMode(juce::AudioDeviceManager& deviceManager, const juce::F
     std::thread noiseThread([&]() {
         auto lastIntensityCheck = std::chrono::steady_clock::now();
         auto lastNoiseSend = std::chrono::steady_clock::now();
+        auto beaconEnableTime = std::chrono::steady_clock::now() +
+            std::chrono::milliseconds(static_cast<int>(ReceiverBeaconConfig::beaconStartDelaySec * 1000.0));
         const double intensityCheckInterval = 0.02;
         const double minNoiseInterval = 0.15;
 
@@ -1287,7 +1283,7 @@ void runChirpReceiverMode(juce::AudioDeviceManager& deviceManager, const juce::F
                     size_t recentCount = std::min(snapshot.size(), intensityWindowSamples);
                     std::vector<float> recentSamples(snapshot.end() - recentCount, snapshot.end());
                     double signalPower = calculateSignalPower(recentSamples);
-                    if (signalPower < intensityThreshold) {
+                    if (signalPower < intensityThreshold && now >= beaconEnableTime) {
                         double timeSinceLastNoise = std::chrono::duration<double>(now - lastNoiseSend).count();
                         if (timeSinceLastNoise >= minNoiseInterval) {
                             std::cout << "[RECEIVER] Signal intensity dropped, sending noise ping." << std::endl;
