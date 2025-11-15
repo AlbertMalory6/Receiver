@@ -12,13 +12,13 @@
  * Files saved to: D:\fourth_year\cs120\debug_pic\ASK\
  */
 
- #include <JuceHeader.h>
- #include <iostream>
- #include <fstream>
- #include <cmath>
- #include <iomanip>
- #include <vector>
- #include <random>
+#include <JuceHeader.h>
+#include <iostream>
+#include <fstream>
+#include <cmath>
+#include <iomanip>
+#include <vector>
+#include <random>
 #include <algorithm>
 #include <atomic>
 #include <chrono>
@@ -26,11 +26,12 @@
 #include <mutex>
 #include <thread>
 #include <functional>
- 
+
 class SampleRingBuffer {
 public:
     explicit SampleRingBuffer(size_t capacitySamples)
-        : capacity_(capacitySamples) {}
+        : capacity_(capacitySamples) {
+    }
 
     void pushSamples(const float* samples, int numSamples) {
         std::lock_guard<std::mutex> lock(mutex_);
@@ -65,8 +66,8 @@ private:
  // 1 = Play from audio_path, 0 = Play generated signal
 
 namespace ASK {
-    constexpr double sampleRate = 44100.0;  // Match MATLAB
-    constexpr int preambleSamples = 440;
+    constexpr double sampleRate = 88200.0;  // Match MATLAB
+    constexpr int preambleSamples = 220;
 
     // Chirp parameters (1kHz-6kHz sweep, lowered for better channel response)
     constexpr double chirp_f_start = 1000.0;   // Was 2000.0
@@ -74,7 +75,7 @@ namespace ASK {
 
     // Line coding parameters
     constexpr double baseFreq = 2000.0;        // Base tone for line coding (2kHz)
-    
+
     // =========================================================================
     // SPEED TUNING PARAMETERS - Adjust these to meet timing requirements
     // =========================================================================
@@ -88,107 +89,107 @@ namespace ASK {
     //      11      |  4,009  |  12.5s   | Medium  <- RECOMMENDED START
     //       8      |  5,512  |   9.1s   | Marginal
     //       6      |  7,350  |   6.8s   | Poor (use only if channel is perfect)
-    
-    constexpr int samplesPerBit = 3;          // NRZ: 4,009 bps (RECOMMENDED for speed)
-    
+
+    constexpr int samplesPerBit = 6;          // NRZ: 4,009 bps (RECOMMENDED for speed)
+
     constexpr int bitsPerFrame = 108;            // 8 ID + 100 data + 8 CRC
     constexpr int dataBitsPerFrame = 100;
     constexpr int idBitsPerFrame = 8;
     constexpr int crcBitsPerFrame = 8;
     constexpr int numFrames = 500;               // Changed from 100 to handle 50,000 bits (500×100=50,000)
- 
-     // CRC polynomial: x^8+x^7+x^5+x^2+x+1 = 0xD5 = 0b11010101
-     constexpr uint8_t crcPolynomial = 0xD5;
- 
-     // Input/Output paths
-     const std::string inputPath = "INPUT.bin";  // Use binary file now
-     const std::string outputPath = "D:\\fourth_year\\cs120\\debug_pic\\ASK\\";
-     const std::string audio_path = "D:\\fourth_year\\cs120\\debug_pic\\ASK\\recorded_signal.wav";
- 
- }
- 
- // ==============================================================================
- //  CRC GENERATOR
- // ==============================================================================
- class CRC8Generator {
- private:
-     uint8_t polynomial;
- 
- public:
-     CRC8Generator(uint8_t poly) : polynomial(poly) {}
- 
-     // Generate CRC for data (returns data + CRC)
-     std::vector<bool> generate(const std::vector<bool>& data) {
-         std::vector<bool> result = data;
-         uint8_t crc = 0;
- 
-         for (bool bit : data) {
-             bool feedback = (crc >> 7) ^ bit;
-             crc <<= 1;
-             if (feedback) {
-                 crc ^= polynomial;
-             }
-         }
- 
-         // Append CRC bits
-         for (int i = 7; i >= 0; --i) {
-             result.push_back((crc >> i) & 1);
-         }
- 
-         return result;
-     }
- 
-     // Check CRC (returns true if valid)
-     bool check(const std::vector<bool>& dataWithCRC) {
-         if (dataWithCRC.size() < 8) return false;
- 
-         std::vector<bool> data(dataWithCRC.begin(), dataWithCRC.end() - 8);
-         std::vector<bool> computed = generate(data);
- 
-         for (size_t i = 0; i < 8; ++i) {
-             if (computed[data.size() + i] != dataWithCRC[data.size() + i]) {
-                 return false;
-             }
-         }
-         return true;
-     }
- };
- 
- // ==============================================================================
- //  SIGNAL GENERATOR
- // ==============================================================================
- class SignalGenerator {
- public:
-     /** Generates the preamble chirp (2kHz-10kHz sweep, matching MATLAB) */
-     static juce::AudioBuffer<float> generatePreamble() {
-         juce::AudioBuffer<float> preamble(1, ASK::preambleSamples);
-         auto* signal = preamble.getWritePointer(0);
- 
-         // Generate frequency sweep: 2kHz -> 10kHz -> 2kHz
-         std::vector<double> freqSweep;
-         for (int i = 0; i < ASK::preambleSamples / 2; ++i) {
-             double freq = juce::jmap((double)i, 0.0, (double)(ASK::preambleSamples / 2 - 1),
-                 ASK::chirp_f_start, ASK::chirp_f_end);
-             freqSweep.push_back(freq);
-         }
-         for (int i = ASK::preambleSamples / 2; i < ASK::preambleSamples; ++i) {
-             double freq = juce::jmap((double)i, (double)(ASK::preambleSamples / 2),
-                 (double)(ASK::preambleSamples - 1),
-                 ASK::chirp_f_end, ASK::chirp_f_start);
-             freqSweep.push_back(freq);
-         }
- 
-         // Generate signal using cumulative integration (like cumtrapz in MATLAB)
-         double currentPhase = 0.0;
-         for (int i = 0; i < ASK::preambleSamples; ++i) {
-             double phaseIncrement = 2.0 * juce::MathConstants<double>::pi * freqSweep[i] / ASK::sampleRate;
-             currentPhase += phaseIncrement;
-             signal[i] = std::sin(currentPhase);
-         }
- 
-         return preamble;
-     }
- 
+
+    // CRC polynomial: x^8+x^7+x^5+x^2+x+1 = 0xD5 = 0b11010101
+    constexpr uint8_t crcPolynomial = 0xD5;
+
+    // Input/Output paths
+    const std::string inputPath = "INPUT.bin";  // Use binary file now
+    const std::string outputPath = "D:\\fourth_year\\cs120\\debug_pic\\ASK\\";
+    const std::string audio_path = "D:\\fourth_year\\cs120\\debug_pic\\ASK\\recorded_signal.wav";
+
+}
+
+// ==============================================================================
+//  CRC GENERATOR
+// ==============================================================================
+class CRC8Generator {
+private:
+    uint8_t polynomial;
+
+public:
+    CRC8Generator(uint8_t poly) : polynomial(poly) {}
+
+    // Generate CRC for data (returns data + CRC)
+    std::vector<bool> generate(const std::vector<bool>& data) {
+        std::vector<bool> result = data;
+        uint8_t crc = 0;
+
+        for (bool bit : data) {
+            bool feedback = (crc >> 7) ^ bit;
+            crc <<= 1;
+            if (feedback) {
+                crc ^= polynomial;
+            }
+        }
+
+        // Append CRC bits
+        for (int i = 7; i >= 0; --i) {
+            result.push_back((crc >> i) & 1);
+        }
+
+        return result;
+    }
+
+    // Check CRC (returns true if valid)
+    bool check(const std::vector<bool>& dataWithCRC) {
+        if (dataWithCRC.size() < 8) return false;
+
+        std::vector<bool> data(dataWithCRC.begin(), dataWithCRC.end() - 8);
+        std::vector<bool> computed = generate(data);
+
+        for (size_t i = 0; i < 8; ++i) {
+            if (computed[data.size() + i] != dataWithCRC[data.size() + i]) {
+                return false;
+            }
+        }
+        return true;
+    }
+};
+
+// ==============================================================================
+//  SIGNAL GENERATOR
+// ==============================================================================
+class SignalGenerator {
+public:
+    /** Generates the preamble chirp (2kHz-10kHz sweep, matching MATLAB) */
+    static juce::AudioBuffer<float> generatePreamble() {
+        juce::AudioBuffer<float> preamble(1, ASK::preambleSamples);
+        auto* signal = preamble.getWritePointer(0);
+
+        // Generate frequency sweep: 2kHz -> 10kHz -> 2kHz
+        std::vector<double> freqSweep;
+        for (int i = 0; i < ASK::preambleSamples / 2; ++i) {
+            double freq = juce::jmap((double)i, 0.0, (double)(ASK::preambleSamples / 2 - 1),
+                ASK::chirp_f_start, ASK::chirp_f_end);
+            freqSweep.push_back(freq);
+        }
+        for (int i = ASK::preambleSamples / 2; i < ASK::preambleSamples; ++i) {
+            double freq = juce::jmap((double)i, (double)(ASK::preambleSamples / 2),
+                (double)(ASK::preambleSamples - 1),
+                ASK::chirp_f_end, ASK::chirp_f_start);
+            freqSweep.push_back(freq);
+        }
+
+        // Generate signal using cumulative integration (like cumtrapz in MATLAB)
+        double currentPhase = 0.0;
+        for (int i = 0; i < ASK::preambleSamples; ++i) {
+            double phaseIncrement = 2.0 * juce::MathConstants<double>::pi * freqSweep[i] / ASK::sampleRate;
+            currentPhase += phaseIncrement;
+            signal[i] = std::sin(currentPhase);
+        }
+
+        return preamble;
+    }
+
     /** Generates base tone for line coding (2kHz sine wave) */
     static juce::AudioBuffer<float> generateBaseTone(int numSamples) {
         juce::AudioBuffer<float> tone(1, numSamples);
@@ -212,13 +213,13 @@ namespace ASK {
     static juce::AudioBuffer<float> generateNRZBit(bool bitValue, int samplesPerBit) {
         auto tone = generateBaseTone(samplesPerBit);
         auto* signal = tone.getWritePointer(0);
-        
+
         // Bit 1 = positive amplitude, Bit 0 = negative amplitude
         float polarity = bitValue ? 1.0f : -1.0f;
         for (int i = 0; i < samplesPerBit; ++i) {
             signal[i] *= polarity;
         }
-        
+
         return tone;
     }
 
@@ -236,65 +237,65 @@ namespace ASK {
         beacon.copyFrom(0, 0, chirp, 0, 0, chirp.getNumSamples());
         return beacon;
     }
- };
- 
- // ==============================================================================
- //  FILE I/O
- // ==============================================================================
- class FileIO {
- public:
-     static std::vector<bool> readInputFile(const std::string& filename) {
-         std::vector<bool> data;
-         std::ifstream file(filename, std::ios::binary);
+};
 
-         if (!file.is_open()) {
-             std::cerr << "ERROR: Could not open input file: " << filename << std::endl;
-             return data;
-         }
+// ==============================================================================
+//  FILE I/O
+// ==============================================================================
+class FileIO {
+public:
+    static std::vector<bool> readInputFile(const std::string& filename) {
+        std::vector<bool> data;
+        std::ifstream file(filename, std::ios::binary);
 
-         // Read all bytes
-         std::vector<unsigned char> bytes(
-             (std::istreambuf_iterator<char>(file)),
-             (std::istreambuf_iterator<char>())
-         );
+        if (!file.is_open()) {
+            std::cerr << "ERROR: Could not open input file: " << filename << std::endl;
+            return data;
+        }
+
+        // Read all bytes
+        std::vector<unsigned char> bytes(
+            (std::istreambuf_iterator<char>(file)),
+            (std::istreambuf_iterator<char>())
+        );
 
 
 
-         file.close();
+        file.close();
 
-         // Convert bytes into bits (MSB first)
-         for (unsigned char byte : bytes) {
-             for (int bit = 7; bit >= 0; --bit) {
-                 bool bitValue = (byte >> bit) & 1;
-                 data.push_back(bitValue);
-             }
-         }  
+        // Convert bytes into bits (MSB first)
+        for (unsigned char byte : bytes) {
+            for (int bit = 7; bit >= 0; --bit) {
+                bool bitValue = (byte >> bit) & 1;
+                data.push_back(bitValue);
+            }
+        }
 
-         std::cout << "First 16 bits: ";
-         for (int i = 0; i < 16 && i < (int)data.size(); ++i)
-             std::cout << data[i];
-         std::cout << std::endl;
+        std::cout << "First 16 bits: ";
+        for (int i = 0; i < 16 && i < (int)data.size(); ++i)
+            std::cout << data[i];
+        std::cout << std::endl;
 
-         // Limit to max data size (100 frames * 100 bits)
-         int maxDataSize = ASK::numFrames * ASK::dataBitsPerFrame;
-         if ((int)data.size() > maxDataSize) {
-             data.resize(maxDataSize);
-             std::cout << "WARNING: Data truncated to " << maxDataSize << " bits" << std::endl;
-         }
+        // Limit to max data size (100 frames * 100 bits)
+        int maxDataSize = ASK::numFrames * ASK::dataBitsPerFrame;
+        if ((int)data.size() > maxDataSize) {
+            data.resize(maxDataSize);
+            std::cout << "WARNING: Data truncated to " << maxDataSize << " bits" << std::endl;
+        }
 
-         std::cout << "Read " << data.size() << " bits (" << bytes.size()
-             << " bytes) from binary file: " << filename << std::endl;
+        std::cout << "Read " << data.size() << " bits (" << bytes.size()
+            << " bytes) from binary file: " << filename << std::endl;
 
-         return data;
-     }
- };
+        return data;
+    }
+};
 
- 
- // ==============================================================================
- //  MODULATOR
- // ==============================================================================
- class Modulator {
- public:
+
+// ==============================================================================
+//  MODULATOR
+// ==============================================================================
+class Modulator {
+public:
     static std::vector<juce::AudioBuffer<float>> generateFrameBuffers(const std::vector<bool>& inputData) {
         auto preamble = SignalGenerator::generatePreamble();
 
@@ -366,64 +367,64 @@ namespace ASK {
 
         return result;
     }
- };
- 
- // ==============================================================================
- //  AUDIO RECORDER (Using ThreadedWriter like AudioRecordingDemo)
- // ==============================================================================
- class AudioRecorder : public juce::AudioIODeviceCallback {
- public:
-     AudioRecorder() {
-         backgroundThread.startThread();
-     }
- 
-     ~AudioRecorder() override {
-         stop();
-     }
- 
-     void startRecording(const juce::File& file, double sampleRateToUse) {
-         stop();
- 
-         sampleRate = sampleRateToUse;
- 
-         if (sampleRate > 0) {
-             file.deleteFile();
- 
-             if (std::unique_ptr<juce::OutputStream> fileStream{ file.createOutputStream() }) {
-                 juce::WavAudioFormat wavFormat;
- 
-                 using Opts = juce::AudioFormatWriterOptions;
-                 // createWriterFor takes a reference to unique_ptr and takes ownership if successful
-                 if (auto writer = wavFormat.createWriterFor(fileStream,
-                     Opts{}.withSampleRate(sampleRate)
-                     .withNumChannels(1)
-                     .withBitsPerSample(16))) {
-                     // Writer now owns the stream (fileStream is set to nullptr by createWriterFor)
-                     // Create ThreadedWriter for background writing
-                     threadedWriter.reset(new juce::AudioFormatWriter::ThreadedWriter(
-                         writer.release(), backgroundThread, 32768));
- 
-                     nextSampleNum = 0;
- 
-                     const juce::CriticalSection::ScopedLockType sl(writerLock);
-                     activeWriter = threadedWriter.get();
- 
-                     std::cout << "Recording started to: " << file.getFullPathName() << std::endl;
-                     std::cout << "Sample rate: " << sampleRate << " Hz" << std::endl;
-                 }
-             }
-         }
-     }
- 
-     void stop() {
-         {
-             const juce::CriticalSection::ScopedLockType sl(writerLock);
-             activeWriter = nullptr;
-         }
-         threadedWriter.reset();
-         std::cout << "Recording stopped." << std::endl;
-     }
- 
+};
+
+// ==============================================================================
+//  AUDIO RECORDER (Using ThreadedWriter like AudioRecordingDemo)
+// ==============================================================================
+class AudioRecorder : public juce::AudioIODeviceCallback {
+public:
+    AudioRecorder() {
+        backgroundThread.startThread();
+    }
+
+    ~AudioRecorder() override {
+        stop();
+    }
+
+    void startRecording(const juce::File& file, double sampleRateToUse) {
+        stop();
+
+        sampleRate = sampleRateToUse;
+
+        if (sampleRate > 0) {
+            file.deleteFile();
+
+            if (std::unique_ptr<juce::OutputStream> fileStream{ file.createOutputStream() }) {
+                juce::WavAudioFormat wavFormat;
+
+                using Opts = juce::AudioFormatWriterOptions;
+                // createWriterFor takes a reference to unique_ptr and takes ownership if successful
+                if (auto writer = wavFormat.createWriterFor(fileStream,
+                    Opts{}.withSampleRate(sampleRate)
+                    .withNumChannels(1)
+                    .withBitsPerSample(16))) {
+                    // Writer now owns the stream (fileStream is set to nullptr by createWriterFor)
+                    // Create ThreadedWriter for background writing
+                    threadedWriter.reset(new juce::AudioFormatWriter::ThreadedWriter(
+                        writer.release(), backgroundThread, 32768));
+
+                    nextSampleNum = 0;
+
+                    const juce::CriticalSection::ScopedLockType sl(writerLock);
+                    activeWriter = threadedWriter.get();
+
+                    std::cout << "Recording started to: " << file.getFullPathName() << std::endl;
+                    std::cout << "Sample rate: " << sampleRate << " Hz" << std::endl;
+                }
+            }
+        }
+    }
+
+    void stop() {
+        {
+            const juce::CriticalSection::ScopedLockType sl(writerLock);
+            activeWriter = nullptr;
+        }
+        threadedWriter.reset();
+        std::cout << "Recording stopped." << std::endl;
+    }
+
     bool isRecording() const {
         return activeWriter.load() != nullptr;
     }
@@ -434,22 +435,22 @@ namespace ASK {
     }
 
     void audioDeviceAboutToStart(juce::AudioIODevice* device) override {
-         // Update sample rate if device provides one
-         if (device != nullptr && sampleRate == 0) {
-             sampleRate = device->getCurrentSampleRate();
-         }
-     }
- 
-     void audioDeviceStopped() override {
-         // Keep sampleRate for file writing
-     }
- 
-     void audioDeviceIOCallbackWithContext(const float* const* inputChannelData, int numInputChannels,
-         float* const* outputChannelData, int numOutputChannels,
-         int numSamples,
-         const juce::AudioIODeviceCallbackContext& context) override {
-         juce::ignoreUnused(context);
- 
+        // Update sample rate if device provides one
+        if (device != nullptr && sampleRate == 0) {
+            sampleRate = device->getCurrentSampleRate();
+        }
+    }
+
+    void audioDeviceStopped() override {
+        // Keep sampleRate for file writing
+    }
+
+    void audioDeviceIOCallbackWithContext(const float* const* inputChannelData, int numInputChannels,
+        float* const* outputChannelData, int numOutputChannels,
+        int numSamples,
+        const juce::AudioIODeviceCallbackContext& context) override {
+        juce::ignoreUnused(context);
+
         // Write input to file
         {
             const juce::CriticalSection::ScopedLockType sl(writerLock);
@@ -468,19 +469,19 @@ namespace ASK {
         }
 
         // Clear output buffers (we don't play anything here)
-         for (int i = 0; i < numOutputChannels; ++i) {
-             if (outputChannelData[i] != nullptr) {
-                 juce::FloatVectorOperations::clear(outputChannelData[i], numSamples);
-             }
-         }
-     }
- 
- private:
-     juce::TimeSliceThread backgroundThread{ "Audio Recorder Thread" };
-     std::unique_ptr<juce::AudioFormatWriter::ThreadedWriter> threadedWriter;
-     double sampleRate = 0.0;
-     int nextSampleNum = 0;
- 
+        for (int i = 0; i < numOutputChannels; ++i) {
+            if (outputChannelData[i] != nullptr) {
+                juce::FloatVectorOperations::clear(outputChannelData[i], numSamples);
+            }
+        }
+    }
+
+private:
+    juce::TimeSliceThread backgroundThread{ "Audio Recorder Thread" };
+    std::unique_ptr<juce::AudioFormatWriter::ThreadedWriter> threadedWriter;
+    double sampleRate = 0.0;
+    int nextSampleNum = 0;
+
     juce::CriticalSection writerLock;
     std::atomic<juce::AudioFormatWriter::ThreadedWriter*> activeWriter{ nullptr };
 
@@ -488,59 +489,59 @@ namespace ASK {
     std::function<void(const float*, int)> sampleCallback;
     std::mutex callbackMutex;
 };
- 
- // ==============================================================================
- //  AUDIO PLAYER (Separate class for playback)
- // ==============================================================================
- class AudioPlayer : public juce::AudioIODeviceCallback {
- public:
-     AudioPlayer(const juce::AudioBuffer<float>& bufferToPlay)
-         : sourceBuffer(bufferToPlay), samplesPlayed(0) {
-     }
- 
-     void audioDeviceAboutToStart(juce::AudioIODevice*) override {
-         samplesPlayed = 0;
-     }
- 
-     void audioDeviceStopped() override {}
- 
-     void audioDeviceIOCallbackWithContext(const float* const* inputChannelData, int numInputChannels,
-         float* const* outputChannelData, int numOutputChannels,
-         int numSamples,
-         const juce::AudioIODeviceCallbackContext& context) override {
-         juce::ignoreUnused(inputChannelData, numInputChannels, context);
- 
-         // Handle playback (output)
-         int samplesRemaining = sourceBuffer.getNumSamples() - samplesPlayed;
-         int samplesToPlay = std::min(numSamples, samplesRemaining);
- 
-         if (samplesToPlay > 0) {
-             const float* src = sourceBuffer.getReadPointer(0, samplesPlayed);
-             for (int i = 0; i < numOutputChannels; ++i) {
-                 if (outputChannelData[i] != nullptr) {
-                     std::memcpy(outputChannelData[i], src, sizeof(float) * samplesToPlay);
-                     if (samplesToPlay < numSamples) {
-                         juce::FloatVectorOperations::clear(outputChannelData[i] + samplesToPlay,
-                             numSamples - samplesToPlay);
-                     }
-                 }
-             }
-             samplesPlayed += samplesToPlay;
-         }
-         else {
-             // Playback finished, output silence
-             for (int i = 0; i < numOutputChannels; ++i) {
-                 if (outputChannelData[i] != nullptr) {
-                     juce::FloatVectorOperations::clear(outputChannelData[i], numSamples);
-                 }
-             }
-         }
-     }
- 
- private:
-     const juce::AudioBuffer<float>& sourceBuffer;
-     int samplesPlayed;
- };
+
+// ==============================================================================
+//  AUDIO PLAYER (Separate class for playback)
+// ==============================================================================
+class AudioPlayer : public juce::AudioIODeviceCallback {
+public:
+    AudioPlayer(const juce::AudioBuffer<float>& bufferToPlay)
+        : sourceBuffer(bufferToPlay), samplesPlayed(0) {
+    }
+
+    void audioDeviceAboutToStart(juce::AudioIODevice*) override {
+        samplesPlayed = 0;
+    }
+
+    void audioDeviceStopped() override {}
+
+    void audioDeviceIOCallbackWithContext(const float* const* inputChannelData, int numInputChannels,
+        float* const* outputChannelData, int numOutputChannels,
+        int numSamples,
+        const juce::AudioIODeviceCallbackContext& context) override {
+        juce::ignoreUnused(inputChannelData, numInputChannels, context);
+
+        // Handle playback (output)
+        int samplesRemaining = sourceBuffer.getNumSamples() - samplesPlayed;
+        int samplesToPlay = std::min(numSamples, samplesRemaining);
+
+        if (samplesToPlay > 0) {
+            const float* src = sourceBuffer.getReadPointer(0, samplesPlayed);
+            for (int i = 0; i < numOutputChannels; ++i) {
+                if (outputChannelData[i] != nullptr) {
+                    std::memcpy(outputChannelData[i], src, sizeof(float) * samplesToPlay);
+                    if (samplesToPlay < numSamples) {
+                        juce::FloatVectorOperations::clear(outputChannelData[i] + samplesToPlay,
+                            numSamples - samplesToPlay);
+                    }
+                }
+            }
+            samplesPlayed += samplesToPlay;
+        }
+        else {
+            // Playback finished, output silence
+            for (int i = 0; i < numOutputChannels; ++i) {
+                if (outputChannelData[i] != nullptr) {
+                    juce::FloatVectorOperations::clear(outputChannelData[i], numSamples);
+                }
+            }
+        }
+    }
+
+private:
+    const juce::AudioBuffer<float>& sourceBuffer;
+    int samplesPlayed;
+};
 
 double bufferDurationSeconds(const juce::AudioBuffer<float>& buffer) {
     return static_cast<double>(buffer.getNumSamples()) / ASK::sampleRate;
@@ -553,46 +554,46 @@ void playBufferBlocking(juce::AudioDeviceManager& deviceManager, const juce::Aud
     juce::Thread::sleep(durationMs);
     deviceManager.removeAudioCallback(&player);
 }
- 
- // ==============================================================================
- //  CHIRP DETECTOR (Modified for full analysis logging)
- // ==============================================================================
- class ChirpDetector {
- private:
-     juce::AudioBuffer<float> template_;
-     double templateEnergy_;
- 
-     double calculateEnergy(const float* buffer, int numSamples) {
-         double energy = 0.0;
-         for (int i = 0; i < numSamples; ++i) {
-             energy += buffer[i] * buffer[i];
-         }
-         return energy;
-     }
- 
- public:
-     ChirpDetector() {
-         template_ = SignalGenerator::generatePreamble();
-         templateEnergy_ = calculateEnergy(template_.getReadPointer(0), template_.getNumSamples());
-         std::cout << "Chirp template generated: " << template_.getNumSamples() << " samples" << std::endl;
-         std::cout << "Template energy: " << templateEnergy_ << std::endl;
-     }
- 
-     /**
-      * Analyzes the entire signal and logs correlation scores at every sample index
-      */
-     void logCorrelation(const juce::AudioBuffer<float>& signal, const std::string& logFilePath) {
-         const float* sigData = signal.getReadPointer(0);
-         const float* tempData = template_.getReadPointer(0);
-         const int sigLen = signal.getNumSamples();
-         const int tempLen = template_.getNumSamples();
- 
-         std::ofstream logFile(logFilePath);
-         if (!logFile.is_open()) {
-             std::cerr << "ERROR: Could not open log file: " << logFilePath << std::endl;
-             return;
-         }
- 
+
+// ==============================================================================
+//  CHIRP DETECTOR (Modified for full analysis logging)
+// ==============================================================================
+class ChirpDetector {
+private:
+    juce::AudioBuffer<float> template_;
+    double templateEnergy_;
+
+    double calculateEnergy(const float* buffer, int numSamples) {
+        double energy = 0.0;
+        for (int i = 0; i < numSamples; ++i) {
+            energy += buffer[i] * buffer[i];
+        }
+        return energy;
+    }
+
+public:
+    ChirpDetector() {
+        template_ = SignalGenerator::generatePreamble();
+        templateEnergy_ = calculateEnergy(template_.getReadPointer(0), template_.getNumSamples());
+        std::cout << "Chirp template generated: " << template_.getNumSamples() << " samples" << std::endl;
+        std::cout << "Template energy: " << templateEnergy_ << std::endl;
+    }
+
+    /**
+     * Analyzes the entire signal and logs correlation scores at every sample index
+     */
+    void logCorrelation(const juce::AudioBuffer<float>& signal, const std::string& logFilePath) {
+        const float* sigData = signal.getReadPointer(0);
+        const float* tempData = template_.getReadPointer(0);
+        const int sigLen = signal.getNumSamples();
+        const int tempLen = template_.getNumSamples();
+
+        std::ofstream logFile(logFilePath);
+        if (!logFile.is_open()) {
+            std::cerr << "ERROR: Could not open log file: " << logFilePath << std::endl;
+            return;
+        }
+
         std::cout << "\nAnalyzing " << sigLen << " samples..." << std::endl;
         std::cout << "Logging correlation scores to: " << logFilePath << std::endl;
 
@@ -607,7 +608,7 @@ void playBufferBlocking(juce::AudioDeviceManager& deviceManager, const juce::Aud
 
             for (int j = 0; j < tempLen; ++j) {
                 dotProduct += sigData[i + j] * tempData[j];
-            } 
+            }
 
             score = dotProduct;
 
@@ -626,7 +627,7 @@ void playBufferBlocking(juce::AudioDeviceManager& deviceManager, const juce::Aud
         logFile.close();
         std::cout << "\n✓ Analysis complete." << std::endl;
         std::cout << "  Max Dot Product: " << maxScore << " at sample " << maxPos << std::endl;
-     }
+    }
 
     bool detectPreamble(const std::vector<float>& signal, double threshold = 0.65) const {
         const int tempLen = template_.getNumSamples();
@@ -653,97 +654,97 @@ void playBufferBlocking(juce::AudioDeviceManager& deviceManager, const juce::Aud
         }
         return false;
     }
- };
- 
- // ==============================================================================
- //  UTILITY FUNCTIONS
- // ==============================================================================
- void saveWavFile(const juce::AudioBuffer<float>& buffer, const juce::File& file, int numSamples) {
-     juce::WavAudioFormat wavFormat;
-     if (std::unique_ptr<juce::OutputStream> fileStream{ file.createOutputStream() }) {
-         using Opts = juce::AudioFormatWriterOptions;
-         if (auto writer = wavFormat.createWriterFor(fileStream.release(),
-             ASK::sampleRate,        // double sampleRate
-             1,                      // unsigned int numChannels
-             16,                     // unsigned int bitsPerSample
-             {},                     // juce::StringPairArray* metadata = nullptr
-             0))                     // int qualityOptionIndex = 0
-         {
-             fileStream.release();
-             writer->writeFromAudioSampleBuffer(buffer, 0, numSamples);
-             std::cout << "✓ Audio saved to: " << file.getFullPathName() << std::endl;
-         }
-         else {
-             std::cerr << "ERROR: Could not create writer for " << file.getFullPathName() << std::endl;
-         }
-     }
-     else {
-         std::cerr << "ERROR: Could not create output stream for " << file.getFullPathName() << std::endl;
-     }
- }
- 
- bool loadWavFile(juce::AudioBuffer<float>& buffer, const juce::File& file) {
-     juce::AudioFormatManager formatManager;
-     formatManager.registerBasicFormats();
- 
-     std::unique_ptr<juce::AudioFormatReader> reader(formatManager.createReaderFor(file));
-     if (reader == nullptr) {
-         std::cerr << "ERROR: Could not read audio file: " << file.getFullPathName() << std::endl;
-         return false;
-     }
- 
-     buffer.setSize((int)reader->numChannels, (int)reader->lengthInSamples);
-     if (!reader->read(&buffer, 0, (int)reader->lengthInSamples, 0, true, true)) {
-         std::cerr << "ERROR: Failed to read audio data from file" << std::endl;
-         return false;
-     }
- 
-     std::cout << "✓ Audio loaded from: " << file.getFullPathName() << std::endl;
-     std::cout << "  Channels: " << buffer.getNumChannels() << std::endl;
-     std::cout << "  Samples: " << buffer.getNumSamples() << std::endl;
-     std::cout << "  Sample rate: " << reader->sampleRate << " Hz" << std::endl;
- 
-     return true;
- }
- 
- void analyzeRecordingDiagnostics(const juce::AudioBuffer<float>& buffer) {
-     if (buffer.getNumSamples() == 0) {
-         std::cout << "  [Diagnostics] Buffer is empty!" << std::endl;
-         return;
-     }
- 
-     const float* data = buffer.getReadPointer(0);
-     int numSamples = buffer.getNumSamples();
- 
-     // Calculate statistics
-     float minVal = data[0], maxVal = data[0];
-     double sum = 0.0, sumSq = 0.0;
- 
-     for (int i = 0; i < numSamples; ++i) {
-         float val = data[i];
-         minVal = std::min(minVal, val);
-         maxVal = std::max(maxVal, val);
-         sum += val;
-         sumSq += val * val;
-     }
- 
-     double mean = sum / numSamples;
-     double variance = (sumSq / numSamples) - (mean * mean);
-     double stdDev = std::sqrt(variance);
- 
-     std::cout << "\n[Recording Diagnostics]" << std::endl;
-     std::cout << "  Min value: " << std::fixed << std::setprecision(6) << minVal << std::endl;
-     std::cout << "  Max value: " << maxVal << std::endl;
-     std::cout << "  Mean: " << mean << std::endl;
-     std::cout << "  Std deviation: " << stdDev << std::endl;
- 
-     // Check if signal is constant (very low variance)
-     if (stdDev < 1e-6) {
-         std::cout << "  ⚠ WARNING: Signal appears to be CONSTANT (std dev < 1e-6)" << std::endl;
-         std::cout << "     This suggests the microphone may not be receiving the audio." << std::endl;
-     }
- 
- 
+};
+
+// ==============================================================================
+//  UTILITY FUNCTIONS
+// ==============================================================================
+void saveWavFile(const juce::AudioBuffer<float>& buffer, const juce::File& file, int numSamples) {
+    juce::WavAudioFormat wavFormat;
+    if (std::unique_ptr<juce::OutputStream> fileStream{ file.createOutputStream() }) {
+        using Opts = juce::AudioFormatWriterOptions;
+        if (auto writer = wavFormat.createWriterFor(fileStream.release(),
+            ASK::sampleRate,        // double sampleRate
+            1,                      // unsigned int numChannels
+            16,                     // unsigned int bitsPerSample
+            {},                     // juce::StringPairArray* metadata = nullptr
+            0))                     // int qualityOptionIndex = 0
+        {
+            fileStream.release();
+            writer->writeFromAudioSampleBuffer(buffer, 0, numSamples);
+            std::cout << "✓ Audio saved to: " << file.getFullPathName() << std::endl;
+        }
+        else {
+            std::cerr << "ERROR: Could not create writer for " << file.getFullPathName() << std::endl;
+        }
+    }
+    else {
+        std::cerr << "ERROR: Could not create output stream for " << file.getFullPathName() << std::endl;
+    }
+}
+
+bool loadWavFile(juce::AudioBuffer<float>& buffer, const juce::File& file) {
+    juce::AudioFormatManager formatManager;
+    formatManager.registerBasicFormats();
+
+    std::unique_ptr<juce::AudioFormatReader> reader(formatManager.createReaderFor(file));
+    if (reader == nullptr) {
+        std::cerr << "ERROR: Could not read audio file: " << file.getFullPathName() << std::endl;
+        return false;
+    }
+
+    buffer.setSize((int)reader->numChannels, (int)reader->lengthInSamples);
+    if (!reader->read(&buffer, 0, (int)reader->lengthInSamples, 0, true, true)) {
+        std::cerr << "ERROR: Failed to read audio data from file" << std::endl;
+        return false;
+    }
+
+    std::cout << "✓ Audio loaded from: " << file.getFullPathName() << std::endl;
+    std::cout << "  Channels: " << buffer.getNumChannels() << std::endl;
+    std::cout << "  Samples: " << buffer.getNumSamples() << std::endl;
+    std::cout << "  Sample rate: " << reader->sampleRate << " Hz" << std::endl;
+
+    return true;
+}
+
+void analyzeRecordingDiagnostics(const juce::AudioBuffer<float>& buffer) {
+    if (buffer.getNumSamples() == 0) {
+        std::cout << "  [Diagnostics] Buffer is empty!" << std::endl;
+        return;
+    }
+
+    const float* data = buffer.getReadPointer(0);
+    int numSamples = buffer.getNumSamples();
+
+    // Calculate statistics
+    float minVal = data[0], maxVal = data[0];
+    double sum = 0.0, sumSq = 0.0;
+
+    for (int i = 0; i < numSamples; ++i) {
+        float val = data[i];
+        minVal = std::min(minVal, val);
+        maxVal = std::max(maxVal, val);
+        sum += val;
+        sumSq += val * val;
+    }
+
+    double mean = sum / numSamples;
+    double variance = (sumSq / numSamples) - (mean * mean);
+    double stdDev = std::sqrt(variance);
+
+    std::cout << "\n[Recording Diagnostics]" << std::endl;
+    std::cout << "  Min value: " << std::fixed << std::setprecision(6) << minVal << std::endl;
+    std::cout << "  Max value: " << maxVal << std::endl;
+    std::cout << "  Mean: " << mean << std::endl;
+    std::cout << "  Std deviation: " << stdDev << std::endl;
+
+    // Check if signal is constant (very low variance)
+    if (stdDev < 1e-6) {
+        std::cout << "  ⚠ WARNING: Signal appears to be CONSTANT (std dev < 1e-6)" << std::endl;
+        std::cout << "     This suggests the microphone may not be receiving the audio." << std::endl;
+    }
+
+
 }
 
 // Forward declaration
@@ -774,16 +775,12 @@ void runLinkMonitoredSender(juce::AudioDeviceManager& deviceManager,
     deviceManager.addAudioCallback(&recorder);
 
     ChirpDetector detector;
-    const double handshakeIntervalSec = 5.0;
-    const double powerLossTimeoutSec = 2.0;  // Wait 2 seconds after no power detected
+    const int framesPerPause = 125;  // Pause every 125 frames
+    const double pauseDurationSec = 0.1;  // 0.1 second pause to listen for chirp
     const double powerThreshold = 0.01;  // Threshold for signal power detection (adjust as needed)
-    const size_t minSamplesForPowerCheck = static_cast<size_t>(ASK::sampleRate * 0.1);  // 100ms of samples
+    const size_t minSamplesForPowerCheck = static_cast<size_t>(ASK::sampleRate * 0.05);  // 50ms of samples
 
-    auto intervalStart = std::chrono::steady_clock::now();
-    auto lastChirpCheck = std::chrono::steady_clock::now();
-    auto noPowerDetectedTime = std::chrono::steady_clock::time_point();
     bool linkError = false;
-    bool noPowerDetected = false;
     std::atomic<bool> abortRequested{ false };
 
     // Thread to monitor for Enter key press to abort
@@ -800,7 +797,7 @@ void runLinkMonitoredSender(juce::AudioDeviceManager& deviceManager,
             sumSq += s * s;
         }
         return sumSq / samples.size();  // Average power
-    };
+        };
 
     for (size_t frameIdx = 0; frameIdx < frameBuffers.size(); ++frameIdx) {
         // Check for abort request
@@ -809,84 +806,49 @@ void runLinkMonitoredSender(juce::AudioDeviceManager& deviceManager,
             break;
         }
 
-        auto now = std::chrono::steady_clock::now();
-        double elapsed = std::chrono::duration<double>(now - intervalStart).count();
-        bool chirpDetectedThisIteration = false;
-        
-        // Continuous signal power monitoring (faster than waiting 5 seconds)
-        auto snapshot = sampleBuffer.snapshot();
-        bool hasPower = false;
-        double signalPower = 0.0;
-        
-        if (snapshot.size() >= minSamplesForPowerCheck) {
-            // Use only recent samples (last 200ms) for faster response to current signal activity
-            size_t recentSampleCount = std::min(snapshot.size(), static_cast<size_t>(ASK::sampleRate * 0.2));
-            std::vector<float> recentSamples(snapshot.end() - recentSampleCount, snapshot.end());
-            signalPower = calculateSignalPower(recentSamples);
-            hasPower = (signalPower > powerThreshold);
-            
-            // Track power loss
-            if (hasPower) {
-                noPowerDetected = false;
-                noPowerDetectedTime = std::chrono::steady_clock::time_point();
-            } else {
-                if (!noPowerDetected) {
-                    // First time detecting no power
-                    noPowerDetected = true;
-                    noPowerDetectedTime = now;
-                } else {
-                    // Check if we've been without power for 2 seconds
-                    double noPowerElapsed = std::chrono::duration<double>(now - noPowerDetectedTime).count();
-                    if (noPowerElapsed >= powerLossTimeoutSec) {
-                        std::cout << "line error" << std::endl;
-                        linkError = true;
-                        abortRequested = true;  // Abort the process
-                        break;
-                    }
-                }
-            }
-            
-            // If signal power detected, immediately check for chirp
-            if (hasPower) {
-                auto timeSinceLastCheck = std::chrono::duration<double>(now - lastChirpCheck).count();
-                // Throttle chirp checks to avoid excessive processing (max once per 50ms for faster response)
-                if (timeSinceLastCheck >= 0.05) {
-                    if (detector.detectPreamble(snapshot, 0.65)) {
-                        sampleBuffer.clear();
-                        intervalStart = std::chrono::steady_clock::now();
-                        lastChirpCheck = now;
-                        chirpDetectedThisIteration = true;
-                        noPowerDetected = false;  // Reset power loss tracking
-                        // Retransmit current frame immediately
-                        std::cout << "[TX] Frame " << (frameIdx + 1) << " / " << frameBuffers.size() << " (retransmit)" << std::endl;
-                        playBufferBlocking(deviceManager, frameBuffers[frameIdx]);
-                    }
-                    lastChirpCheck = now;
-                }
-            }
-        }
-        
-        // Fallback: 5-second timeout check (flag every 5 seconds)
-        if (!chirpDetectedThisIteration && elapsed >= handshakeIntervalSec) {
-            if (snapshot.empty() || !detector.detectPreamble(snapshot, 0.65)) {
-                // No chirp in 5-second check, but don't error yet (power loss check handles that)
-                intervalStart = std::chrono::steady_clock::now();  // Reset timer, continue transmission
-            } else {
-                // Chirp found in timeout check
-                sampleBuffer.clear();
-                intervalStart = std::chrono::steady_clock::now();
-                lastChirpCheck = now;
-                chirpDetectedThisIteration = true;
-                noPowerDetected = false;  // Reset power loss tracking
-                std::cout << "[TX] Frame " << (frameIdx + 1) << " / " << frameBuffers.size() << " (retransmit)" << std::endl;
-                playBufferBlocking(deviceManager, frameBuffers[frameIdx]);
-            }
-        }
+        // Normal transmission
+        std::cout << "[TX] Frame " << (frameIdx + 1) << " / " << frameBuffers.size() << std::endl;
+        playBufferBlocking(deviceManager, frameBuffers[frameIdx]);
 
-        // Normal transmission (skip if already retransmitted due to chirp)
-        if (!chirpDetectedThisIteration) {
-            std::cout << "[TX] Frame " << (frameIdx + 1) << " / " << frameBuffers.size() << std::endl;
-            playBufferBlocking(deviceManager, frameBuffers[frameIdx]);
+        // Every 125 frames, pause and listen for chirp
+        if ((frameIdx + 1) % framesPerPause == 0) {
+            std::cout << "[PAUSE] Listening for chirp (0.1s)..." << std::endl;
+            sampleBuffer.clear();  // Clear buffer before listening
+            
+            auto pauseStart = std::chrono::steady_clock::now();
+            bool chirpDetected = false;
+            
+            // Listen for 0.1 seconds
+            while (std::chrono::duration<double>(std::chrono::steady_clock::now() - pauseStart).count() < pauseDurationSec) {
+                if (abortRequested.load()) {
+                    break;
+                }
+                
+                auto snapshot = sampleBuffer.snapshot();
+                if (snapshot.size() >= minSamplesForPowerCheck) {
+                    // Check for signal power
+                    double signalPower = calculateSignalPower(snapshot);
+                    if (signalPower > powerThreshold) {
+                        // Signal detected, check for chirp
+                        if (detector.detectPreamble(snapshot, 0.65)) {
+                            chirpDetected = true;
+                            std::cout << "[PAUSE] Chirp detected, continuing transmission." << std::endl;
+                            sampleBuffer.clear();
+                            break;
+                        }
+                    }
+                }
+                
+                std::this_thread::sleep_for(std::chrono::milliseconds(10));  // Check every 10ms
+            }
+            
+            // If no chirp detected during pause, raise link error and abort
+            if (!chirpDetected && !abortRequested.load()) {
+                std::cout << "line error" << std::endl;
+                linkError = true;
+                abortRequested = true;
+                break;
+            }
         }
     }
 
@@ -894,7 +856,8 @@ void runLinkMonitoredSender(juce::AudioDeviceManager& deviceManager,
     if (inputThread.joinable()) {
         if (abortRequested.load()) {
             inputThread.join();
-        } else {
+        }
+        else {
             inputThread.detach();
         }
     }
@@ -904,9 +867,11 @@ void runLinkMonitoredSender(juce::AudioDeviceManager& deviceManager,
 
     if (linkError) {
         // "line error" already printed, process aborted
-    } else if (abortRequested.load()) {
+    }
+    else if (abortRequested.load()) {
         std::cout << "[SENDER] Transmission aborted by user." << std::endl;
-    } else {
+    }
+    else {
         std::cout << "[SENDER] Completed transmission of " << frameBuffers.size()
             << " frames with periodic link checks." << std::endl;
     }
@@ -914,7 +879,7 @@ void runLinkMonitoredSender(juce::AudioDeviceManager& deviceManager,
 
 void runChirpReceiverMode(juce::AudioDeviceManager& deviceManager, const juce::File& outputDir) {
     std::cout << "\n[MODE 6: RECEIVER CHIRP BEACON]\n";
-    std::cout << "A pure chirp will be transmitted every 5 seconds to keep the link alive." << std::endl;
+    std::cout << "Monitoring signal intensity. Will send chirp when sender pauses." << std::endl;
     std::cout << "Press ENTER to stop this mode once started." << std::endl;
 
     AudioRecorder recorder;
@@ -922,19 +887,69 @@ void runChirpReceiverMode(juce::AudioDeviceManager& deviceManager, const juce::F
     recorder.startRecording(recFile, ASK::sampleRate);
     deviceManager.addAudioCallback(&recorder);
 
+    // Prepare chirp in advance for fast transmission
     auto chirpBuffer = SignalGenerator::generateChirpBeacon();
+    
+    // Signal intensity monitoring
+    const double intensityThreshold = 0.005;  // Threshold below which sender is considered paused
+    const size_t intensityWindowSamples = static_cast<size_t>(ASK::sampleRate * 0.05);  // 50ms window
+    SampleRingBuffer intensityBuffer(intensityWindowSamples * 2);
+    
     std::atomic<bool> stopRequested{ false };
+    
+    // Helper function to calculate signal power
+    auto calculateSignalPower = [](const std::vector<float>& samples) -> double {
+        if (samples.empty()) return 0.0;
+        double sumSq = 0.0;
+        for (float s : samples) {
+            sumSq += s * s;
+        }
+        return sumSq / samples.size();
+    };
+    
+    // Monitor signal intensity via callback (just collect samples, no processing)
+    recorder.setSampleCallback([&intensityBuffer](const float* samples, int numSamples) {
+        intensityBuffer.pushSamples(samples, numSamples);
+    });
 
     std::thread inputThread([&stopRequested]() {
         std::cin.get();
         stopRequested = true;
         });
 
+    // Main loop: monitor intensity and send chirp when needed
+    auto lastIntensityCheck = std::chrono::steady_clock::now();
+    auto lastChirpSend = std::chrono::steady_clock::now();
+    const double intensityCheckInterval = 0.02;  // Check intensity every 20ms
+    const double minChirpInterval = 0.15;  // Minimum 150ms between chirps to avoid spam
+    
     while (!stopRequested.load()) {
-        playBufferBlocking(deviceManager, chirpBuffer);
-        for (int i = 0; i < 50 && !stopRequested.load(); ++i) {
-            std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        auto now = std::chrono::steady_clock::now();
+        
+        // Check signal intensity periodically
+        if (std::chrono::duration<double>(now - lastIntensityCheck).count() >= intensityCheckInterval) {
+            lastIntensityCheck = now;
+            
+            auto snapshot = intensityBuffer.snapshot();
+            if (snapshot.size() >= intensityWindowSamples) {
+                // Use only recent samples
+                size_t recentCount = std::min(snapshot.size(), intensityWindowSamples);
+                std::vector<float> recentSamples(snapshot.end() - recentCount, snapshot.end());
+                double signalPower = calculateSignalPower(recentSamples);
+                
+                // If intensity drops below threshold (sender paused), send chirp immediately
+                if (signalPower < intensityThreshold) {
+                    double timeSinceLastChirp = std::chrono::duration<double>(now - lastChirpSend).count();
+                    if (timeSinceLastChirp >= minChirpInterval) {
+                        std::cout << "[RECEIVER] Signal intensity dropped, sending chirp immediately." << std::endl;
+                        playBufferBlocking(deviceManager, chirpBuffer);
+                        lastChirpSend = now;
+                    }
+                }
+            }
         }
+        
+        std::this_thread::sleep_for(std::chrono::milliseconds(5));  // Check every 5ms
     }
 
     if (inputThread.joinable()) {
@@ -968,28 +983,28 @@ private:
     std::vector<bool> demodulateFrameNRZ(const float* frameData, int frameSamples) {
         // NRZ Demodulation: Detect sign of signal in each bit period
         std::vector<bool> bits(ASK::bitsPerFrame);
-        
+
         for (int bitIdx = 0; bitIdx < ASK::bitsPerFrame; ++bitIdx) {
             int bitStart = bitIdx * ASK::samplesPerBit;
             int bitEnd = (bitIdx + 1) * ASK::samplesPerBit;
-            
+
             // Sample the middle 50% of the bit period (skip edges for stability)
             int sampleStart = bitStart + ASK::samplesPerBit / 4;
             int sampleEnd = bitEnd - ASK::samplesPerBit / 4;
-            
+
             // Integrate signal over sample period
             double sum = 0.0;
             for (int j = sampleStart; j < sampleEnd && j < frameSamples; ++j) {
                 sum += frameData[j];
             }
-            
+
             // Positive sum = bit 1, Negative sum = bit 0
             bits[bitIdx] = (sum > 0.0);
         }
-        
+
         return bits;
     }
-    
+
     std::vector<bool> demodulateFrame(const float* frameData, int frameSamples) {
         return demodulateFrameNRZ(frameData, frameSamples);
     }
@@ -1044,20 +1059,20 @@ public:
                 }
                 double syncPower = dotProduct / 200.0;
 
-                if (syncPower > 1.0 && syncPower > syncPowerLocalMax && syncPower > power / 2  ) { // 0  &&  
+                if (syncPower > 0.5 && syncPower > syncPowerLocalMax && syncPower > power / 12) { // 0  &&  
                     syncPowerLocalMax = syncPower; startIndex = i;
                     if (verboseOutput_) {
                         //print local syncPower to tune threshold
-                        std::cout << "[Detection] SyncPower at sample " << i << ": " << syncPower 
-                                  << " (power=" << power  << ")" << std::endl;
+                        std::cout << "[Detection] SyncPower at sample " << i << ": " << syncPower
+                            << " (power=" << power << ")" << std::endl;
                     }
                 }
                 else if ((i - startIndex > 200) && (startIndex != 0)) { //
                     detectedPositions.push_back(startIndex);
                     detectionAttempts++;
                     if (verboseOutput_) {
-                        std::cout << "\n[Frame Detection #" << detectionAttempts << "] Peak at sample " 
-                                  << startIndex << " (max syncPower=" << syncPowerLocalMax << ")" << std::endl;
+                        std::cout << "\n[Frame Detection #" << detectionAttempts << "] Peak at sample "
+                            << startIndex << " (max syncPower=" << syncPowerLocalMax << ")" << std::endl;
                     }
                     syncPowerLocalMax = 0.0; state = 1; decodeFIFO.clear();
                     // Reset syncFIFO like MATLAB: syncFIFO = zeros(1, length(syncFIFO))
@@ -1069,7 +1084,7 @@ public:
                 decodeFIFO.push_back(sigData[i]);
                 if ((int)decodeFIFO.size() >= frameSamples) {
                     std::vector<bool> bits = demodulateFrame(decodeFIFO.data(), frameSamples);
-                    
+
                     // Extract frame ID
                     int frameId = 0;
                     for (int j = 0; j < ASK::idBitsPerFrame; ++j) frameId = (frameId << 1) | (bits[j] ? 1 : 0);
@@ -1080,9 +1095,9 @@ public:
 
                     // Always show result in verbose mode
                     if (verboseOutput_) {
-                        std::cout << "  Frame ID: " << frameId 
-                                  << " | CRC: " << (crcValid ? "VALID" : "INVALID")
-                                  << " | Data bits: ";
+                        std::cout << "  Frame ID: " << frameId
+                            << " | CRC: " << (crcValid ? "VALID" : "INVALID")
+                            << " | Data bits: ";
                         // Print first 20 data bits for preview
                         for (int j = 0; j < std::min(100, ASK::dataBitsPerFrame); ++j) {
                             std::cout << (bits[ASK::idBitsPerFrame + j] ? '1' : '0');
@@ -1092,20 +1107,22 @@ public:
                     }
 
                     // Categorize result
-                    if (frameId >= 0   ){ // && crcValid)&& frameId <= ASK::numFrames
+                    if (frameId >= 0) { // && crcValid)&& frameId <= ASK::numFrames
                         validFrames++;
                         frameId = detectionAttempts;
                         decodedFrameIds.push_back(frameId);
                         std::vector<bool> frameData(bits.begin() + ASK::idBitsPerFrame,
                             bits.begin() + ASK::idBitsPerFrame + ASK::dataBitsPerFrame);
                         decodedFrames[frameId] = frameData;
-                        
+
                         if (!verboseOutput_) {
                             std::cout << "Frame " << frameId << " decoded successfully" << std::endl;
                         }
-                    } else if (frameId <= 0 || frameId > ASK::numFrames) {
+                    }
+                    else if (frameId <= 0 || frameId > ASK::numFrames) {
                         invalidID++;
-                    } else if (!crcValid) {
+                    }
+                    else if (!crcValid) {
                         invalidCRC++;
                     }
 
@@ -1119,8 +1136,8 @@ public:
         std::cout << "  Valid frames: " << validFrames << " / " << ASK::numFrames << std::endl;
         std::cout << "  Invalid CRC: " << invalidCRC << std::endl;
         std::cout << "  Invalid ID: " << invalidID << std::endl;
-        std::cout << "  Success rate: " << std::fixed << std::setprecision(2) 
-                  << (100.0 * validFrames / ASK::numFrames) << "%" << std::endl;
+        std::cout << "  Success rate: " << std::fixed << std::setprecision(2)
+            << (100.0 * validFrames / ASK::numFrames) << "%" << std::endl;
 
         // Write decoded data to OUTPUT.txt
         std::string outputFilePath = ASK::outputPath + "OUTPUT.txt";
@@ -1147,7 +1164,7 @@ public:
         std::cout << "[OK] Decoded data saved to: " << outputFilePath << std::endl;
     }
 };
- 
+
 bool waitForChirpDetection(ChirpDetector& detector,
     SampleRingBuffer& buffer,
     double timeoutSeconds,
@@ -1258,7 +1275,7 @@ int main(int argc, char* argv[]) {
         case 2: { // Record only
             std::cout << "\n[MODE 2: RECORD ONLY]" << std::endl;
             juce::File recordedFile = outputDir.getChildFile("recorded_signal_mode2.wav");
-            
+
             std::cout << "Press ENTER to start recording..." << std::endl;
             std::cin.get();
 
@@ -1277,18 +1294,18 @@ int main(int argc, char* argv[]) {
             juce::AudioBuffer<float> recordedAudio;
             if (loadWavFile(recordedAudio, recordedFile)) {
                 analyzeRecordingDiagnostics(recordedAudio);
-                
+
                 std::cout << "\nDemodulate this recording? (y/n): ";
                 char response;
                 std::cin >> response;
                 std::cin.ignore();
-                
+
                 if (response == 'y' || response == 'Y') {
                     std::cout << "Use verbose output? (y/n): ";
                     char verboseResp;
                     std::cin >> verboseResp;
                     std::cin.ignore();
-                    
+
                     FrameDemodulator demodulator(verboseResp == 'y' || verboseResp == 'Y');
                     demodulator.demodulate(recordedAudio, ASK::outputPath + "correlation_values_mode2.csv");
                 }
@@ -1299,13 +1316,13 @@ int main(int argc, char* argv[]) {
         case 3: { // Play and Record
             std::cout << "\n[MODE 3: PLAY AND RECORD]" << std::endl;
             juce::File recordedFile = outputDir.getChildFile("recorded_signal_mode3.wav");
-            
+
             std::cout << "Press ENTER to start..." << std::endl;
             std::cin.get();
 
             AudioRecorder recorder;
             AudioPlayer player(modulatedSignal);
-            
+
             recorder.startRecording(recordedFile, ASK::sampleRate);
             deviceManager.addAudioCallback(&recorder);
             deviceManager.addAudioCallback(&player);
@@ -1322,18 +1339,18 @@ int main(int argc, char* argv[]) {
             juce::AudioBuffer<float> recordedAudio;
             if (loadWavFile(recordedAudio, recordedFile)) {
                 analyzeRecordingDiagnostics(recordedAudio);
-                
+
                 std::cout << "\nDemodulate this recording? (y/n): ";
                 char response;
                 std::cin >> response;
                 std::cin.ignore();
-                
+
                 if (response == 'y' || response == 'Y') {
                     std::cout << "Use verbose output? (y/n): ";
                     char verboseResp;
                     std::cin >> verboseResp;
                     std::cin.ignore();
-                    
+
                     FrameDemodulator demodulator(verboseResp == 'y' || verboseResp == 'Y');
                     demodulator.demodulate(recordedAudio, ASK::outputPath + "correlation_values_mode3.csv");
                 }
@@ -1346,22 +1363,22 @@ int main(int argc, char* argv[]) {
             std::cout << "Enter WAV file path (or press ENTER for default recorded_signal.wav): ";
             std::string path;
             std::getline(std::cin, path);
-            
+
             if (path.empty()) {
                 path = ASK::outputPath + "recorded_signal.wav";
             }
-            
+
             juce::File audioFile(path);
             juce::AudioBuffer<float> recordedAudio;
-            
+
             if (loadWavFile(recordedAudio, audioFile)) {
                 analyzeRecordingDiagnostics(recordedAudio);
-                
+
                 std::cout << "\nUse verbose output? (y/n): ";
                 char verboseResp;
                 std::cin >> verboseResp;
                 std::cin.ignore();
-                
+
                 FrameDemodulator demodulator(verboseResp == 'y' || verboseResp == 'Y');
                 demodulator.demodulate(recordedAudio, ASK::outputPath + "correlation_values_mode4.csv");
             }
@@ -1400,5 +1417,4 @@ int main(int argc, char* argv[]) {
 
     return 0;
 }
- 
- 
+
