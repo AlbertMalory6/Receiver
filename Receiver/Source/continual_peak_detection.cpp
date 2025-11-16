@@ -118,7 +118,10 @@ namespace LinkMonitorConfig {
     constexpr double pauseListenSeconds = 0.5;      // Listen window duration during pause
     constexpr double highPowerRmsThreshold = 0.08;  // RMS power threshold to qualify as noise beacon
     constexpr double highPowerPeakThreshold = 1.1;  // Peak amplitude threshold for noise beacon
-    constexpr double beaconCorrelationThreshold = 0.35; // Matched-filter threshold for receiver beacon
+    constexpr double beaconCorrelationThreshold = 0.55; // Matched-filter threshold for receiver beacon
+    constexpr double beaconWindowSeconds = 2.0;      // Detection window to count multiple beacons
+    constexpr double beaconMinWindowSeconds = 1.0;    // Minimum span required between first and last detection
+    constexpr int beaconDetectionsRequired = 8;     // Minimum detections within window to flag link error
 }
 
 namespace ReceiverBeaconConfig {
@@ -256,16 +259,6 @@ public:
         beacon.clear();
         beacon.copyFrom(0, 0, chirp, 0, 0, chirp.getNumSamples());
         return beacon;
-    }
-
-    static juce::AudioBuffer<float> generateDoubleChirpRequest(int tailSilenceSamples = 0) {
-        auto chirp = generatePreamble();
-        int chirpSamples = chirp.getNumSamples();
-        juce::AudioBuffer<float> request(1, chirpSamples * 2 + tailSilenceSamples);
-        request.clear();
-        request.copyFrom(0, 0, chirp, 0, 0, chirpSamples);
-        request.copyFrom(0, chirpSamples, chirp, 0, 0, chirpSamples);
-        return request;
     }
 };
 
@@ -680,39 +673,6 @@ public:
         }
         return false;
     }
-
-    int countPreambles(const std::vector<float>& signal,
-        double threshold = 0.65,
-        int minSeparationSamples = ASK::preambleSamples) const {
-        const int tempLen = template_.getNumSamples();
-        if ((int)signal.size() < tempLen) {
-            return 0;
-        }
-        const float* tempData = template_.getReadPointer(0);
-        int count = 0;
-        size_t i = 0;
-        while (i + tempLen <= signal.size()) {
-            double dotProduct = 0.0;
-            double signalEnergy = 0.0;
-            for (int j = 0; j < tempLen; ++j) {
-                float sample = signal[i + j];
-                dotProduct += sample * tempData[j];
-                signalEnergy += sample * sample;
-            }
-            double normalizedScore = 0.0;
-            if (signalEnergy > 0.0) {
-                normalizedScore = dotProduct / std::sqrt(signalEnergy * templateEnergy_);
-            }
-            if (normalizedScore >= threshold) {
-                ++count;
-                i += static_cast<size_t>(std::max(minSeparationSamples, tempLen));
-            }
-            else {
-                ++i;
-            }
-        }
-        return count;
-    }
 };
 
 // ==============================================================================
@@ -827,8 +787,10 @@ void runLinkMonitoredSender(juce::AudioDeviceManager& deviceManager,
 
     AudioRecorder recorder;
     SampleRingBuffer sampleBuffer(static_cast<size_t>(ASK::sampleRate * 3));
-    recorder.setSampleCallback([&sampleBuffer](const float* samples, int numSamples) {
+    SampleRingBuffer beaconSampleBuffer(static_cast<size_t>(ASK::sampleRate * 2));
+    recorder.setSampleCallback([&sampleBuffer, &beaconSampleBuffer](const float* samples, int numSamples) {
         sampleBuffer.pushSamples(samples, numSamples);
+        beaconSampleBuffer.pushSamples(samples, numSamples);
         });
 
     juce::File recFile = outputDir.getChildFile("link_sender_record.wav");
@@ -837,8 +799,9 @@ void runLinkMonitoredSender(juce::AudioDeviceManager& deviceManager,
 
     const size_t minSamplesForPowerCheck = static_cast<size_t>(ASK::sampleRate * 0.05);  // 50ms of samples
 
-    bool linkError = false;
+    std::atomic<bool> linkError{ false };
     auto abortRequested = std::make_shared<std::atomic<bool>>(false);
+    std::atomic<bool> isPauseWindow{ false };
 
     // Thread to monitor for Enter key press to abort
     std::thread inputThread([abortRequested]() {
@@ -895,7 +858,89 @@ void runLinkMonitoredSender(juce::AudioDeviceManager& deviceManager,
         return dot / std::sqrt(refEnergy * sampEnergy); // Normalized correlation [-1,1]
         };
 
-    auto requestChirpBuffer = SignalGenerator::generateDoubleChirpRequest();
+    std::atomic<bool> beaconMonitorStop{ false };
+    std::atomic<bool> beaconDetectedOutsidePause{ false };
+
+    std::thread beaconMonitorThread([&]() {
+        bool detectionActive = false;
+        std::deque<std::chrono::steady_clock::time_point> detectionTimes;
+        const auto beaconWindowDuration = std::chrono::duration<double>(LinkMonitorConfig::beaconWindowSeconds);
+
+        while (!beaconMonitorStop.load()) {
+            if (abortRequested->load()) break;
+            if (isPauseWindow.load()) {
+                detectionActive = false;
+                std::this_thread::sleep_for(std::chrono::milliseconds(10));
+                continue;
+            }
+
+            auto snapshot = beaconSampleBuffer.snapshot();
+            if (snapshot.size() >= minSamplesForPowerCheck) {
+                size_t recentCount = std::min(snapshot.size(), minSamplesForPowerCheck);
+                std::vector<float> recentSamples(snapshot.end() - recentCount, snapshot.end());
+
+                double signalPower = calculateSignalPower(recentSamples);
+                double signalPeak = calculatePeak(recentSamples);
+                double beaconCorrelation = calculateBeaconCorrelation(recentSamples);
+
+                bool exceedsThresholds =
+                    beaconCorrelation > LinkMonitorConfig::beaconCorrelationThreshold &&
+                    (signalPower > LinkMonitorConfig::highPowerRmsThreshold
+                        || signalPeak > LinkMonitorConfig::highPowerPeakThreshold);
+
+                if (exceedsThresholds) {
+                    auto now = std::chrono::steady_clock::now();
+                    if (!detectionActive) {
+                        detectionActive = true;
+                        detectionTimes.push_back(now);
+
+                        auto windowStart = now - std::chrono::duration_cast<std::chrono::steady_clock::duration>(beaconWindowDuration);
+                        while (!detectionTimes.empty() && detectionTimes.front() < windowStart) {
+                            detectionTimes.pop_front();
+                        }
+
+                        if ((int)detectionTimes.size() >= LinkMonitorConfig::beaconDetectionsRequired) {
+                            double windowSeconds = detectionTimes.size() > 1
+                                ? std::chrono::duration<double>(detectionTimes.back() - detectionTimes.front()).count()
+                                : 0.0;
+
+                            if (windowSeconds >= LinkMonitorConfig::beaconMinWindowSeconds
+                                && !beaconDetectedOutsidePause.exchange(true)) {
+                                std::cout << "[LINK] Detected " << detectionTimes.size()
+                                    << " noise beacons within " << std::fixed << std::setprecision(3)
+                                    << windowSeconds << "s during transmission (corr=" << beaconCorrelation
+                                    << ", power=" << signalPower << ", peak=" << signalPeak
+                                    << "). Aborting in 1s..." << std::endl;
+                                std::this_thread::sleep_for(std::chrono::seconds(1));
+                                linkError.store(true);
+                                abortRequested->store(true);
+                                break;
+                            }
+                        }
+                    }
+                }
+                else {
+                    detectionActive = false;
+                }
+            }
+            else {
+                detectionActive = false;
+            }
+
+            std::this_thread::sleep_for(std::chrono::milliseconds(10));
+        }
+        });
+
+    struct PauseWindowGuard {
+        explicit PauseWindowGuard(std::atomic<bool>& flag) : flagRef(flag) {
+            flagRef.store(true);
+        }
+        ~PauseWindowGuard() {
+            flagRef.store(false);
+        }
+    private:
+        std::atomic<bool>& flagRef;
+    };
 
     for (size_t frameIdx = 0; frameIdx < frameBuffers.size(); ++frameIdx) {
         // Check for abort request
@@ -908,11 +953,11 @@ void runLinkMonitoredSender(juce::AudioDeviceManager& deviceManager,
         std::cout << "[TX] Frame " << (frameIdx + 1) << " / " << frameBuffers.size() << std::endl;
         playBufferBlocking(deviceManager, frameBuffers[frameIdx]);
 
-        // Periodic handshake: send double-chirp request and wait for receiver beacon
+        // Periodic pause to listen for high-power noise beacon from receiver
         if ((frameIdx + 1) % LinkMonitorConfig::framesPerPause == 0) {
-            std::cout << "[HANDSHAKE] Sending double-chirp request..." << std::endl;
-            playBufferBlocking(deviceManager, requestChirpBuffer);
-            sampleBuffer.clear();  // Clear previously captured samples including our request
+            PauseWindowGuard pauseGuard(isPauseWindow);
+            std::cout << "[PAUSE] Monitoring link (" << LinkMonitorConfig::pauseListenSeconds << "s)..." << std::endl;
+            sampleBuffer.clear();  // Clear buffer before listening
 
             auto pauseStart = std::chrono::steady_clock::now();
             bool signalDetected = false;
@@ -937,7 +982,7 @@ void runLinkMonitoredSender(juce::AudioDeviceManager& deviceManager,
                         && (signalPower > LinkMonitorConfig::highPowerRmsThreshold
                             || signalPeak > LinkMonitorConfig::highPowerPeakThreshold)) {
                         signalDetected = true;
-                        std::cout << "[HANDSHAKE] Receiver beacon detected (corr=" << beaconCorrelation
+                        std::cout << "[PAUSE] Beacon detected (corr=" << beaconCorrelation
                             << ", power=" << signalPower << ", peak=" << signalPeak << ")" << std::endl;
                         sampleBuffer.clear();
                         break;
@@ -948,12 +993,12 @@ void runLinkMonitoredSender(juce::AudioDeviceManager& deviceManager,
 
             if (!signalDetected && !abortRequested->load()) {
                 std::cout << "line error" << std::endl;
-                linkError = true;
+                linkError.store(true);
                 abortRequested->store(true);
                 break;
             }
             else if (signalDetected) {
-                std::cout << "[HANDSHAKE] Beacon acknowledged. Continuing transmission." << std::endl;
+                std::cout << "[PAUSE] High-power noise detected, continuing." << std::endl;
             }
         }
     }
@@ -968,10 +1013,15 @@ void runLinkMonitoredSender(juce::AudioDeviceManager& deviceManager,
         }
     }
 
+    beaconMonitorStop.store(true);
+    if (beaconMonitorThread.joinable()) {
+        beaconMonitorThread.join();
+    }
+
     recorder.stop();
     deviceManager.removeAudioCallback(&recorder);
 
-    if (linkError) {
+    if (linkError.load()) {
         // "line error" already printed, process aborted
     }
     else if (abortRequested->load()) {
@@ -1243,23 +1293,31 @@ void runChirpReceiverMode(juce::AudioDeviceManager& deviceManager, const juce::F
         phase += phaseIncrement;
     }
 
-    // Buffers for demodulation and request detection
+    // Buffers for demodulation and intensity monitoring
     SampleRingBuffer demodBuffer(static_cast<size_t>(ASK::sampleRate * 12));
-    const size_t requestDetectionWindowSamples = static_cast<size_t>(ASK::sampleRate * 0.6);
-    SampleRingBuffer requestBuffer(requestDetectionWindowSamples);
+    const double intensityThreshold = 0.005;
+    const size_t intensityWindowSamples = static_cast<size_t>(ASK::sampleRate * 0.05);
+    SampleRingBuffer intensityBuffer(intensityWindowSamples * 2);
 
     std::atomic<bool> stopRequested{ false };
     std::atomic<ReceiverStopReason> stopReason{ ReceiverStopReason::None };
     auto userAbortFlag = std::make_shared<std::atomic<bool>>(false);
+
+    auto calculateSignalPower = [](const std::vector<float>& samples) -> double {
+        if (samples.empty()) return 0.0;
+        double sumSq = 0.0;
+        for (float s : samples) sumSq += s * s;
+        return sumSq / samples.size();
+        };
 
     auto requestStop = [&](ReceiverStopReason reason) {
         stopReason.store(reason);
         stopRequested.store(true);
         };
 
-    recorder.setSampleCallback([&demodBuffer, &requestBuffer](const float* samples, int numSamples) {
+    recorder.setSampleCallback([&demodBuffer, &intensityBuffer](const float* samples, int numSamples) {
         demodBuffer.pushSamples(samples, numSamples);
-        requestBuffer.pushSamples(samples, numSamples);
+        intensityBuffer.pushSamples(samples, numSamples);
         });
 
     std::thread inputThread([userAbortFlag]() {
@@ -1267,7 +1325,6 @@ void runChirpReceiverMode(juce::AudioDeviceManager& deviceManager, const juce::F
         userAbortFlag->store(true);
         });
 
-    ChirpDetector chirpDetector;
     FrameDemodulator demodulator(false);
     const size_t minDemodSamples = static_cast<size_t>(ASK::sampleRate * 2);
     std::thread demodThread([&]() {
@@ -1300,13 +1357,13 @@ void runChirpReceiverMode(juce::AudioDeviceManager& deviceManager, const juce::F
         }
         });
 
-    std::thread requestThread([&]() {
-        const double minBeaconInterval = 0.15;
-        const double chirpDetectionThreshold = 0.7;
-        const int minChirpSeparationSamples = std::max(ASK::preambleSamples / 2, 1);
-        auto lastBeaconSend = std::chrono::steady_clock::now();
+    std::thread noiseThread([&]() {
+        auto lastIntensityCheck = std::chrono::steady_clock::now();
+        auto lastNoiseSend = std::chrono::steady_clock::now();
         auto beaconEnableTime = std::chrono::steady_clock::now() +
             std::chrono::milliseconds(static_cast<int>(ReceiverBeaconConfig::beaconStartDelaySec * 1000.0));
+        const double intensityCheckInterval = 0.02;
+        const double minNoiseInterval = 0.15;
 
         while (!stopRequested.load()) {
             if (userAbortFlag->load()) {
@@ -1315,28 +1372,23 @@ void runChirpReceiverMode(juce::AudioDeviceManager& deviceManager, const juce::F
             }
 
             auto now = std::chrono::steady_clock::now();
-            if (now < beaconEnableTime) {
-                std::this_thread::sleep_for(std::chrono::milliseconds(5));
-                continue;
-            }
-
-            auto snapshot = requestBuffer.snapshot();
-            if (snapshot.size() >= static_cast<size_t>(ASK::preambleSamples * 2)) {
-                int chirpCount = chirpDetector.countPreambles(
-                    snapshot,
-                    chirpDetectionThreshold,
-                    minChirpSeparationSamples);
-                if (chirpCount >= 2) {
-                    double timeSinceLastNoise = std::chrono::duration<double>(now - lastBeaconSend).count();
-                    if (timeSinceLastNoise >= minBeaconInterval) {
-                        std::cout << "[RECEIVER] Double chirp detected, sending beacon." << std::endl;
-                        playBufferBlocking(deviceManager, noiseBuffer);
-                        lastBeaconSend = std::chrono::steady_clock::now();
-                        requestBuffer.clear();
+            if (std::chrono::duration<double>(now - lastIntensityCheck).count() >= intensityCheckInterval) {
+                lastIntensityCheck = now;
+                auto snapshot = intensityBuffer.snapshot();
+                if (snapshot.size() >= intensityWindowSamples) {
+                    size_t recentCount = std::min(snapshot.size(), intensityWindowSamples);
+                    std::vector<float> recentSamples(snapshot.end() - recentCount, snapshot.end());
+                    double signalPower = calculateSignalPower(recentSamples);
+                    if (signalPower < intensityThreshold && now >= beaconEnableTime) {
+                        double timeSinceLastNoise = std::chrono::duration<double>(now - lastNoiseSend).count();
+                        if (timeSinceLastNoise >= minNoiseInterval) {
+                            std::cout << "[RECEIVER] Signal intensity dropped, sending noise ping." << std::endl;
+                            playBufferBlocking(deviceManager, noiseBuffer);
+                            lastNoiseSend = now;
+                        }
                     }
                 }
             }
-
             std::this_thread::sleep_for(std::chrono::milliseconds(5));
         }
         });
@@ -1362,7 +1414,7 @@ void runChirpReceiverMode(juce::AudioDeviceManager& deviceManager, const juce::F
     }
 
     if (demodThread.joinable()) demodThread.join();
-    if (requestThread.joinable()) requestThread.join();
+    if (noiseThread.joinable()) noiseThread.join();
 
     auto finalReason = stopReason.load();
     if (finalReason == ReceiverStopReason::DetectionCountReached) {
@@ -1452,8 +1504,8 @@ int main(int argc, char* argv[]) {
         std::cout << "  2. Record only (receive)" << std::endl;
         std::cout << "  3. Play and Record (simultaneous)" << std::endl;
         std::cout << "  4. Demodulate existing recording" << std::endl;
-        std::cout << "  5. Sender (handshake every 5s)" << std::endl;
-        std::cout << "  6. Receiver (chirp beacon)" << std::endl;
+        std::cout << "  5. Sender (ACK protocal)" << std::endl;
+        std::cout << "  6. Receiver (ACK protocal)" << std::endl;
         std::cout << "  0. Exit" << std::endl;
         std::cout << "Enter choice: ";
 
