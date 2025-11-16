@@ -118,17 +118,17 @@ namespace LinkMonitorConfig {
     constexpr double pauseListenSeconds = 0.5;      // Listen window duration during pause
     constexpr double highPowerRmsThreshold = 0.08;  // RMS power threshold to qualify as noise beacon
     constexpr double highPowerPeakThreshold = 1.1;  // Peak amplitude threshold for noise beacon
-    constexpr double beaconCorrelationThreshold = 0.55; // Matched-filter threshold for receiver beacon
+    constexpr double beaconCorrelationThreshold = 0.35; // Matched-filter threshold for receiver beacon
     constexpr double beaconWindowSeconds = 2.0;      // Detection window to count multiple beacons
     constexpr double beaconMinWindowSeconds = 1.0;    // Minimum span required between first and last detection
-    constexpr int beaconDetectionsRequired = 8;     // Minimum detections within window to flag link error
+    constexpr int beaconDetectionsRequired = 9;     // Minimum detections within window to flag link error
 }
 
 namespace ReceiverBeaconConfig {
     constexpr double noiseBurstDurationSec = 0.04;       // Duration of receiver noise beacon
     constexpr float noiseBurstAmplitude = 0.98f;         // Max amplitude for beacon samples
     constexpr double beaconFrequencyHz = 7500.0;         // Distinct carrier for beacon (outside data band)
-    constexpr double beaconStartDelaySec = 0.5;          // Wait time before beacon transmissions allowed
+    constexpr double beaconStartDelaySec = 0.25;          // Wait time before beacon transmissions allowed
 }
 
 // ==============================================================================
@@ -906,12 +906,11 @@ void runLinkMonitoredSender(juce::AudioDeviceManager& deviceManager,
 
                             if (windowSeconds >= LinkMonitorConfig::beaconMinWindowSeconds
                                 && !beaconDetectedOutsidePause.exchange(true)) {
-                                std::cout << "[LINK] Detected " << detectionTimes.size()
+                                std::cout << "[LINK] link error !" << std::endl;/*detectionTimes.size()
                                     << " noise beacons within " << std::fixed << std::setprecision(3)
                                     << windowSeconds << "s during transmission (corr=" << beaconCorrelation
                                     << ", power=" << signalPower << ", peak=" << signalPeak
-                                    << "). Aborting in 1s..." << std::endl;
-                                std::this_thread::sleep_for(std::chrono::seconds(1));
+                                    << "). Aborting..." << std::endl;*/
                                 linkError.store(true);
                                 abortRequested->store(true);
                                 break;
@@ -950,13 +949,13 @@ void runLinkMonitoredSender(juce::AudioDeviceManager& deviceManager,
         }
 
         // Normal transmission
-        std::cout << "[TX] Frame " << (frameIdx + 1) << " / " << frameBuffers.size() << std::endl;
+        //std::cout << "[TX] Frame " << (frameIdx + 1) << " / " << frameBuffers.size() << std::endl;
         playBufferBlocking(deviceManager, frameBuffers[frameIdx]);
 
         // Periodic pause to listen for high-power noise beacon from receiver
         if ((frameIdx + 1) % LinkMonitorConfig::framesPerPause == 0) {
             PauseWindowGuard pauseGuard(isPauseWindow);
-            std::cout << "[PAUSE] Monitoring link (" << LinkMonitorConfig::pauseListenSeconds << "s)..." << std::endl;
+            //std::cout << "[PAUSE] Monitoring link (" << LinkMonitorConfig::pauseListenSeconds << "s)..." << std::endl;
             sampleBuffer.clear();  // Clear buffer before listening
 
             auto pauseStart = std::chrono::steady_clock::now();
@@ -982,8 +981,8 @@ void runLinkMonitoredSender(juce::AudioDeviceManager& deviceManager,
                         && (signalPower > LinkMonitorConfig::highPowerRmsThreshold
                             || signalPeak > LinkMonitorConfig::highPowerPeakThreshold)) {
                         signalDetected = true;
-                        std::cout << "[PAUSE] Beacon detected (corr=" << beaconCorrelation
-                            << ", power=" << signalPower << ", peak=" << signalPeak << ")" << std::endl;
+                        //std::cout << "[PAUSE] Beacon detected (corr=" << beaconCorrelation
+                        //    << ", power=" << signalPower << ", peak=" << signalPeak << ")" << std::endl;
                         sampleBuffer.clear();
                         break;
                     }
@@ -998,7 +997,7 @@ void runLinkMonitoredSender(juce::AudioDeviceManager& deviceManager,
                 break;
             }
             else if (signalDetected) {
-                std::cout << "[PAUSE] High-power noise detected, continuing." << std::endl;
+                //std::cout << "[PAUSE] High-power noise detected, continuing." << std::endl;
             }
         }
     }
@@ -1382,7 +1381,7 @@ void runChirpReceiverMode(juce::AudioDeviceManager& deviceManager, const juce::F
                     if (signalPower < intensityThreshold && now >= beaconEnableTime) {
                         double timeSinceLastNoise = std::chrono::duration<double>(now - lastNoiseSend).count();
                         if (timeSinceLastNoise >= minNoiseInterval) {
-                            std::cout << "[RECEIVER] Signal intensity dropped, sending noise ping." << std::endl;
+                            //std::cout << "[RECEIVER] no signals at all, sending link error." << std::endl;
                             playBufferBlocking(deviceManager, noiseBuffer);
                             lastNoiseSend = now;
                         }
